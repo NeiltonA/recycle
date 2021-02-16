@@ -45,7 +45,7 @@ public class AddressController {
 	@Autowired
 	private ViaZipCodeClient service;
 
-	@ApiOperation(value = "Method responsible for returning the list of address") // Método responsável pelo retorno da // lista de address
+	@ApiOperation(value = "Method responsible for returning the list of address")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")																				
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Address>> getAll() {
@@ -53,7 +53,6 @@ public class AddressController {
 			List<Address> address = repository.findAll();
 
 			if (address.isEmpty()) {
-
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(address, HttpStatus.OK);
@@ -63,7 +62,7 @@ public class AddressController {
 
 	}
 
-	@ApiOperation(value = "method responsible for returning the address via zip code") // Método responsável por // retornar o endereço via cep.
+	@ApiOperation(value = "method responsible for returning the address via zip code")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@GetMapping(value = "/zipCode/{zipCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) throws Exception {
@@ -83,9 +82,24 @@ public class AddressController {
 		}
 
 	}
+	
+	@ApiOperation(value = "Method responsible for searching by ID")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Address> getById(@PathVariable("id") long id) {
+		try {
+			Optional<Address> add = repository.findById(id);
+
+			if (add.isPresent()) {
+				return new ResponseEntity<>(add.get(), HttpStatus.OK);
+			}
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
+	}
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@ApiOperation(value = "Method responsible for saving the address") // Método responsável por salvar o address
-	@PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for saving the address")
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Address> save(@Valid @RequestBody Address address) {
 		try {
 			Address add = addressService.save(address);
@@ -96,8 +110,8 @@ public class AddressController {
 		}
 	}
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@ApiOperation(value = "Method responsible for changing the address") // Método responsável por alterar o address
-	@PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for changing the address") 
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Address> update(@PathVariable("id") Long id, @RequestBody Address address) {
 		try {
 			Optional<Address> add = repository.findById(id);
@@ -113,8 +127,8 @@ public class AddressController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@ApiOperation(value = "Method responsible for excluding the address") // Método responsável pela exclusão do address
-	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for excluding the address")
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
 			Optional<Address> add = repository.findById(id);
