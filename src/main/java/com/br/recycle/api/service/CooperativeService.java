@@ -41,8 +41,8 @@ public class CooperativeService {
 		}
 	}
 
-	public Cooperative buscarOuFalhar(Long cooperativeId) {
-		return repository.findById(cooperativeId).orElseThrow(() -> new CooperativeNaoEncontradaException(cooperativeId));
+	public Cooperative buscarOuFalhar(Long id) {
+		return repository.findById(id).orElseThrow(() -> new CooperativeNaoEncontradaException(id));
 	}
 
 }

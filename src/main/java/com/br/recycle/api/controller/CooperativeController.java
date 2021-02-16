@@ -34,11 +34,11 @@ public class CooperativeController {
 
 	@Autowired
 	private CooperativeRepository repository;
-	
+
 	@Autowired
 	private CooperativeService service;
-	
-	@ApiOperation(value = "Method responsible for returning the list of cooperative")//Método responsável pelo retorno da lista de doadores
+
+	@ApiOperation(value = "Method responsible for returning the list of cooperative")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Cooperative>> getAll() {
 		try {
@@ -55,23 +55,26 @@ public class CooperativeController {
 
 	}
 
-	@ApiOperation(value = "Method responsible for searching by ID")//Método responsável pela busca por ID
-	@GetMapping(value="/consult/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for searching by ID")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Cooperative> getById(@PathVariable("id") long id) {
-		Optional<Cooperative> coop = repository.findById(id);
+		try {
+			Optional<Cooperative> coop = repository.findById(id);
 
-		if (coop.isPresent()) {
-			return new ResponseEntity<>(coop.get(), HttpStatus.OK);
-		} else {
+			if (coop.isPresent()) {
+				return new ResponseEntity<>(coop.get(), HttpStatus.OK);
+			}
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for saving the cooperative")//Método responsável por salvar o cooperative
+	@ApiOperation(value = "Method responsible for saving the cooperative")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Cooperative> save(@Valid @RequestBody Cooperative giver) {
+	public ResponseEntity<Cooperative> save(@Valid @RequestBody Cooperative cooperative) {
 		try {
-			Cooperative coop = service.save(giver);
+			Cooperative coop = service.save(cooperative);
 			log.info("Registered successfully -> []");
 			return new ResponseEntity<>(coop, HttpStatus.CREATED);
 		} catch (Exception e) {
@@ -80,36 +83,37 @@ public class CooperativeController {
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for changing the cooperative")//Método responsável por alterar o cooperative
-	@PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Cooperative> update(@PathVariable("id") long id, @RequestBody Cooperative giver) {
-		Optional<Cooperative> coop = repository.findById(id);
-		if (coop.isPresent()) {
-			//employee.setId(id);
-			return new ResponseEntity<>(repository.save(giver), HttpStatus.OK);
-		} else {
-			return ResponseEntity.notFound().build();
-
-		}
-
-	}
-
-	@ApiOperation(value = "Method responsible for excluding the cooperative")//Método responsável pela exclusão do cooperative
-	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HttpStatus> deleteFunc(@PathVariable("id") long id) {
+	@ApiOperation(value = "Method responsible for changing the cooperative")
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Cooperative> update(@PathVariable("id") long id, @RequestBody Cooperative cooperative) {
 		try {
 			Optional<Cooperative> coop = repository.findById(id);
 			if (coop.isPresent()) {
-				repository.deleteById(id);
-				return new ResponseEntity<>(HttpStatus.OK);
-			}else {
-				return ResponseEntity.notFound().build();
+				cooperative.setId(coop.get().getId());
+				return new ResponseEntity<>(service.save(cooperative), HttpStatus.OK);
 			}
+
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
 
+	@ApiOperation(value = "Method responsible for excluding the cooperative") // cooperative
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
+		try {
+			Optional<Cooperative> coop = repository.findById(id);
+			if (coop.isPresent()) {
+				repository.deleteById(id);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
+		}
+
+	}
 
 }

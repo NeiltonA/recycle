@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.br.recycle.api.bean.GiverResponseBean;
-import com.br.recycle.api.exception.GiverNaoEncontradaException;
 import com.br.recycle.api.exception.NegocioException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.repository.GiverRepository;
@@ -37,18 +35,17 @@ public class GiverController {
 
 	@Autowired
 	private GiverRepository repository;
-	
+
 	@Autowired
 	private GiverService service;
-	
-	@ApiOperation(value = "Method responsible for returning the list of giver")//Método responsável pelo retorno da lista de doadores
+
+	@ApiOperation(value = "Method responsible for returning the list of giver")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<GiverResponseBean>> getAll() {
+	public ResponseEntity<List<Giver>> getAll() {
 		try {
-			List<GiverResponseBean> giver = service.consultByAll();
+			List<Giver> giver = repository.findAll();
 
 			if (giver.isEmpty()) {
-
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(giver, HttpStatus.OK);
@@ -58,61 +55,64 @@ public class GiverController {
 
 	}
 
-	@ApiOperation(value = "Method responsible for searching by ID")//Método responsável pela busca por ID
-	@GetMapping(value="/consult/{idGiver}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for searching by ID")
+	@GetMapping(value = "/{idGiver}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Giver> getById(@PathVariable("idGiver") Long idGiver) {
-		Optional<Giver> giver = repository.findById(idGiver);
+		try {
+			Optional<Giver> giver = repository.findById(idGiver);
 
-		if (giver.isPresent()) {
-			return new ResponseEntity<>(giver.get(), HttpStatus.OK);
-		} else {
+			if (giver.isPresent()) {
+				return new ResponseEntity<>(giver.get(), HttpStatus.OK);
+			}
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 	}
 
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@ApiOperation(value = "Method responsible for saving the giver")//Método responsável por salvar o doador
-	@PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for saving the giver")
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Giver> save(@RequestBody @Valid Giver giver) {
 		try {
 			Giver giv = service.save(giver);
 			log.info("Registered successfully -> []");
 			return new ResponseEntity<>(giv, HttpStatus.CREATED);
-		} catch (GiverNaoEncontradaException e) {
+		} catch (Exception e) {
 			throw new NegocioException(e.getMessage(), e);
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for changing the giver")//Método responsável por alterar o doador
-	@PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for changing the giver")
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Giver> update(@PathVariable("id") long id, @RequestBody Giver giver) {
-		Optional<Giver> giv = repository.findById(id);
-		if (giv.isPresent()) {
-			giver.setId(giv.get().getId());
-			return new ResponseEntity<>(repository.save(giver), HttpStatus.OK);
-		} else {
+		try {
+			Optional<Giver> giv = repository.findById(id);
+			if (giv.isPresent()) {
+				giver.setId(giv.get().getId());
+				return new ResponseEntity<>(service.save(giver), HttpStatus.OK);
+			}
 			return ResponseEntity.notFound().build();
-
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
 
-	@ApiOperation(value = "Method responsible for excluding the giver")//Método responsável pela exclusão do doador
-	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HttpStatus> deleteFunc(@PathVariable("id") long id) {
+	@ApiOperation(value = "Method responsible for excluding the giver")
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
 			Optional<Giver> giv = repository.findById(id);
 			if (giv.isPresent()) {
 				repository.deleteById(id);
 				return new ResponseEntity<>(HttpStatus.OK);
-			}else {
-				return ResponseEntity.notFound().build();
 			}
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
-
 
 }

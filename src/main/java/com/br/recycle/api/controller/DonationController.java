@@ -34,18 +34,17 @@ public class DonationController {
 
 	@Autowired
 	private DonationRepository repository;
-	
+
 	@Autowired
 	private DonationService service;
-	
-	@ApiOperation(value = "Method responsible for returning the list of donation")//Método responsável pelo retorno da lista de donation
+
+	@ApiOperation(value = "Method responsible for returning the list of donation")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Donation>> getAll() {
 		try {
 			List<Donation> donation = repository.findAll();
 
 			if (donation.isEmpty()) {
-
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 			return new ResponseEntity<>(donation, HttpStatus.OK);
@@ -55,20 +54,23 @@ public class DonationController {
 
 	}
 
-	@ApiOperation(value = "Method responsible for searching by ID")//Método responsável pela busca por ID
-	@GetMapping(value="/consult/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for searching by ID")
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Donation> getById(@PathVariable("id") long id) {
-		Optional<Donation> donation = repository.findById(id);
+		try {
+			Optional<Donation> donation = repository.findById(id);
 
-		if (donation.isPresent()) {
-			return new ResponseEntity<>(donation.get(), HttpStatus.OK);
-		} else {
+			if (donation.isPresent()) {
+				return new ResponseEntity<>(donation.get(), HttpStatus.OK);
+			}
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for saving the donation")//Método responsável por salvar o donation
-	@PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for saving the donation")
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Donation> save(@Valid @RequestBody Donation donation) {
 		try {
 			Donation don = service.save(donation);
@@ -80,31 +82,33 @@ public class DonationController {
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for changing the donation")//Método responsável por alterar o donation
-	@PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for changing the donation")
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Donation> update(@PathVariable("id") long id, @RequestBody Donation donation) {
-		Optional<Donation> don = repository.findById(id);
-		if (don.isPresent()) {
-			//employee.setId(id);
-			return new ResponseEntity<>(repository.save(donation), HttpStatus.OK);
-		} else {
+		try {
+			Optional<Donation> don = repository.findById(id);
+			if (don.isPresent()) {
+				donation.setId(don.get().getId());
+				return new ResponseEntity<>(service.save(donation), HttpStatus.OK);
+			}
 			return ResponseEntity.notFound().build();
 
+		} catch (Exception e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 
 	}
 
-	@ApiOperation(value = "Method responsible for excluding the donation")//Método responsável pela exclusão do donation
-	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HttpStatus> deleteFunc(@PathVariable("id") long id) {
+	@ApiOperation(value = "Method responsible for excluding the donation")
+	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
 			Optional<Donation> donation = repository.findById(id);
-			if (donation != null) {
-				repository.deleteById(id);
+			if (donation.isPresent()) {
+				service.excluir(id);
 				return new ResponseEntity<>(HttpStatus.OK);
-			}else {
-				return ResponseEntity.notFound().build();
 			}
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			throw new NegocioException(e.getMessage(), e);
 		}

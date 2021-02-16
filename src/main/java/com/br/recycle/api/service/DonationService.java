@@ -28,16 +28,16 @@ public class DonationService {
 	}
 
 	@Transactional
-	public void excluir(Long donationId) {
+	public void excluir(Long id) {
 		try {
-			repository.deleteById(donationId);
+			repository.deleteById(id);
 			repository.flush();
 
 		} catch (EmptyResultDataAccessException e) {
-			throw new DonationNaoEncontradaException(donationId);
+			throw new DonationNaoEncontradaException(id);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(String.format(MSG_DONATION_EM_USO, donationId));
+			throw new EntidadeEmUsoException(String.format(MSG_DONATION_EM_USO, id));
 		}
 	}
 

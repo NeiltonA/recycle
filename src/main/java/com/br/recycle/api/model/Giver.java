@@ -13,8 +13,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,7 +34,6 @@ public class Giver  implements Serializable{
 
 	@OneToOne
 	@JoinColumn(name = "id_user", nullable = false)
-	@JsonBackReference
 	private User user;
 	
 	
