@@ -40,7 +40,7 @@ public class Cooperative implements Serializable {
 	
 	@Column(name = "cpf_responsible")
 	@CPF(message = "Invalid CPF")
-	private String Cpfresponsible;
+	private String CpfResponsible;
 
 	@OneToOne
 	@JoinColumn(name = "id_user", nullable = false)

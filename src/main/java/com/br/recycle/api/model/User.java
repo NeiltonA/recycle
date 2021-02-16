@@ -26,8 +26,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.payload.RoleName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -38,9 +40,6 @@ import lombok.ToString;
 @Entity
 
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-            "username"
-        }),
         @UniqueConstraint(columnNames = {
             "email"
         })
@@ -61,14 +60,15 @@ public class User implements Serializable {
 	@NotEmpty
     private String name;
     
-    @NotEmpty
-    private String username;
+	
+    //private String username;
 
     @NaturalId
     @NotEmpty(message = "{validation.mail.notEmpty}")
 	@Email(regexp = ".*@.*\\..*", message = "Email invalido!")
     private String email;
 
+    @JsonIgnore
     @Transient
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -80,6 +80,7 @@ public class User implements Serializable {
     @Column(name = "cell_phone")
     private String cellPhone;
     
+    @CPF(message = "Invalid CPF")
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
     

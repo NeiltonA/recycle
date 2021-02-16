@@ -51,7 +51,7 @@ public class AuthController {
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 		try {
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					loginRequest.getUsernameOrEmail(), loginRequest.getPassword()));
+					loginRequest.getEmail(), loginRequest.getPassword()));
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -68,10 +68,10 @@ public class AuthController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@RequestBody @Valid User user) {
 		try {
-			if (userRepository.existsByUsername(user.getUsername())) {
-				return new ResponseEntity<Object>(new ApiResponse(false, "Username is already taken!"),
-						HttpStatus.BAD_REQUEST);
-			}
+//			if (userRepository.existsByUsername(user.getUsername())) {
+//				return new ResponseEntity<Object>(new ApiResponse(false, "Username is already taken!"),
+//						HttpStatus.BAD_REQUEST);
+//			}
 
 			if (userRepository.existsByEmail(user.getEmail())) {
 				return new ResponseEntity<Object>(new ApiResponse(false, "Email Address already in use!"),

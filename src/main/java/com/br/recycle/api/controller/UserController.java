@@ -72,12 +72,12 @@ public class UserController {
 
 	}
 
-	@PreAuthorize("hasRole('USER')")
-	@GetMapping("/user/checkUsernameAvailability")
-	public Boolean checkUsernameAvailability(@RequestParam(value = "username") String username) {
-		Boolean isAvailable = !userRepository.existsByUsername(username);
-		return isAvailable;
-	}
+//	@PreAuthorize("hasRole('USER')")
+//	@GetMapping("/user/checkUsernameAvailability")
+//	public Boolean checkUsernameAvailability(@RequestParam(value = "username") String username) {
+//		Boolean isAvailable = !userRepository.existsByUsername(username);
+//		return isAvailable;
+//	}
 
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/user/checkEmailAvailability")
@@ -86,15 +86,15 @@ public class UserController {
 		return isAvailable;
 	}
 
-	@GetMapping("/users/{username}")
-	public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-
-		UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName());
-
-		return userProfile;
-	}
+//	@GetMapping("/users/{username}")
+//	public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
+//		User user = userRepository.findByUsername(username)
+//				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+//
+//		UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName());
+//
+//		return userProfile;
+//	}
 	
 	
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
