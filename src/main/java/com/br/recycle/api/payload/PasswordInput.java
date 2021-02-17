@@ -12,9 +12,9 @@ public class PasswordInput {
 	
 	@ApiModelProperty(example = "123", required = true)
 	@NotBlank
-	private String passwordAtual;
+	private String currentPassword;
 	
 	@ApiModelProperty(example = "123", required = true)
 	@NotBlank
-	private String novoPassword;
+	private String newPassword;
 }

@@ -90,7 +90,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.OK)
 	public void updatePassword(@PathVariable Long userId, @RequestBody @Valid PasswordInput password) {
 		try {
-		service.alterarSenha(userId, password.getPasswordAtual(), password.getNovoPassword());
+		service.alterarSenha(userId, password.getCurrentPassword(), password.getNewPassword());
 	}catch (Exception e) {
 		throw new NegocioException(e.getMessage(), e);
 
