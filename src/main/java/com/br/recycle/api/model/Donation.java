@@ -41,7 +41,7 @@ public class Donation  extends AbstractAggregateRoot<Donation>{
 	@Column(name = "id_donation")
 	private Long id;
 	
-	private String codigo;
+	private String code;
 	
 	@Column(name = "donor_user_name")
 	private String donorUserName;
@@ -82,15 +82,15 @@ public class Donation  extends AbstractAggregateRoot<Donation>{
 	private OffsetDateTime datedelivery;
 	
 	@OneToOne
-	@JoinColumn(name = "id_giver", nullable = false)
-	private User user;
+	@JoinColumn(name = "id_giver")
+	private Giver giver;
 	
 	@OneToOne
-	@JoinColumn(name = "id_cooperative", nullable = false)
+	@JoinColumn(name = "id_cooperative")
 	private Cooperative cooperative;
 	
 	@OneToOne
-	@JoinColumn(name = "id_address", nullable = false)
+	@JoinColumn(name = "id_address")
 	private Address address;
 	
 	public void confirm() {
@@ -115,7 +115,7 @@ public class Donation  extends AbstractAggregateRoot<Donation>{
 		if (getStatus().naoPodeAlterarPara(newStatus)) {
 			throw new NegocioException(
 					String.format("Status do donation %s não pode ser alterado de %s para %s",
-							getCodigo(), getStatus().getDescricao(), 
+							getCode(), getStatus().getDescricao(), 
 							newStatus.getDescricao()));
 		}
 		
@@ -124,6 +124,6 @@ public class Donation  extends AbstractAggregateRoot<Donation>{
 	
 	@PrePersist
 	private void gerarCodigo() {
-		setCodigo(UUID.randomUUID().toString());
+		setCode(UUID.randomUUID().toString());
 	}
 }

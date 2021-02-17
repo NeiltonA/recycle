@@ -45,8 +45,8 @@ public class DonationService {
 		return repository.findById(donationId).orElseThrow(() -> new DonationNaoEncontradaException(donationId));
 	}
 
-	public Donation buscarOuFalharByCodigo(String codigoDonation) {
-		return repository.findByCodigo(codigoDonation)
-			.orElseThrow(() -> new DonationNaoEncontradaException(codigoDonation));
+	public Donation buscarOuFalharByCode(String code) {
+		return repository.findByCode(code)
+			.orElseThrow(() -> new DonationNaoEncontradaException(code));
 	}
 }

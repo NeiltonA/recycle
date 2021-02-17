@@ -29,7 +29,6 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.payload.RoleName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -68,7 +67,7 @@ public class User implements Serializable {
 	@Email(regexp = ".*@.*\\..*", message = "Email invalido!")
     private String email;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Transient
     @Enumerated(EnumType.STRING)
     @NotNull

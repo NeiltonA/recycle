@@ -30,7 +30,7 @@ public class Giver  implements Serializable{
 	@Column(name = "id_giver")
 	private Long id;
 	
-	private String codigo;
+	private String code;
 
 	@OneToOne
 	@JoinColumn(name = "id_user", nullable = false)
@@ -39,6 +39,6 @@ public class Giver  implements Serializable{
 	
 	@PrePersist
 	private void gerarCodigo() {
-		setCodigo(UUID.randomUUID().toString());
+		setCode(UUID.randomUUID().toString());
 	}
 }
