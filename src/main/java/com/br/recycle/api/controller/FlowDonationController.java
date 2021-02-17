@@ -19,21 +19,21 @@ public class FlowDonationController {
 	
 	@PutMapping("/confirmed")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void confirmar(@PathVariable String codigoPedido) {
-		service.confirm(codigoPedido);
+	public void confirmar(@PathVariable String code) {
+		service.confirm(code);
 	}
 	
 	
 	@PutMapping("/cancel")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void cancel(@PathVariable String codigoPedido) {
-		service.cancel(codigoPedido);
+	public void cancel(@PathVariable String code) {
+		service.cancel(code);
 	}
 	
 	@PutMapping("/deliver")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deliver(@PathVariable String codigoPedido) {
-		service.deliver(codigoPedido);
+	public void deliver(@PathVariable String code) {
+		service.deliver(code);
 	}
 	
 }

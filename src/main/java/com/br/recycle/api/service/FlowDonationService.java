@@ -38,6 +38,8 @@ public class FlowDonationService {
 	public void deliver(String code) {
 		Donation donation = service.buscarOuFalharByCode(code);
 		donation.deliver();
+		
+		repository.save(donation);
 	}
 	
 	

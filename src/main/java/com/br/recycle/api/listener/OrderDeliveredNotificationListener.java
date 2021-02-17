@@ -4,23 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.br.recycle.api.event.DonationCancelEvent;
+import com.br.recycle.api.event.DonationDeliveredEvent;
 import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.service.EnvioEmailService;
 import com.br.recycle.api.service.EnvioEmailService.Mensagem;
 
 @Component
-public class OrderCanceledNotificationListener {
+public class OrderDeliveredNotificationListener {
 
 	@Autowired
 	private EnvioEmailService emailService;
 	
 	@TransactionalEventListener// fase especifica que o event pode ser disparado
-	public void aoCancelarPedido(DonationCancelEvent event) {
+	public void aoRecebePedido(DonationDeliveredEvent event) {
 		Donation donation =  event.getDonation();
 		var mensagem = Mensagem.builder()
-				.assunto(donation.getGiver().getUser().getName() + " _ Donation cancel")
-				.corpo("emails/donation-cancel.html")
+				.assunto(donation.getGiver().getUser().getName() + " _ Donation delivered")
+				.corpo("emails/donation-delivered.html")
 				.variavel("donation", donation)
 				.destinatario(donation.getGiver().getUser().getEmail())
 				.build();

@@ -24,6 +24,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 
 import com.br.recycle.api.event.DonationCancelEvent;
 import com.br.recycle.api.event.DonationConfirmedEvent;
+import com.br.recycle.api.event.DonationDeliveredEvent;
 import com.br.recycle.api.exception.NegocioException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -103,11 +104,13 @@ public class Donation  extends AbstractAggregateRoot<Donation>{
 	public void deliver() {
 		setStatus(DonationStatus.DELIVERED);
 		setDatedelivery(OffsetDateTime.now());
-	}
+		registerEvent(new DonationDeliveredEvent(this));
 	
+	}
+
 	public void cancel() {
+		setStatus(DonationStatus.CANCELED);
 		setDateCancellation(OffsetDateTime.now());
-		
 		registerEvent(new DonationCancelEvent(this));
 	}
 	
