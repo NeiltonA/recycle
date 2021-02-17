@@ -64,7 +64,7 @@ public class AddressController {
 
 	@ApiOperation(value = "method responsible for returning the address via zip code")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@GetMapping(value = "/zipCode/{zipCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/zip_code/{zipCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) throws Exception {
 		try {
 			AddressResponseBean bean = service.searchAddress(zipCode);
