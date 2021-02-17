@@ -30,16 +30,16 @@ public class Rate implements Serializable {
 	@Column(name = "id_rate")
 	private Long id;
 	
-	private String note; //nota
+	private Long note;
 	
-	private String  comment;//comentario
+	private String  comment;
 
 	
 	@OneToOne
-	@JoinColumn(name = "id_cooperative", nullable = false)
+	@JoinColumn(name = "id_cooperative")
 	private Cooperative cooperative;
 	
 	@OneToOne
-	@JoinColumn(name = "id_giver", nullable = false)
+	@JoinColumn(name = "id_giver")
 	private Giver giver;
 }
