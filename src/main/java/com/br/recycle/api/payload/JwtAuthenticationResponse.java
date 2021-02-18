@@ -11,13 +11,13 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class JwtAuthenticationResponse {
     private String accessToken;
-    private Date expiryDateToken;
+    private Date expirationDateToken;
     private String flowIndicator;
     private Boolean active;
-    private String typeUser;
-	/*
-	 * public JwtAuthenticationResponse(String accessToken, String flowIndicator) {
-	 * this.accessToken = accessToken; this.flowIndicator= flowIndicator; }
-	 */
+    private String userType;
+    /*
+     * public JwtAuthenticationResponse(String accessToken, String flowIndicator) {
+     * this.accessToken = accessToken; this.flowIndicator= flowIndicator; }
+     */
 
 }

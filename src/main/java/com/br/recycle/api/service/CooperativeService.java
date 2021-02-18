@@ -7,42 +7,40 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.CooperativeNaoEncontradaException;
-import com.br.recycle.api.exception.EntidadeEmUsoException;
+import com.br.recycle.api.exception.CooperativeNotFoundException;
+import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.repository.CooperativeRepository;
-
-
 
 @Service
 public class CooperativeService {
 
-	private static final String MSG_COOPERATIVE_EM_USO = "Cooperative de código %d não pode ser removida, pois está em uso";
+    private static final String COOPERATIVE_IN_USE_MESSAGE = "CooperativA de código %d não pode ser removida, pois está em uso.";
 
-	@Autowired
-	private CooperativeRepository repository;
+    @Autowired
+    private CooperativeRepository repository;
 
-	@Transactional
-	public Cooperative save(Cooperative cooperative) {
-		return repository.save(cooperative);
-	}
+    @Transactional
+    public Cooperative save(Cooperative cooperative) {
+        return repository.save(cooperative);
+    }
 
-	@Transactional
-	public void excluir(Long cooperativeId) {
-		try {
-			repository.deleteById(cooperativeId);
-			repository.flush();
+    @Transactional
+    public void remove(Long cooperativeId) {
+        try {
+            repository.deleteById(cooperativeId);
+            repository.flush();
 
-		} catch (EmptyResultDataAccessException e) {
-			throw new CooperativeNaoEncontradaException(cooperativeId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new CooperativeNotFoundException(cooperativeId);
 
-		} catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(String.format(MSG_COOPERATIVE_EM_USO, cooperativeId));
-		}
-	}
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityInUseException(String.format(COOPERATIVE_IN_USE_MESSAGE, cooperativeId));
+        }
+    }
 
-	public Cooperative buscarOuFalhar(Long id) {
-		return repository.findById(id).orElseThrow(() -> new CooperativeNaoEncontradaException(id));
-	}
+    public Cooperative findOrFail(Long id) {
+        return repository.findById(id).orElseThrow(() -> new CooperativeNotFoundException(id));
+    }
 
 }

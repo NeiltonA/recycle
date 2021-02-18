@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.br.recycle.api.exception.NegocioException;
+import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.PasswordInput;
 import com.br.recycle.api.payload.UserProfile;
 import com.br.recycle.api.repository.UserRepository;
 import com.br.recycle.api.security.CurrentUser;
-import com.br.recycle.api.security.UserPrincipal;
+import com.br.recycle.api.security.MainUser;
 import com.br.recycle.api.service.UserService;
 
 import io.swagger.annotations.Api;
@@ -37,98 +37,90 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "User", description = "REST API for User", tags = { "User" })
 public class UserController {
 
-	@Autowired
-	private UserRepository userRepository;
-	
-	
-	@Autowired
-	private UserService service;
+    @Autowired
+    private UserRepository userRepository;
 
-	@GetMapping("/user/me")
-	@PreAuthorize("hasRole('USER')")
-	// @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public UserProfile getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-		UserProfile userSummary = new UserProfile(currentUser.getId(), currentUser.getUsername(),
-				currentUser.getName());
-		return userSummary;
-	}
+    @Autowired
+    private UserService service;
 
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping
-	public ResponseEntity<List<User>> findAll() {
-		try {
-		List<User> todasUsuarios = userRepository.findAll();
-		
-		return new ResponseEntity<>(todasUsuarios, HttpStatus.OK);
-		}catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
-		}
-	}
+    @GetMapping("/user/me")
+    @PreAuthorize("hasRole('USER')")
+    // @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public UserProfile getCurrentUser(@CurrentUser MainUser currentUser) {
+        UserProfile userSummary = new UserProfile(currentUser.getId(), currentUser.getUsername(),
+                currentUser.getName());
+        return userSummary;
+    }
 
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/{id}")
-	public ResponseEntity<Optional<User>> findById(@PathVariable("id") Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<User>> findAll() {
+        try {
+            List<User> usersList = userRepository.findAll();
 
-		Optional<User> todasUsuarios = userRepository.findById(id);
-		if (!todasUsuarios.isEmpty()) {
-			return new ResponseEntity<Optional<User>>(todasUsuarios, HttpStatus.OK);
-		}
-		return new ResponseEntity<Optional<User>>(todasUsuarios, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(usersList, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
 
-	}
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<User>> findById(@PathVariable("id") Long id) {
+        Optional<User> usersList = userRepository.findById(id);
+        if (!usersList.isEmpty()) {
+            return new ResponseEntity<Optional<User>>(usersList, HttpStatus.OK);
+        }
+        return new ResponseEntity<Optional<User>>(usersList, HttpStatus.NO_CONTENT);
+    }
 
 
-	@PreAuthorize("hasRole('USER')")
-	@GetMapping("/user/checkEmailAvailability")
-	public Boolean checkEmailAvailability(@RequestParam(value = "email") String email) {
-		Boolean isAvailable = !userRepository.existsByEmail(email);
-		return isAvailable;
-	}
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user/checkEmailAvailability")
+    public Boolean checkEmailAvailability(@RequestParam(value = "email") String email) {
+        Boolean isAvailable = !userRepository.existsByEmail(email);
+        return isAvailable;
+    }
 
 
-	
-	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@PutMapping("/{userId}/password")
-	@ResponseStatus(HttpStatus.OK)
-	public void updatePassword(@PathVariable Long userId, @RequestBody @Valid PasswordInput password) {
-		try {
-		service.alterarSenha(userId, password.getCurrentPassword(), password.getNewPassword());
-	}catch (Exception e) {
-		throw new NegocioException(e.getMessage(), e);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PutMapping("/{userId}/password")
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePassword(@PathVariable Long userId, @RequestBody @Valid PasswordInput password) {
+        try {
+            service.changePassword(userId, password.getCurrentPassword(), password.getNewPassword());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
 
-	}
-	}
-	
-	@ApiOperation(value = "Method responsible for changing the user")
-	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> update(@PathVariable("id") long id, @RequestBody User user) {
-		try {
-			Optional<User> us = userRepository.findById(id);
-			if (us.isPresent()) {
-				user.setId(us.get().getId());
-				return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
-		}
+    @ApiOperation(value = "Method responsible for changing the user")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> update(@PathVariable("id") long id, @RequestBody User user) {
+        try {
+            Optional<User> us = userRepository.findById(id);
+            if (us.isPresent()) {
+                user.setId(us.get().getId());
+                return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
 
-	}
-
-	@ApiOperation(value = "Method responsible for excluding the user")
-	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
-		try {
-			Optional<User> user = userRepository.findById(id);
-			if (user.isPresent()) {
-				userRepository.deleteById(id);
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
-		}
-
-	}
-
+    @ApiOperation(value = "Method responsible for removing the user")
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
+        try {
+            Optional<User> user = userRepository.findById(id);
+            if (user.isPresent()) {
+                userRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
 }

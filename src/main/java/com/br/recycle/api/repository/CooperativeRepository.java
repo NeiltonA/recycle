@@ -8,5 +8,4 @@ import com.br.recycle.api.model.Cooperative;
 @Repository
 public interface CooperativeRepository extends JpaRepository<Cooperative, Long> {
 
-
 }

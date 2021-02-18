@@ -20,7 +20,7 @@ public class FlowDonationService {
 
 	@Transactional
 	public void confirm(String code) {
-		Donation donation = service.buscarOuFalharByCode(code);
+		Donation donation = service.findByCodeOrFail(code);
 		donation.confirm();
 		
 		repository.save(donation);
@@ -28,7 +28,7 @@ public class FlowDonationService {
 	
 	@Transactional
 	public void cancel(String code) {
-		Donation donation = service.buscarOuFalharByCode(code);
+		Donation donation = service.findByCodeOrFail(code);
 		donation.cancel();
 		
 		repository.save(donation);
@@ -36,7 +36,7 @@ public class FlowDonationService {
 	
 	@Transactional
 	public void deliver(String code) {
-		Donation donation = service.buscarOuFalharByCode(code);
+		Donation donation = service.findByCodeOrFail(code);
 		donation.deliver();
 		
 		repository.save(donation);

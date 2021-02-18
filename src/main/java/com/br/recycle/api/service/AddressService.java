@@ -7,8 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.AddressNaoEncontradaException;
-import com.br.recycle.api.exception.EntidadeEmUsoException;
+import com.br.recycle.api.exception.AddressNotFoundException;
+import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.repository.AddressRepository;
 
@@ -27,21 +27,21 @@ public class AddressService {
 	}
 
 	@Transactional
-	public void excluir(Long addressId) {
+	public void remove(Long addressId) {
 		try {
 			repository.deleteById(addressId);
 			repository.flush();
 
 		} catch (EmptyResultDataAccessException e) {
-			throw new AddressNaoEncontradaException(addressId);
+			throw new AddressNotFoundException(addressId);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(String.format(MSG_ADDRESS_EM_USO, addressId));
+			throw new EntityInUseException(String.format(MSG_ADDRESS_EM_USO, addressId));
 		}
 	}
 
-	public Address buscarOuFalhar(Long addressId) {
-		return repository.findById(addressId).orElseThrow(() -> new AddressNaoEncontradaException(addressId));
+	public Address findOrFail(Long addressId) {
+		return repository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(addressId));
 	}
 
 }

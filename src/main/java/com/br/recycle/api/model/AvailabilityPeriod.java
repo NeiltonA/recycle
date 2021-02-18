@@ -4,9 +4,9 @@ public enum AvailabilityPeriod {
 
 	
 	ANY_TIME("Any time"), //Qualquer horário
-	MORNING("Morning"),//Manhã
-	EVENING("Evening"),//Tarde
-	NIGHT("Night");//Noite
+	MORNING("Morning"), //Manhã
+	EVENING("Evening"), //Tarde
+	NIGHT("Night"); //Noite
 	
 	private String description;
 	

@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,23 +26,23 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Rate implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_rate")
-	private Long id;
-	
-	private Long note;
-	
-	private String  comment;
+    private static final long serialVersionUID = 1L;
 
-	
-	@OneToOne
-	@JoinColumn(name = "id_cooperative")
-	private Cooperative cooperative;
-	
-	@OneToOne
-	@JoinColumn(name = "id_giver")
-	private Giver giver;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_rate")
+    private Long id;
+
+    private Long note;
+
+    private String comment;
+
+
+    @OneToOne
+    @JoinColumn(name = "id_cooperative")
+    private Cooperative cooperative;
+
+    @OneToOne
+    @JoinColumn(name = "id_giver")
+    private Giver giver;
 }

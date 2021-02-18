@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.exception.AppException;
-import com.br.recycle.api.exception.NegocioException;
-import com.br.recycle.api.exception.UserNaoEncontradoException;
+import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.Role;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.ApiResponse;
@@ -35,71 +35,70 @@ import io.swagger.annotations.Api;
 @Api(value = "Auth", description = "REST API for Auth", tags = { "Auth" })
 public class AuthController {
 
-	@Autowired
-	AuthenticationManager authenticationManager;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-	@Autowired
-	UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
-	@Autowired
-	RoleRepository roleRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-	@Autowired
-	JwtTokenProvider tokenProvider;
+    @Autowired
+    JwtTokenProvider tokenProvider;
 
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-		try {
-			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					loginRequest.getEmail(), loginRequest.getPassword()));
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginRequest.getEmail(), loginRequest.getPassword()));
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			//String jwt = tokenProvider.generateToken(authentication);
-			Object jwt = tokenProvider.generateToken(authentication);
+            //String jwt = tokenProvider.generateToken(authentication);
+            Object jwt = tokenProvider.generateToken(authentication);
 
-			return ResponseEntity.ok(jwt);
-		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+            return ResponseEntity.ok(jwt);
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
 
-		}
-	}
-
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@RequestBody @Valid User user) {
-		try {
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@RequestBody @Valid User user) {
+        try {
 //			if (userRepository.existsByUsername(user.getUsername())) {
 //				return new ResponseEntity<Object>(new ApiResponse(false, "Username is already taken!"),
 //						HttpStatus.BAD_REQUEST);
 //			}
 
-			if (userRepository.existsByEmail(user.getEmail())) {
-				return new ResponseEntity<Object>(new ApiResponse(false, "Email Address already in use!"),
-						HttpStatus.BAD_REQUEST);
-			}
+            if (userRepository.existsByEmail(user.getEmail())) {
+                return new ResponseEntity<Object>(new ApiResponse(false, "Email Address already in use!"),
+                        HttpStatus.BAD_REQUEST);
+            }
 
-			// Creating user's account
-			// User user = new User();
+            // Creating user's account
+            // User user = new User();
 
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-			Role userRole = roleRepository.findByName(user.getRole().name())
-					.orElseThrow(() -> new AppException("User Role not set."));
+            Role userRole = roleRepository.findByName(user.getRole().name())
+                    .orElseThrow(() -> new AppException("User Role not set."));
 
-			user.setRoles(Collections.singleton(userRole));
+            user.setRoles(Collections.singleton(userRole));
 
-			// User result = userRepository.save(user);
+            // User result = userRepository.save(user);
 
 //        URI location = ServletUriComponentsBuilder
 //                .fromCurrentContextPath().path("/users/{username}")
 //                .buildAndExpand(result.getUsername()).toUri();
-			return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
-		} catch (UserNaoEncontradoException e) {
-			throw new NegocioException(e.getMessage(), e);
+            return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            throw new BusinessException(e.getMessage(), e);
 
-		}
-	}
+        }
+    }
 }

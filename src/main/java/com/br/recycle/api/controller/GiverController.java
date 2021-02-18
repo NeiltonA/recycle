@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.br.recycle.api.exception.NegocioException;
+import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.service.GiverService;
@@ -41,23 +41,22 @@ public class GiverController {
 	@Autowired
 	private GiverService service;
 
-	@ApiOperation(value = "Method responsible for returning the list of giver")
+	@ApiOperation(value = "Method responsible for returning the list of givers")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Giver>> getAll() {
 		try {
-			List<Giver> giver = repository.findAll();
+			List<Giver> givers = repository.findAll();
 
-			if (giver.isEmpty()) {
+			if (givers.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<>(giver, HttpStatus.OK);
+			return new ResponseEntity<>(givers, HttpStatus.OK);
 		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+			throw new BusinessException(e.getMessage(), e);
 		}
-
 	}
 
-	@ApiOperation(value = "Method responsible for searching by ID")
+	@ApiOperation(value = "Method responsible for searching the giver by ID")
 	@GetMapping(value = "/{idGiver}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Giver> getById(@PathVariable("idGiver") Long idGiver) {
 		try {
@@ -68,7 +67,7 @@ public class GiverController {
 			}
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+			throw new BusinessException(e.getMessage(), e);
 		}
 	}
 
@@ -81,7 +80,7 @@ public class GiverController {
 			log.info("Registered successfully -> []");
 			return new ResponseEntity<>(giv, HttpStatus.CREATED);
 		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+			throw new BusinessException(e.getMessage(), e);
 		}
 	}
 
@@ -96,12 +95,11 @@ public class GiverController {
 			}
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+			throw new BusinessException(e.getMessage(), e);
 		}
-
 	}
 
-	@ApiOperation(value = "Method responsible for excluding the giver")
+	@ApiOperation(value = "Method responsible for removing the giver")
 	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
@@ -112,9 +110,7 @@ public class GiverController {
 			}
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
-			throw new NegocioException(e.getMessage(), e);
+			throw new BusinessException(e.getMessage(), e);
 		}
-
 	}
-
 }

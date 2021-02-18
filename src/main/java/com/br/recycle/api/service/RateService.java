@@ -7,8 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.EntidadeEmUsoException;
-import com.br.recycle.api.exception.RateNaoEncontradaException;
+import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.RatingNotFoundException;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.repository.RateRepository;
 
@@ -34,15 +34,15 @@ public class RateService {
 			repository.flush();
 
 		} catch (EmptyResultDataAccessException e) {
-			throw new RateNaoEncontradaException(id);
+			throw new RatingNotFoundException(id);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(String.format(MSG_COOPERATIVE_EM_USO, id));
+			throw new EntityInUseException(String.format(MSG_COOPERATIVE_EM_USO, id));
 		}
 	}
 
 	public Rate buscarOuFalhar(Long id) {
-		return repository.findById(id).orElseThrow(() -> new RateNaoEncontradaException(id));
+		return repository.findById(id).orElseThrow(() -> new RatingNotFoundException(id));
 	}
 
 }
