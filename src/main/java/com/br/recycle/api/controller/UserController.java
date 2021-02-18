@@ -29,10 +29,12 @@ import com.br.recycle.api.security.CurrentUser;
 import com.br.recycle.api.security.MainUser;
 import com.br.recycle.api.service.UserService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@Api(value = "User", description = "REST API for User", tags = { "User" })
 public class UserController {
 
     @Autowired

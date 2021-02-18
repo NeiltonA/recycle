@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "rate")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Rate implements Serializable {
 
     private static final long serialVersionUID = 1L;

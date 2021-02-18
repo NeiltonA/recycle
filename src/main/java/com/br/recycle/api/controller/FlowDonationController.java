@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.service.FlowDonationService;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping(value = "/api/v1/donation/{code}")
+@Api(value = "Flow Donation", description = "REST API for Flow Donation", tags = { "Flow Donation" })
 public class FlowDonationController {
 
 	@Autowired

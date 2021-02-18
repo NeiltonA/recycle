@@ -27,6 +27,8 @@ import com.br.recycle.api.event.DonationConfirmedEvent;
 import com.br.recycle.api.event.DonationDeliveredEvent;
 import com.br.recycle.api.exception.BusinessException;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +37,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "donation")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Donation extends AbstractAggregateRoot<Donation> {
 
     @Id

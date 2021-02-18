@@ -13,6 +13,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +23,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
 @Table(name = "giver")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Giver  implements Serializable{
 	
 	private static final long serialVersionUID = 1L;

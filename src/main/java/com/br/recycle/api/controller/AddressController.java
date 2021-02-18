@@ -28,12 +28,15 @@ import com.br.recycle.api.repository.AddressRepository;
 import com.br.recycle.api.service.AddressService;
 import com.br.recycle.api.util.Dictionary;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+
 
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/address")
+@Api(value = "Address", description = "REST API for Address", tags = { "Address" })
 public class AddressController {
 
     @Autowired

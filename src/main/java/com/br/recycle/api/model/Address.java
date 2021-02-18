@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "address")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 1L;

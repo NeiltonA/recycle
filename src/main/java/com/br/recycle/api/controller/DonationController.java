@@ -24,12 +24,14 @@ import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.repository.DonationRepository;
 import com.br.recycle.api.service.DonationService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/donation")
+@Api(value = "Donation", description = "REST API for Donation", tags = { "Donation" })
 public class DonationController {
 
     @Autowired

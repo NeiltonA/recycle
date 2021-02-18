@@ -30,6 +30,8 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.payload.RoleName;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +47,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class User implements Serializable {
 
     private static final long serialVersionUID = 7422560922720116772L;
