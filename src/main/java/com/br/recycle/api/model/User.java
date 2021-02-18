@@ -94,8 +94,9 @@ public class User implements Serializable {
     //@OneToMany(mappedBy = "user")
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonManagedReference
+    @NotEmpty
     private List<Address> address;
-
+  
 //    @OneToOne(mappedBy = "user")
 //    private Giver giver;
 //    
