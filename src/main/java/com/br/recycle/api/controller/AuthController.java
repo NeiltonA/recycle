@@ -28,8 +28,11 @@ import com.br.recycle.api.repository.RoleRepository;
 import com.br.recycle.api.repository.UserRepository;
 import com.br.recycle.api.security.JwtTokenProvider;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping("/api/v1/auth")
+@Api(value = "Auth", description = "REST API for Auth", tags = { "Auth" })
 public class AuthController {
 
 	@Autowired

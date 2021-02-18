@@ -24,12 +24,14 @@ import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/cooperative")
+@Api(value = "Cooperative", description = "REST API for Cooperative", tags = { "Cooperative" })
 public class CooperativeController {
 
 	@Autowired

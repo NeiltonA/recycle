@@ -24,12 +24,14 @@ import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.repository.RateRepository;
 import com.br.recycle.api.service.RateService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/api/v1/rate")
+@Api(value = "Rate", description = "REST API for Rate", tags = { "Rate" })
 public class RateController {
 
 	@Autowired
