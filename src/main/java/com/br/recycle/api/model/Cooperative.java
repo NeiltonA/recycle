@@ -13,6 +13,9 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "cooperative")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Cooperative implements Serializable {
 
 	private static final long serialVersionUID = 1L;

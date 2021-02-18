@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import io.swagger.models.auth.In;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -24,7 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig extends WebMvcConfigurationSupport {
+public class SwaggerConfig {
 
 	@Bean
 	public Docket greetingApi() {
@@ -43,7 +42,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0\"").build();
 	}
 
-	@Override
 	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 
