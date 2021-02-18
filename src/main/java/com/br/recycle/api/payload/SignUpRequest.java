@@ -22,11 +22,11 @@ public class SignUpRequest {
     private String email;
 
     private String password;
-    
-	private String cellPhone;
 
-	private String cpfCnpj;
-    
+    private String cellPhone;
+
+    private String cpfCnpj;
+
     @Enumerated
     @NotNull
     private RoleName role;

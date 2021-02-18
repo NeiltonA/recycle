@@ -39,9 +39,7 @@ import lombok.ToString;
 @Entity
 
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-            "email"
-        })
+        @UniqueConstraint(columnNames = {"email"})
 })
 @Data
 @AllArgsConstructor
@@ -49,22 +47,21 @@ import lombok.ToString;
 @ToString
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 7422560922720116772L;
+    private static final long serialVersionUID = 7422560922720116772L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_user")
+    @Column(name = "id_user")
     private Long id;
 
-	@NotEmpty
+    @NotEmpty
     private String name;
-    
-	
+
     //private String username;
 
     @NaturalId
     @NotEmpty(message = "{validation.mail.notEmpty}")
-	@Email(regexp = ".*@.*\\..*", message = "Email invalido!")
+    @Email(regexp = ".*@.*\\..*", message = "Email inválido!")
     private String email;
 
     //@JsonIgnore
@@ -72,44 +69,43 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @NotNull
     private RoleName role;
-    
+
     @NotEmpty
     private String password;
-    
+
     @Column(name = "cell_phone")
     private String cellPhone;
-    
-    @CPF(message = "Invalid CPF")
+
+    @CPF(message = "CPF inválido")
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
-    
+
     @NotEmpty
     @Column(name = "flow_indicator")
     private String flowIndicator;
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-   
-    
+
     //@OneToMany(mappedBy = "user")
-    @OneToMany(fetch= FetchType.LAZY, cascade= CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonManagedReference
-	private List<Address> address;
+    private List<Address> address;
 
 //    @OneToOne(mappedBy = "user")
 //    private Giver giver;
 //    
 //    @OneToOne(mappedBy = "user")
 //    private Cooperative cooperative;
-    
-	public boolean isNovo() {
-		return getId() == null;
-	}
 
-	private Boolean active = Boolean.TRUE;
+    public boolean isNew() {
+        return getId() == null;
+    }
+
+    private Boolean active = Boolean.TRUE;
 
 }

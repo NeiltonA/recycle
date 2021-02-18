@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.br.recycle.api.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class UserPrincipal implements UserDetails {
+public class MainUser implements UserDetails {
     private Long id;
 
     private String name;
@@ -21,10 +21,10 @@ public class UserPrincipal implements UserDetails {
 
     @JsonIgnore
     private String email;
-    
+
     @JsonIgnore
     private Boolean active;
-    
+
     @JsonIgnore
     private String flowIndicator;
     @JsonIgnore
@@ -32,7 +32,7 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String name, String email,Boolean active, String flowIndicator, String password, Collection<? extends GrantedAuthority> authorities) {
+    public MainUser(Long id, String name, String email, Boolean active, String flowIndicator, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -42,12 +42,12 @@ public class UserPrincipal implements UserDetails {
         this.active = active;
     }
 
-    public static UserPrincipal create(User user) {
+    public static MainUser create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
                 new SimpleGrantedAuthority(role.getName())
         ).collect(Collectors.toList());
 
-        return new UserPrincipal(
+        return new MainUser(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
@@ -69,11 +69,11 @@ public class UserPrincipal implements UserDetails {
     public String getEmail() {
         return email;
     }
-    
+
     public Boolean getActive() {
         return active;
     }
-    
+
     public String getFlowIndicator() {
         return flowIndicator;
     }
@@ -117,7 +117,7 @@ public class UserPrincipal implements UserDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserPrincipal that = (UserPrincipal) o;
+        MainUser that = (MainUser) o;
         return Objects.equals(id, that.id);
     }
 

@@ -38,7 +38,7 @@ public class Giver  implements Serializable{
 	
 	
 	@PrePersist
-	private void gerarCodigo() {
+	private void generateCode() {
 		setCode(UUID.randomUUID().toString());
 	}
 }

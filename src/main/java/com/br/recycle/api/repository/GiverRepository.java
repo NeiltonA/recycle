@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.br.recycle.api.model.Giver;
 
-
-
 @Repository
 public interface GiverRepository extends JpaRepository<Giver, Long> {
 

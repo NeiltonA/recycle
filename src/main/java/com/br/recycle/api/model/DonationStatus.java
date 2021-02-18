@@ -5,25 +5,25 @@ import java.util.List;
 
 public enum DonationStatus {
 
-	CREATED("Created"), //criado
-	CONFIRMED("Confirmed", CREATED), //confirmado
-	DELIVERED("Delivered", CONFIRMED), // entregue
-	CANCELED("Canceled", CREATED); // cancelado
-	
-	private String descricao;
-	private List<DonationStatus> previousStatus; //status anteriores
-	
-	DonationStatus(String descricao, DonationStatus... statusAnteriores) {
-		this.descricao = descricao;
-		this.previousStatus = Arrays.asList(statusAnteriores);
-	}
-	
-	public String getDescricao() {
-		return this.descricao;
-	}
-	
-	public boolean naoPodeAlterarPara(DonationStatus novoStatus) {
-		return !novoStatus.previousStatus.contains(this);
-	}
-	
+    CREATED("Created"), //criado
+    CONFIRMED("Confirmed", CREATED), //confirmado
+    DELIVERED("Delivered", CONFIRMED), // entregue
+    CANCELED("Canceled", CREATED); // cancelado
+
+    private String description;
+    private List<DonationStatus> previousStatus; //status anteriores
+
+    DonationStatus(String description, DonationStatus... previousStatus) {
+        this.description = description;
+        this.previousStatus = Arrays.asList(previousStatus);
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public boolean cantChangeTo(DonationStatus novoStatus) {
+        return !novoStatus.previousStatus.contains(this);
+    }
+
 }

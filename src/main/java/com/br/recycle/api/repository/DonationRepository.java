@@ -10,6 +10,6 @@ import com.br.recycle.api.model.Donation;
 @Repository
 public interface DonationRepository extends JpaRepository<Donation, Long> {
 
-	Optional<Donation> findByCode(String code);
+    Optional<Donation> findByCode(String code);
 
 }

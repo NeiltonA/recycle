@@ -19,7 +19,7 @@ public class FlowDonationController {
 	
 	@PutMapping("/confirmed")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void confirmar(@PathVariable String code) {
+	public void confirm(@PathVariable String code) {
 		service.confirm(code);
 	}
 	

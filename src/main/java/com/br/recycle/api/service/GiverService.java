@@ -12,8 +12,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.bean.GiverResponseBean;
-import com.br.recycle.api.exception.EntidadeEmUsoException;
-import com.br.recycle.api.exception.GiverNaoEncontradaException;
+import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.GiverNotFoundException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.repository.GiverRepository;
 
@@ -41,15 +41,15 @@ public class GiverService {
 			repository.flush();
 
 		} catch (EmptyResultDataAccessException e) {
-			throw new GiverNaoEncontradaException(giverId);
+			throw new GiverNotFoundException(giverId);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(String.format(MSG_GIVER_EM_USO, giverId));
+			throw new EntityInUseException(String.format(MSG_GIVER_EM_USO, giverId));
 		}
 	}
 
 	public Giver buscarOuFalhar(Long giverId) {
-		return repository.findById(giverId).orElseThrow(() -> new GiverNaoEncontradaException(giverId));
+		return repository.findById(giverId).orElseThrow(() -> new GiverNotFoundException(giverId));
 	}
 	
 	

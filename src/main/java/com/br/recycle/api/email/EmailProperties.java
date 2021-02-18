@@ -13,20 +13,15 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties("recycle.email")
 public class EmailProperties {
-	
-	
-	@NotNull
-	private String remetente;
-	
-	private Sandbox sandbox = new Sandbox();
 
-	
-	@Getter
-	@Setter
-	public class Sandbox {
-		
-		private String destinatario;
-		
-	}
-	
+    @NotNull
+    private String sender;
+
+    private Sandbox sandbox = new Sandbox();
+
+    @Getter
+    @Setter
+    public class Sandbox {
+        private String recipient;
+    }
 }

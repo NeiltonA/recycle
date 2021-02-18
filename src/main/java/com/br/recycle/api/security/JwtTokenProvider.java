@@ -29,7 +29,7 @@ public class JwtTokenProvider {
     @Value("${recycle.jwtExpirationInMs}")
     private int jwtExpirationInMs;
 
-//    public String generateToken(Authentication authentication) {
+    //    public String generateToken(Authentication authentication) {
 //
 //        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 //
@@ -45,21 +45,21 @@ public class JwtTokenProvider {
 //                .compact();
 //    }
     public Object generateToken(Authentication authentication) {
-    	UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-    	 Date now = new Date();
-         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-         
-    	JwtAuthenticationResponse jwt = new JwtAuthenticationResponse();
-    	jwt.setAccessToken("Bearer " +(Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
+        MainUser mainUser = (MainUser) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        JwtAuthenticationResponse jwt = new JwtAuthenticationResponse();
+        jwt.setAccessToken("Bearer " + (Jwts.builder()
+                .setSubject(Long.toString(mainUser.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact()));
-    	jwt.setExpiryDateToken(expiryDate);
-    	jwt.setFlowIndicator(userPrincipal.getFlowIndicator());
-    	jwt.setActive(userPrincipal.getActive());
-    	jwt.setTypeUser(userPrincipal.getAuthorities().toString());
+        jwt.setExpirationDateToken(expiryDate);
+        jwt.setFlowIndicator(mainUser.getFlowIndicator());
+        jwt.setActive(mainUser.getActive());
+        jwt.setUserType(mainUser.getAuthorities().toString());
         return jwt;
     }
 
