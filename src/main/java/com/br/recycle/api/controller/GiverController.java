@@ -57,7 +57,7 @@ public class GiverController {
 	}
 
 	@ApiOperation(value = "Method responsible for searching the giver by ID")
-	@GetMapping(value = "/{idGiver}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Giver> getById(@PathVariable("idGiver") Long idGiver) {
 		try {
 			Optional<Giver> giver = repository.findById(idGiver);
