@@ -111,12 +111,14 @@ public class UserController {
 
 	@ApiOperation(value = "Method responsible for changing the user")
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> update(@PathVariable("id") long id, @RequestBody User user) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public Object update(@PathVariable("id") long id, @RequestBody User user) {
 		try {
 			Optional<User> us = userRepository.findById(id);
 			if (us.isPresent()) {
 				user.setId(us.get().getId());
-				return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+				user = userRepository.save(user);
+				return userDtoAssembler.toModel(user);
 			}
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
