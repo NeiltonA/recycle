@@ -20,6 +20,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jjwt.version>0.11.2</jjwt.version>
 		<spring-cloud.version>Hoxton.SR10</spring-cloud.version>
+		<modelmapper.version>2.3.0</modelmapper.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -55,7 +56,11 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmapper.version}</version>
+		</dependency>
 		<!-- For Working with Json Web Tokens (JWT) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

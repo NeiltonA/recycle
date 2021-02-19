@@ -1,6 +1,6 @@
 package com.br.recycle.api.exception;
 
-public class AddressNotFoundException extends EntidadeNaoEncontradaException {
+public class AddressNotFoundException extends EntityNotFoundException {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,6 +9,6 @@ public class AddressNotFoundException extends EntidadeNaoEncontradaException {
     }
 
     public AddressNotFoundException(Long kitchenId) {
-        this(String.format("Não existe um cadastro de cozinha com código %d", kitchenId));
+        this(String.format("Não existe um cadastro de endereço com código %d", kitchenId));
     }
 }

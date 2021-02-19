@@ -27,7 +27,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.br.recycle.api.exception.EntityInUseException;
-import com.br.recycle.api.exception.EntidadeNaoEncontradaException;
+import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.BusinessException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -224,8 +224,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 	}
 	
-	@ExceptionHandler(EntidadeNaoEncontradaException.class)
-	public ResponseEntity<?> handleEntityNotFoundException(EntidadeNaoEncontradaException ex,
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex,
 														   WebRequest request) {
 		
 		HttpStatus status = HttpStatus.NOT_FOUND;
