@@ -3,7 +3,6 @@ package com.br.recycle.api.payload;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -15,7 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class UserDto{
+public class UserDtoOut{
 
 	
 	private Long id;

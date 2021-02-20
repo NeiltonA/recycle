@@ -56,7 +56,7 @@ public class Address implements Serializable {
 	private String city;
 
 	@ManyToOne
-	@JoinColumn(name = "id_user", nullable = false)
+	@JoinColumn(name = "id_user")
 	@JsonBackReference
 	private User user;
 
