@@ -23,6 +23,6 @@ public class UserDtoIn{
 	private String cpfCnpj;
 	private String role;
 	private String flowIndicator;
-	 private Boolean active;
+	private Boolean active = Boolean.TRUE;
 	private List<AddressDto> Address;
 }
