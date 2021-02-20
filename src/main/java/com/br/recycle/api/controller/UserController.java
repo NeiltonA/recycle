@@ -29,7 +29,8 @@ import com.br.recycle.api.model.Role;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.PasswordInput;
-import com.br.recycle.api.payload.UserDto;
+import com.br.recycle.api.payload.UserDtoIn;
+import com.br.recycle.api.payload.UserDtoOut;
 import com.br.recycle.api.repository.RoleRepository;
 import com.br.recycle.api.repository.UserRepository;
 import com.br.recycle.api.service.UserService;
@@ -58,7 +59,7 @@ public class UserController {
 	private UserDtoAssembler userDtoAssembler;
 
 	@GetMapping
-	public List<UserDto> findAll() {
+	public List<UserDtoOut> findAll() {
 		try {
 			List<User> users = userRepository.findAll();
 
@@ -69,7 +70,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public UserDto findById(@PathVariable("id") Long id) {
+	public UserDtoOut findById(@PathVariable("id") Long id) {
 		User usersList = service.fetchOrFail(id);
 		return userDtoAssembler.toModel(usersList);
 
@@ -77,7 +78,7 @@ public class UserController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Object registerUser(@RequestBody @Valid User user) {
+	public Object save(@RequestBody @Valid User user) {
 		try {
 
 			if (userRepository.existsByEmail(user.getEmail())) {
@@ -101,9 +102,9 @@ public class UserController {
 
 	@PutMapping("/{id}/password")
 	@ResponseStatus(HttpStatus.OK)
-	public void updatePassword(@PathVariable Long userId, @RequestBody @Valid PasswordInput password) {
+	public void updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordInput password) {
 		try {
-			service.changePassword(userId, password.getCurrentPassword(), password.getNewPassword());
+			service.changePassword(id, password.getCurrentPassword(), password.getNewPassword());
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -112,18 +113,16 @@ public class UserController {
 	@ApiOperation(value = "Method responsible for changing the user")
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Object update(@PathVariable("id") long id, @RequestBody User user) {
+	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn userdtoIn) {
 		try {
-			Optional<User> us = userRepository.findById(id);
-			if (us.isPresent()) {
-				user.setId(us.get().getId());
-				user = userRepository.save(user);
+			User user = service.fetchOrFail(id);
+				userDtoAssembler.copyToDomainObject(userdtoIn, user);
+				user = service.save(user);
 				return userDtoAssembler.toModel(user);
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
+			} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
+	
 	}
 
 	@ApiOperation(value = "Method responsible for removing the user")

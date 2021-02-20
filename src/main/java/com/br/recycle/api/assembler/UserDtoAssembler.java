@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.br.recycle.api.model.User;
-import com.br.recycle.api.payload.UserDto;
+import com.br.recycle.api.payload.UserDtoIn;
+import com.br.recycle.api.payload.UserDtoOut;
 
 
 @Component
@@ -17,14 +18,25 @@ public class UserDtoAssembler {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public UserDto toModel(User user) {
-		return modelMapper.map(user, UserDto.class);
+	public UserDtoOut toModel(User user) {
+		return modelMapper.map(user, UserDtoOut.class);
 	}
 	
-	public List<UserDto> toCollectionModel(List<User> users) {
+	public List<UserDtoOut> toCollectionModel(List<User> users) {
 		return users.stream()
 				.map(user -> toModel(user))
 				.collect(Collectors.toList());
 	}
+	
+	
+	
+	public User toDomainObject(UserDtoIn userDtoIn) {
+		return modelMapper.map(userDtoIn, User.class);
+	}
+	
+	public void copyToDomainObject(UserDtoIn userDtoIn, User user) {
+		modelMapper.map(userDtoIn, user);
+	}
+	
 	
 }

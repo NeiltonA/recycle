@@ -1,7 +1,5 @@
 package com.br.recycle.api.service;
 
-import java.util.Optional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -33,20 +31,25 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        repository.save(user);
-
-        Optional<User> foundUser = repository.findByEmail(user.getEmail());
-
-        if (foundUser.isPresent() && !foundUser.get().equals(user)) {
-            throw new BusinessException(
-                    String.format("Já existe um usuário cadastrado com o e-mail %s", user.getEmail()));
-        }
-
-        if (user.isNew()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-
+    	
+    	if (user.getRole().name().isEmpty()) {
+    		Object nameGroup = findByGroup(user.getId());
+            user.setRole((RoleName.valueOf(nameGroup.toString())));	
+		}
+        
         return repository.save(user);
+
+		/*
+		 * Optional<User> foundUser = repository.findByEmail(user.getEmail());
+		 * 
+		 * if (foundUser.isPresent() && !foundUser.get().equals(user)) { throw new
+		 * BusinessException(
+		 * String.format("Já existe um usuário cadastrado com o e-mail %s",
+		 * user.getEmail())); }
+		 * 
+		 * if (user.isNew()) {
+		 * user.setPassword(passwordEncoder.encode(user.getPassword())); }
+		 */
     }
 
     @Transactional
