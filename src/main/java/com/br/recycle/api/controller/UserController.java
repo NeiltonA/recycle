@@ -58,7 +58,7 @@ public class UserController {
 	@Autowired
 	private UserDtoAssembler userDtoAssembler;
 
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserDtoOut> findAll() {
 		try {
 			List<User> users = userRepository.findAll();
@@ -69,14 +69,14 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(value="/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDtoOut findById(@PathVariable("id") Long id) {
 		User usersList = service.fetchOrFail(id);
 		return userDtoAssembler.toModel(usersList);
 
 	}
 
-	@PostMapping
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public Object save(@RequestBody @Valid User user) {
 		try {
@@ -100,7 +100,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("/{id}/password")
+	@PutMapping(value ="/{id}/password", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public void updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordInput password) {
 		try {

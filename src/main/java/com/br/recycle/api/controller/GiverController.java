@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
+import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.service.GiverService;
 
@@ -58,9 +60,9 @@ public class GiverController {
 
 	@ApiOperation(value = "Method responsible for searching the giver by ID")
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Giver> getById(@PathVariable("idGiver") Long idGiver) {
+	public ResponseEntity<Giver> getById(@PathVariable("id") Long id) {
 		try {
-			Optional<Giver> giver = repository.findById(idGiver);
+			Optional<Giver> giver = repository.findById(id);
 
 			if (giver.isPresent()) {
 				return new ResponseEntity<>(giver.get(), HttpStatus.OK);
@@ -74,11 +76,11 @@ public class GiverController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the giver")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Giver> save(@RequestBody @Valid Giver giver) {
+	public ResponseEntity<ApiResponse> save(@RequestBody @Valid Giver giver) {
 		try {
-			Giver giv = service.save(giver);
+			service.save(giver);
 			log.info("Registered successfully -> []");
-			return new ResponseEntity<>(giv, HttpStatus.CREATED);
+		        return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Giver registered successfully"));
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
