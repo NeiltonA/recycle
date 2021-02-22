@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.assembler.RateDtoAssembler;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Rate;
+import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.RateDtoOut;
 import com.br.recycle.api.repository.RateRepository;
 import com.br.recycle.api.service.RateService;
 
@@ -39,17 +43,16 @@ public class RateController {
 
     @Autowired
     private RateService service;
+    
+    @Autowired
+  	private RateDtoAssembler assembler;
 
     @ApiOperation(value = "Method responsible for returning the list of rates")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Rate>> getAll() {
+    public List<RateDtoOut> getAll() {
         try {
-            List<Rate> rate = repository.findAll();
-
-            if (rate.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(rate, HttpStatus.OK);
+            List<Rate> rates = repository.findAll();
+            return assembler.toCollectionModel(rates);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -57,14 +60,10 @@ public class RateController {
 
     @ApiOperation(value = "Method responsible for searching the rating by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Rate> getById(@PathVariable("id") long id) {
+    public RateDtoOut getById(@PathVariable("id") long id) {
         try {
-            Optional<Rate> rate = repository.findById(id);
-
-            if (rate.isPresent()) {
-                return new ResponseEntity<>(rate.get(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Rate rate = service.buscarOuFalhar(id);
+            return assembler.toModel(rate);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -72,11 +71,11 @@ public class RateController {
 
     @ApiOperation(value = "Method responsible for saving the rate")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Rate> save(@Valid @RequestBody Rate rate) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Rate rate) {
         try {
-            Rate rat = service.save(rate);
+            service.save(rate);
             log.info("Registered successfully -> []");
-            return new ResponseEntity<>(rat, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Rate registered successfully"));
         } catch (Exception e) {
             log.error("Failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -85,12 +84,12 @@ public class RateController {
 
     @ApiOperation(value = "Method responsible for updating the rate")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Rate> update(@PathVariable("id") long id, @RequestBody Rate rate) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Rate rate) {
         try {
             Optional<Rate> rat = repository.findById(id);
             if (rat.isPresent()) {
                 rate.setId(rat.get().getId());
-                return new ResponseEntity<>(service.save(rate), HttpStatus.OK);
+                return ResponseEntity.ok(new ApiResponse(true, "Donation modify successfully"));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
