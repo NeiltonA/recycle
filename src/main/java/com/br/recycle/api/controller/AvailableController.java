@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,7 @@ import io.swagger.annotations.Api;
 @Api(value = "Available", description = "REST API for Available", tags = { "Available" })
 public class AvailableController {
 
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> healthCheck(){
 		return ResponseEntity.ok("{\"status\":\"OK\"}");
 	}
