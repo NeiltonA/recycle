@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.assembler.DonationDtoAssembler;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Donation;
+import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.DonationDtoOut;
 import com.br.recycle.api.repository.DonationRepository;
 import com.br.recycle.api.service.DonationService;
 
@@ -40,16 +44,15 @@ public class DonationController {
     @Autowired
     private DonationService service;
 
+    @Autowired
+	private DonationDtoAssembler assembler;
+    
     @ApiOperation(value = "Method responsible for returning the list of donations")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Donation>> getAll() {
+    public List<DonationDtoOut> getAll() {
         try {
-            List<Donation> donation = repository.findAll();
-
-            if (donation.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(donation, HttpStatus.OK);
+            List<Donation> donations = repository.findAll();
+            return assembler.toCollectionModel(donations);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -57,14 +60,10 @@ public class DonationController {
 
     @ApiOperation(value = "Method responsible for searching the donation by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Donation> getById(@PathVariable("id") long id) {
+    public DonationDtoOut getById(@PathVariable("id") Long id) {
         try {
-            Optional<Donation> donation = repository.findById(id);
-
-            if (donation.isPresent()) {
-                return new ResponseEntity<>(donation.get(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           Donation donation = service.findOrFail(id);
+            return assembler.toModel(donation);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -72,11 +71,11 @@ public class DonationController {
 
     @ApiOperation(value = "Method responsible for saving the donation")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Donation> save(@Valid @RequestBody Donation newDonation) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Donation newDonation) {
         try {
-            Donation donation = service.save(newDonation);
+            service.save(newDonation);
             log.info("Registered successfully -> []");
-            return new ResponseEntity<>(donation, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Donation registered successfully"));
         } catch (Exception e) {
             log.error("failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -85,12 +84,13 @@ public class DonationController {
 
     @ApiOperation(value = "Method responsible for updating the donation")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Donation> update(@PathVariable("id") long id, @RequestBody Donation newDonation) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Donation newDonation) {
         try {
             Optional<Donation> donation = repository.findById(id);
             if (donation.isPresent()) {
                 newDonation.setId(donation.get().getId());
-                return new ResponseEntity<>(service.save(newDonation), HttpStatus.OK);
+                service.save(newDonation);
+                return ResponseEntity.ok(new ApiResponse(true, "Donation modify successfully"));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

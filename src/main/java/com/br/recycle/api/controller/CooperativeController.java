@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.assembler.CooperativeDtoAssembler;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Cooperative;
+import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
 
@@ -36,20 +40,19 @@ public class CooperativeController {
 
     @Autowired
     private CooperativeRepository repository;
+    
+    @Autowired
+	private CooperativeDtoAssembler assembler;
 
     @Autowired
     private CooperativeService service;
 
     @ApiOperation(value = "Method responsible for returning the list of cooperatives")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Cooperative>> getAll() {
+    public List<CooperativeDtoOut> getAll() {
         try {
-            List<Cooperative> cooperative = repository.findAll();
-
-            if (cooperative.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(cooperative, HttpStatus.OK);
+            List<Cooperative> cooperatives = repository.findAll();
+            return assembler.toCollectionModel(cooperatives);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -57,14 +60,10 @@ public class CooperativeController {
 
     @ApiOperation(value = "Method responsible for searching the cooperative by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Cooperative> getById(@PathVariable("id") long id) {
+    public CooperativeDtoOut getById(@PathVariable("id") long id) {
         try {
-            Optional<Cooperative> coop = repository.findById(id);
-
-            if (coop.isPresent()) {
-                return new ResponseEntity<>(coop.get(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           Cooperative coop = service.findOrFail(id);
+            return assembler.toModel(coop);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
@@ -72,11 +71,11 @@ public class CooperativeController {
 
     @ApiOperation(value = "Method responsible for saving the cooperative")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Cooperative> save(@Valid @RequestBody Cooperative cooperative) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Cooperative cooperative) {
         try {
-            Cooperative coop = service.save(cooperative);
+        	service.save(cooperative);
             log.info("Registered successfully -> []");
-            return new ResponseEntity<>(coop, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Cooperative registered successfully"));
         } catch (Exception e) {
             log.error("failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -85,12 +84,13 @@ public class CooperativeController {
 
     @ApiOperation(value = "Method responsible for updating the cooperative")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Cooperative> update(@PathVariable("id") long id, @RequestBody Cooperative changedCooperative) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Cooperative changedCooperative) {
         try {
             Optional<Cooperative> cooperative = repository.findById(id);
             if (cooperative.isPresent()) {
                 changedCooperative.setId(cooperative.get().getId());
-                return new ResponseEntity<>(service.save(changedCooperative), HttpStatus.OK);
+                service.save(changedCooperative);
+                return ResponseEntity.ok(new ApiResponse(true, "Cooperative modify successfully"));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

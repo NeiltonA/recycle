@@ -15,15 +15,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.assembler.GiverDtoAssembler;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.GiverDtoOut;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.service.GiverService;
 
@@ -41,18 +42,17 @@ public class GiverController {
 	private GiverRepository repository;
 
 	@Autowired
+	private GiverDtoAssembler giverDtoAssembler;
+	
+	@Autowired
 	private GiverService service;
 
 	@ApiOperation(value = "Method responsible for returning the list of givers")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Giver>> getAll() {
+	public List<GiverDtoOut> getAll() {
 		try {
 			List<Giver> givers = repository.findAll();
-
-			if (givers.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-			return new ResponseEntity<>(givers, HttpStatus.OK);
+			return giverDtoAssembler.toCollectionModel(givers);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -60,14 +60,10 @@ public class GiverController {
 
 	@ApiOperation(value = "Method responsible for searching the giver by ID")
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Giver> getById(@PathVariable("id") Long id) {
+	public GiverDtoOut getById(@PathVariable("id") Long id) {
 		try {
-			Optional<Giver> giver = repository.findById(id);
-
-			if (giver.isPresent()) {
-				return new ResponseEntity<>(giver.get(), HttpStatus.OK);
-			}
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			Giver giver = service.buscarOuFalhar(id);
+			return giverDtoAssembler.toModel(giver);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -86,20 +82,6 @@ public class GiverController {
 		}
 	}
 
-	@ApiOperation(value = "Method responsible for changing the giver")
-	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Giver> update(@PathVariable("id") long id, @RequestBody Giver giver) {
-		try {
-			Optional<Giver> giv = repository.findById(id);
-			if (giv.isPresent()) {
-				giver.setId(giv.get().getId());
-				return new ResponseEntity<>(service.save(giver), HttpStatus.OK);
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
-	}
 
 	@ApiOperation(value = "Method responsible for removing the giver")
 	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
