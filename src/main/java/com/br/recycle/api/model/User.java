@@ -1,6 +1,7 @@
 package com.br.recycle.api.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -100,6 +101,11 @@ public class User implements Serializable {
     //@NotEmpty
     private List<Address> address;
   
+    
+	private String token;
+	
+	@Column(columnDefinition = "TIMESTAMP")
+	private LocalDateTime tokenCreationDate;
 //    @OneToOne(mappedBy = "user")
 //    private Giver giver;
 //    
