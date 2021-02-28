@@ -52,7 +52,7 @@ public class MainUser implements UserDetails {
                 user.getName(),
                 user.getEmail(),
                 user.getActive(),
-                user.getFlowIndicator(),
+                user.getFlowIndicator().name(),
                 user.getPassword(),
                 authorities
         );

@@ -84,9 +84,9 @@ public class User implements Serializable {
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
 
-    @NotEmpty
-    @Column(name = "flow_indicator")
-    private String flowIndicator;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Flow flowIndicator;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
