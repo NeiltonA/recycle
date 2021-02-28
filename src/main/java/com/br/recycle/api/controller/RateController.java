@@ -89,7 +89,7 @@ public class RateController {
             Optional<Rate> rat = repository.findById(id);
             if (rat.isPresent()) {
                 rate.setId(rat.get().getId());
-                return ResponseEntity.ok(new ApiResponse(true, "Donation modify successfully"));
+                return ResponseEntity.ok(new ApiResponse(true, "Rate modify successfully"));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
