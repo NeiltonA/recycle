@@ -75,7 +75,7 @@ public class DonationController {
         try {
             service.save(newDonation);
             log.info("Registered successfully -> []");
-            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Donation registered successfully"));
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doação registrada com sucesso."));
         } catch (Exception e) {
             log.error("failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -90,7 +90,7 @@ public class DonationController {
             if (donation.isPresent()) {
                 newDonation.setId(donation.get().getId());
                 service.save(newDonation);
-                return ResponseEntity.ok(new ApiResponse(true, "Donation modify successfully"));
+                return ResponseEntity.ok(new ApiResponse(true, "Doação modificada com sucesso."));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

@@ -75,7 +75,7 @@ public class RateController {
         try {
             service.save(rate);
             log.info("Registered successfully -> []");
-            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Rate registered successfully"));
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Avaliação registrada com sucesso!"));
         } catch (Exception e) {
             log.error("Failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -89,7 +89,7 @@ public class RateController {
             Optional<Rate> rat = repository.findById(id);
             if (rat.isPresent()) {
                 rate.setId(rat.get().getId());
-                return ResponseEntity.ok(new ApiResponse(true, "Rate modify successfully"));
+                return ResponseEntity.ok(new ApiResponse(true, "Avaliação modificada com sucesso!"));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

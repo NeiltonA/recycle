@@ -76,7 +76,7 @@ public class GiverController {
 		try {
 			service.save(giver);
 			log.info("Registered successfully -> []");
-		        return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Giver registered successfully"));
+		        return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doador registrado com sucesso."));
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}

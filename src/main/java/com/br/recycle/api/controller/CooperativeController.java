@@ -75,7 +75,7 @@ public class CooperativeController {
         try {
         	service.save(cooperative);
             log.info("Registered successfully -> []");
-            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Cooperative registered successfully"));
+            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Cooperativa registrada com sucesso."));
         } catch (Exception e) {
             log.error("failed to register -> [] ", e);
             throw new BusinessException(e.getMessage(), e);
@@ -90,7 +90,7 @@ public class CooperativeController {
             if (cooperative.isPresent()) {
                 changedCooperative.setId(cooperative.get().getId());
                 service.save(changedCooperative);
-                return ResponseEntity.ok(new ApiResponse(true, "Cooperative modify successfully"));
+                return ResponseEntity.ok(new ApiResponse(true, "Cooperativa modificada com sucesso."));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

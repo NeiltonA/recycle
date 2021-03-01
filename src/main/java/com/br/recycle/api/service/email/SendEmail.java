@@ -32,10 +32,10 @@ public class SendEmail {
 
 		String subject = "Here's the link to reset your password";
 
-		String content = "<p>Hello,</p>" + "<p>You have requested to reset your password.</p>"
-				+ "<p>Click the link below to change your password:</p>" + "<p><a href=\"" + link
-				+ "\">Change my password</a></p>" + "<br>" + "<p>Ignore this email if you do remember your password, "
-				+ "or you have not made the request.</p>";
+		String content = "<p>Olá,</p>" + "<p>Você solicitou a redefinição de sua senha.</p>"
+				+ "<p>Clique no link abaixo para alterar sua senha:</p>" + "<p><a href=\"" + link
+				+ "\">Mudar minha senha</a></p>" + "<br>" + "<p>Ignore este e-mail se você se lembra da sua senha, "
+				+ "ou você não fez o pedido.</p>";
 
 		helper.setSubject(subject);
 

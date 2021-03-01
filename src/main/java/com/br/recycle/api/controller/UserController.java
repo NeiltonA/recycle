@@ -42,10 +42,12 @@ import com.br.recycle.api.service.email.SendEmail;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequestMapping("/api/v1/user")
 @Api(value = "User", description = "REST API for User", tags = { "User" })
+@Log4j2
 public class UserController {
 
 	@Autowired
@@ -93,13 +95,14 @@ public class UserController {
 		try {
 
 			if (userRepository.existsByEmail(user.getEmail())) {
-				return new ResponseEntity<Object>(new ApiResponse(false, "Email Address already in use!"),
+				log.error("Email já cadastrado!");
+				return new ResponseEntity<Object>(new ApiResponse(false, "E-mail já cadastrado!"),
 						HttpStatus.BAD_REQUEST);
 			}
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 			Role userRole = roleRepository.findByName(user.getRole().name())
-					.orElseThrow(() -> new AppException("User Role not set."));
+					.orElseThrow(() -> new AppException("Grupo do usuário não definido."));
 
 			user.setRoles(Collections.singleton(userRole));
 
@@ -164,7 +167,8 @@ public class UserController {
 				   
 				   sendEmail.sendDespatchEmail(email, link);
 			}
-			return new ResponseEntity<Object>(new ApiResponse(true, "Email sent successfully to update password."),
+			log.error("Email enviado com sucesso para atualização de senha.");
+			return new ResponseEntity<Object>(new ApiResponse(true, "E-mail enviado com sucesso para atualização de senha."),
 					HttpStatus.OK);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
@@ -177,7 +181,8 @@ public class UserController {
 		String token = request.getHeader("Authorization");
 		try {
 			pwService.resetPassword(token, password);
-			return new ResponseEntity<Object>(new ApiResponse(true, "Your password successfully updated."),
+			log.error("Sua senha foi atualizada com sucesso.");
+			return new ResponseEntity<Object>(new ApiResponse(true, "Sua senha foi atualizada com sucesso."),
 					HttpStatus.OK);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
