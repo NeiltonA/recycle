@@ -21,9 +21,9 @@ public class UserDtoOut{
 	private String name;
 	private String email;
 	private String cellPhone;
-	private String cpfCnpj;
+	private String individualRegistration;
 	private String flowIndicator;
 	 private Boolean active;
 	private Set<RoleDto> roles;
-	private List<AddressDto> Address;
+	//private List<AddressDto> Address;
 }

@@ -101,7 +101,7 @@ public class UserController {
 			}
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-			Role userRole = roleRepository.findByName(user.getRole().name())
+			Role userRole = roleRepository.findByName("ROLE_USER")
 					.orElseThrow(() -> new AppException("Grupo do usuário não definido."));
 
 			user.setRoles(Collections.singleton(userRole));

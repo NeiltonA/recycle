@@ -1,7 +1,5 @@
 package com.br.recycle.api.payload;
 
-import java.util.List;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -20,9 +18,9 @@ public class UserDtoIn{
 	private String name;
 	private String email;
 	private String cellPhone;
-	private String cpfCnpj;
-	private String role;
+	private String individualRegistration;
+	//private String role;
 	private String flowIndicator;
 	private Boolean active = Boolean.TRUE;
-	private List<AddressDto> Address;
+	//private List<AddressDto> Address;
 }

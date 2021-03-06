@@ -49,7 +49,7 @@ public class AddressController {
     private ViaZipCodeClient service;
 
     @ApiOperation(value = "Method responsible for returning the list of addresses")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Address>> getAll() {
         try {
@@ -84,6 +84,7 @@ public class AddressController {
         }
     }
 
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation(value = "Method responsible for searching the address by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Address> getById(@PathVariable("id") long id) {
@@ -99,7 +100,7 @@ public class AddressController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation(value = "Method responsible for saving the address")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Address> save(@Valid @RequestBody Address address) {
@@ -112,7 +113,7 @@ public class AddressController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation(value = "Method responsible for changing the address")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Address> update(@PathVariable("id") Long id, @RequestBody Address address) {
@@ -128,7 +129,7 @@ public class AddressController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @ApiOperation(value = "Method responsible for removing the address")
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
