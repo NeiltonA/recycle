@@ -1,6 +1,5 @@
 package com.br.recycle.api.controller;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,16 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.br.recycle.api.assembler.UserDtoAssembler;
-import com.br.recycle.api.exception.AppException;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.UserNotFoundException;
-import com.br.recycle.api.model.Role;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.PasswordInput;
 import com.br.recycle.api.payload.UserDtoIn;
 import com.br.recycle.api.payload.UserDtoOut;
-import com.br.recycle.api.repository.RoleRepository;
+import com.br.recycle.api.payload.UserInput;
 import com.br.recycle.api.repository.UserRepository;
 import com.br.recycle.api.service.PwService;
 import com.br.recycle.api.service.UserService;
@@ -63,9 +61,6 @@ public class UserController {
 	PasswordEncoder passwordEncoder;
 
 	@Autowired
-	RoleRepository roleRepository;
-	
-	@Autowired
 	SendEmail sendEmail;
 
 	@Autowired
@@ -91,52 +86,42 @@ public class UserController {
 
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Object save(@RequestBody @Valid User user) {
+	public UserDtoOut save(@RequestBody @Valid UserInput user) {
 		try {
-
-			if (userRepository.existsByEmail(user.getEmail())) {
-				log.error("Email já cadastrado!");
-				return new ResponseEntity<Object>(new ApiResponse(false, "E-mail já cadastrado!"),
-						HttpStatus.BAD_REQUEST);
-			}
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-			Role userRole = roleRepository.findByName("ROLE_USER")
-					.orElseThrow(() -> new AppException("Grupo do usuário não definido."));
-
-			user.setRoles(Collections.singleton(userRole));
-
-			user = userRepository.save(user);
-			return userDtoAssembler.toModel(user);
+			User us = userDtoAssembler.toDomainObject(user);
+			us = service.save(us);
+			return userDtoAssembler.toModel(us);
 		} catch (UserNotFoundException e) {
 			throw new BusinessException(e.getMessage(), e);
 
 		}
 	}
 
-	@PutMapping(value = "/{id}/password", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseStatus(HttpStatus.OK)
-	public void updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordInput password) {
-		try {
-			service.changePassword(id, password.getCurrentPassword(), password.getNewPassword());
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
-	}
-
 	@ApiOperation(value = "Method responsible for changing the user")
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn userdtoIn) {
+	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn user) {
 		try {
-			User user = service.fetchOrFail(id);
-			userDtoAssembler.copyToDomainObject(userdtoIn, user);
-			user = service.save(user);
-			return userDtoAssembler.toModel(user);
+			User us = service.fetchOrFail(id);
+			userDtoAssembler.copyToDomainObject(user, us);
+			us = service.update(us);
+			return userDtoAssembler.toModel(us);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
 
+	}
+
+	@PatchMapping(value = "/{id}/password", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Object> updatePassword(@PathVariable Long id, @RequestBody @Valid PasswordInput password) {
+		try {
+			service.changePassword(id, password.getCurrentPassword(), password.getNewPassword());
+			return new ResponseEntity<Object>(new ApiResponse(true, "Sua senha foi alterada com sucesso."),
+					HttpStatus.OK);
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage(), e);
+		}
 	}
 
 	@ApiOperation(value = "Method responsible for removing the user")
@@ -161,22 +146,21 @@ public class UserController {
 			String response = pwService.forgotPassword(email);
 
 			if (!response.startsWith("Invalid")) {
-				   String link = ServletUriComponentsBuilder
-			                .fromCurrentContextPath().path("/reset-password?token=" + response)
-			                .buildAndExpand().toUriString();
-				   
-				   sendEmail.sendDespatchEmail(email, link);
+				String link = ServletUriComponentsBuilder.fromCurrentContextPath()
+						.path("/reset-password?token=" + response).buildAndExpand().toUriString();
+
+				sendEmail.sendDespatchEmail(email, link);
 			}
 			log.error("Email enviado com sucesso para atualização de senha.");
-			return new ResponseEntity<Object>(new ApiResponse(true, "E-mail enviado com sucesso para atualização de senha."),
-					HttpStatus.OK);
+			return new ResponseEntity<Object>(
+					new ApiResponse(true, "E-mail enviado com sucesso para atualização de senha."), HttpStatus.OK);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
 	}
 
 	@ApiOperation(value = "Method responsible for reset-password the user")
-	@PutMapping(value = "/reset-password", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/reset-password", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> resetPassword(HttpServletRequest request, @RequestParam String password) {
 		String token = request.getHeader("Authorization");
 		try {

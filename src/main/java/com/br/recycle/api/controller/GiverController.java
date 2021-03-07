@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,10 +70,11 @@ public class GiverController {
 
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the giver")
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> save(@RequestBody @Valid Giver giver) {
+	@PostMapping(value = "/{id}/user", produces = MediaType.APPLICATION_JSON_VALUE)
+	
+	public ResponseEntity<ApiResponse> save(@PathVariable @Valid Long id ) {
 		try {
-			service.save(giver);
+			service.save(id);
 			log.info("Registered successfully -> []");
 		        return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doador registrado com sucesso."));
 		} catch (Exception e) {

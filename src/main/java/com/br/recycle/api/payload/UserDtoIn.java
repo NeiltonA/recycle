@@ -19,8 +19,6 @@ public class UserDtoIn{
 	private String email;
 	private String cellPhone;
 	private String individualRegistration;
-	//private String role;
 	private String flowIndicator;
 	private Boolean active = Boolean.TRUE;
-	//private List<AddressDto> Address;
 }

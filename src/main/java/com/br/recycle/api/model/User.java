@@ -19,12 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.payload.RoleName;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -52,31 +48,30 @@ public class User implements Serializable {
 	@Column(name = "id_user")
 	private Long id;
 
-	@NotEmpty
+	
+	@Column(nullable = false)
 	private String name;
 
 	@NaturalId
-	@NotEmpty(message = "{validation.mail.notEmpty}")
-	@Email(regexp = ".*@.*\\..*", message = "Email inválido!")
+	@Column(nullable = false)
 	private String email;
 
 	
 	@Transient
 	@Enumerated(EnumType.STRING)
-	//@NotNull
 	private RoleName role;
 
-	@NotEmpty
+	@Column(nullable = false)
 	private String password;
 
 	@Column(name = "cell_phone")
 	private String cellPhone;
 
-	@CPF(message = "CPF inválido")
+	
 	@Column(name = "individual_registration")
 	private String individualRegistration;
 
-	@NotNull
+	
 	@Enumerated(EnumType.STRING)
 	private Flow flowIndicator;
 

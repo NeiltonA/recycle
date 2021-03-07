@@ -45,4 +45,7 @@ public class Giver  implements Serializable{
 	private void generateCode() {
 		setCode(UUID.randomUUID().toString());
 	}
+
+
+
 }

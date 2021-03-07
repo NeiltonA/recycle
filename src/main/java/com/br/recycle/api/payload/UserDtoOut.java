@@ -1,6 +1,5 @@
 package com.br.recycle.api.payload;
 
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -25,5 +24,5 @@ public class UserDtoOut{
 	private String flowIndicator;
 	 private Boolean active;
 	private Set<RoleDto> roles;
-	//private List<AddressDto> Address;
+
 }
