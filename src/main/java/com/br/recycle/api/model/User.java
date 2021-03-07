@@ -63,6 +63,9 @@ public class User implements Serializable {
 
 	@Column(nullable = false)
 	private String password;
+	
+	@Transient
+	private String confirmPassword;
 
 	@Column(name = "cell_phone")
 	private String cellPhone;

@@ -44,6 +44,10 @@ public class UserInput{
 	@NotEmpty
 	private String password;
 	
+	@ApiModelProperty(example = "admin123", required = true)
+	@NotEmpty
+	private String confirmPassword;
+	
 	@ApiModelProperty(example = "\"D = Doador\",\"C = Cooperativa\",\"A = Admin\"",  required = true)
 	@NotNull
 	@Enumerated(EnumType.STRING)

@@ -53,6 +53,12 @@ public class UserService {
 					String.format("Já existe um usuário cadastrado com o e-mail %s", user.getEmail()));
 
 		}
+		
+		
+		if (!user.getPassword().matches(user.getConfirmPassword())) {
+			throw new BusinessException(
+					String.format("Senha informada não conferem."));
+		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
