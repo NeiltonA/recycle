@@ -70,7 +70,7 @@ public class GiverController {
 
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the giver")
-	@PostMapping(value = "/{id}/user", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	
 	public ResponseEntity<ApiResponse> save(@PathVariable @Valid Long id ) {
 		try {

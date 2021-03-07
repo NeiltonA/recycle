@@ -57,7 +57,7 @@ public class UserService {
 		
 		if (!user.getPassword().matches(user.getConfirmPassword())) {
 			throw new BusinessException(
-					String.format("Senha informada não conferem."));
+					String.format("Senhas não conferem."));
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 

@@ -25,6 +25,7 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.RateDtoOut;
+import com.br.recycle.api.payload.RateInput;
 import com.br.recycle.api.repository.RateRepository;
 import com.br.recycle.api.service.RateService;
 
@@ -71,9 +72,10 @@ public class RateController {
 
     @ApiOperation(value = "Method responsible for saving the rate")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Rate rate) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody RateInput rate) {
         try {
-            service.save(rate);
+        	Rate rat = assembler.toDomainObject(rate);
+            service.save(rat);
             log.info("Registered successfully -> []");
             return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Avaliação registrada com sucesso!"));
         } catch (Exception e) {
@@ -84,11 +86,14 @@ public class RateController {
 
     @ApiOperation(value = "Method responsible for updating the rate")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Rate rate) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody RateInput rate) {
         try {
-            Optional<Rate> rat = repository.findById(id);
-            if (rat.isPresent()) {
-                rate.setId(rat.get().getId());
+        	
+        	Rate rat = assembler.toDomainObject(rate);
+            Optional<Rate> ra = repository.findById(id);
+            if (ra.isPresent()) {
+                rat.setId(ra.get().getId());
+                repository.save(rat);
                 return ResponseEntity.ok(new ApiResponse(true, "Avaliação modificada com sucesso!"));
             }
             return ResponseEntity.notFound().build();

@@ -11,8 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -42,7 +40,6 @@ public class Cooperative implements Serializable {
     private String responsibleName;// nome do responsavel
 
     @Column(name = "cpf_responsible")
-    @CPF(message = "Invalid CPF")
     private String CpfResponsible;
 
     @OneToOne

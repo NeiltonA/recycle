@@ -25,6 +25,7 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.CooperativeDtoOut;
+import com.br.recycle.api.payload.CooperativeInput;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
 
@@ -71,9 +72,11 @@ public class CooperativeController {
 
     @ApiOperation(value = "Method responsible for saving the cooperative")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Cooperative cooperative) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody CooperativeInput cooperative) {
         try {
-        	service.save(cooperative);
+        	Cooperative coop = assembler.toDomainObject(cooperative);
+
+        	service.save(coop);
             log.info("Registered successfully -> []");
             return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Cooperativa registrada com sucesso."));
         } catch (Exception e) {
@@ -84,13 +87,15 @@ public class CooperativeController {
 
     @ApiOperation(value = "Method responsible for updating the cooperative")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Cooperative changedCooperative) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody CooperativeInput cooperative) {
         try {
-            Optional<Cooperative> cooperative = repository.findById(id);
-            if (cooperative.isPresent()) {
-                changedCooperative.setId(cooperative.get().getId());
-                service.save(changedCooperative);
-                return ResponseEntity.ok(new ApiResponse(true, "Cooperativa modificada com sucesso."));
+        	Cooperative coop = assembler.toDomainObject(cooperative);
+        	
+            Optional<Cooperative> cooper = repository.findById(id);
+            if (cooper.isPresent()) {
+            	coop.setId(cooper.get().getId());
+                repository.save(coop);
+                return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

@@ -25,6 +25,7 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.DonationDtoOut;
+import com.br.recycle.api.payload.DonationInput;
 import com.br.recycle.api.repository.DonationRepository;
 import com.br.recycle.api.service.DonationService;
 
@@ -71,9 +72,11 @@ public class DonationController {
 
     @ApiOperation(value = "Method responsible for saving the donation")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody Donation newDonation) {
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody DonationInput newDonation) {
         try {
-            service.save(newDonation);
+        	
+        	Donation don = assembler.toDomainObject(newDonation);
+            service.save(don);
             log.info("Registered successfully -> []");
             return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doação registrada com sucesso."));
         } catch (Exception e) {
@@ -84,12 +87,14 @@ public class DonationController {
 
     @ApiOperation(value = "Method responsible for updating the donation")
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody Donation newDonation) {
+    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody DonationInput newDonation) {
         try {
+        	Donation don = assembler.toDomainObject(newDonation);
+        	
             Optional<Donation> donation = repository.findById(id);
             if (donation.isPresent()) {
-                newDonation.setId(donation.get().getId());
-                service.save(newDonation);
+            	don.setId(donation.get().getId());
+            	repository.save(don);
                 return ResponseEntity.ok(new ApiResponse(true, "Doação modificada com sucesso."));
             }
             return ResponseEntity.notFound().build();
