@@ -12,6 +12,7 @@
 	<groupId>com.br.recycle.api</groupId>
 	<artifactId>recycle</artifactId>
 	<version>0.0.1</version>
+	<packaging>jar</packaging>
 	<name>recycle</name>
 	<description>recycle</description>
 	<properties>
