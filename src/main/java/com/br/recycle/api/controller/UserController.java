@@ -1,5 +1,6 @@
 package com.br.recycle.api.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,6 +68,7 @@ public class UserController {
 	@Autowired
 	private UserDtoAssembler userDtoAssembler;
 
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserDtoOut> findAll() {
 		try {
@@ -86,11 +89,13 @@ public class UserController {
 
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public UserDtoOut save(@RequestBody @Valid UserInput user) {
+	public ResponseEntity<ApiResponse> save(@RequestBody @Valid UserInput user) {
 		try {
 			User us = userDtoAssembler.toDomainObject(user);
-			us = service.save(us);
-			return userDtoAssembler.toModel(us);
+			service.save(us);
+			log.info("Registered successfully -> []");
+			return ResponseEntity.created(URI.create(""))
+					.body(new ApiResponse(true, "Usuário registrado com sucesso!"));
 		} catch (UserNotFoundException e) {
 			throw new BusinessException(e.getMessage(), e);
 
@@ -102,14 +107,18 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn user) {
 		try {
-			User us = service.fetchOrFail(id);
-			userDtoAssembler.copyToDomainObject(user, us);
-			us = service.update(us);
-			return userDtoAssembler.toModel(us);
+
+			User us = userDtoAssembler.toDomainObject(user);
+			Optional<User> use = userRepository.findById(id);
+			if (use.isPresent()) {
+				us.setId(use.get().getId());
+				us = service.update(us);
+				return ResponseEntity.ok(new ApiResponse(true, "Usuário alterado com sucesso!"));
+			}
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
-
 	}
 
 	@PatchMapping(value = "/{id}/password", produces = MediaType.APPLICATION_JSON_VALUE)
