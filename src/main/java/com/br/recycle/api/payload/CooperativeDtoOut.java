@@ -17,6 +17,7 @@ public class CooperativeDtoOut  {
     private Long id;
     private String companyName; 
     private String responsibleName;
-    private String CpfResponsible;
+    private String cpfResponsible;
+    private String cnpj;
     private UserDtoOut user;
 }

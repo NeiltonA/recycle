@@ -2,6 +2,7 @@ package com.br.recycle.api.payload;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -26,7 +27,12 @@ public class CooperativeInput  {
     
     @ApiModelProperty(example = "29090890025", required = true)
     @CPF(message = "CPF inválido")
-    private String CpfResponsible;
+    private String cpfResponsible;
+    
+    
+    @ApiModelProperty(example = "52288720000106", required = true)
+    @CNPJ(message = "CNPJ inválido")
+    private String cnpj;
 
     @ApiModelProperty(example = "1", required = true)
     @NotNull
