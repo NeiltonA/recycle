@@ -42,7 +42,7 @@ public class Cooperative implements Serializable {
     @Column(name = "cpf_responsible")
     private String cpfResponsible;
 
-    @Column(name = "cpf")
+    @Column(name = "cnpj")
     private String cnpj;
     
     @OneToOne
