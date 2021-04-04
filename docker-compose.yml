@@ -1,0 +1,16 @@
+version: '3'
+services:
+  recycle:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: recycle
+    ports:
+    - '8080:8080'
+    environment:
+      - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1G -Xms128m -XX:MaxMetaspaceSize=128m
+      - PROFILE=dev
+
+   
+   
+

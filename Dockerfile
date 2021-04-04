@@ -1,12 +1,17 @@
-FROM openjdk:11-jdk-alpine
-RUN apk --no-cache add curl
-VOLUME /tmp
-ARG REGION_ARG=us-east-2
-ARG ACCESS_ARG
-ARG SECRET_ARG
-ENV AWS_REGION=$REGION_ARG
-ENV AWS_ACCESS_KEY=$ACCESS_ARG
-ENV AWS_SECRET_KEY=$SECRET_ARG
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+FROM openjdk:11
+ARG PROFILE
+ARG ADDITIONAL_OPTS
+
+ENV PROFILE=${PROFILE}
+ENV ADDITIONAL_OPTS=${ADDITIONAL_OPTS}
+
+WORKDIR /apt/recycle
+
+COPY /target/recycle*.jar recycle.jar
+
+SHELL ["/bin/sh", "-c"]
+
+EXPOSE 8080
+
+CMD java ${ADDITIONAL_OPTS} -jar recycle.jar --spring.profile.active=${PROFILE}
