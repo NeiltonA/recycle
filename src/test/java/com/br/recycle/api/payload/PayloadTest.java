@@ -11,8 +11,8 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,7 +33,8 @@ public class PayloadTest {
 		don.setGiver(gv);
 		don.setCooperative(cp);
 		
-		 Assert.assertNotEquals(don,dons);
+		 assertNotEquals(don,dons);
+
 		 
 		ApiResponse response = new ApiResponse(true, "");
 		response.setMessage("test");

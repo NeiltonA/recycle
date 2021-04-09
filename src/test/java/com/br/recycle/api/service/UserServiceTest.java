@@ -1,11 +1,7 @@
 package com.br.recycle.api.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 
@@ -15,10 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.br.recycle.api.exception.UserNotFoundException;
-import com.br.recycle.api.model.Flow;
 import com.br.recycle.api.model.User;
-import com.br.recycle.api.payload.RoleName;
 import com.br.recycle.api.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)

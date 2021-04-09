@@ -1,6 +1,8 @@
 package com.br.recycle.api.service;
 
-import static org.junit.Assert.assertNotNull;
+
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,7 @@ public class CooperativeServiceTest {
 		user.setId(1L);
 		cooperative.setUser(user);
 		when(repository.save(cooperative)).thenReturn(cooperative);
-		assertNotNull(NOT_NULL, service.save(cooperative));
+		assertNotNull(service.save(cooperative), NOT_NULL);
 	}
 	
 	@Test
@@ -53,7 +55,7 @@ public class CooperativeServiceTest {
 		given(repository.findById(1L)).willReturn(Optional.of(cooperative));
 		Cooperative coop = service.findOrFail(1L);
 		
-		assertNotNull(NOT_NULL, coop);
+		assertNotNull(coop, NOT_NULL);
 
 	}
 	
@@ -63,7 +65,7 @@ public class CooperativeServiceTest {
 		cooperative.setId(1L);
 		service.remove(1L);
 		
-		assertNotNull(NOT_NULL, cooperative);
+		assertNotNull(cooperative, NOT_NULL);
 
 	}
 
