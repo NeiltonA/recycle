@@ -14,8 +14,7 @@ import com.br.recycle.api.payload.AddressInput;
 @Component
 public class AddressDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 
 	public Address toDomainObject(AddressInput addressInput) {
 		return modelMapper.map(addressInput, Address.class);
