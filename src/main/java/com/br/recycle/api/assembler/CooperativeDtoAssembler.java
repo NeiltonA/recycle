@@ -11,12 +11,10 @@ import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
 
-
 @Component
 public class CooperativeDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 	
 	public Cooperative toDomainObject(CooperativeInput cooperativeInput) {
 		return modelMapper.map(cooperativeInput, Cooperative.class);

@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Classe de teste para validar os cenários de transformação de dados
- * de entrada e dados de saida da aplicação do Recycle.
+ * de entrada e dados de saida da aplicação do Recycle com relação aos dados
+ * de Address.
  *
  * @author Caio Henrique do Carmo Bastos
  * @since 03/05/2021

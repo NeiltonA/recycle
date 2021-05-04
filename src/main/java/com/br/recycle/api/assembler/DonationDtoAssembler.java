@@ -11,12 +11,10 @@ import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.payload.DonationDtoOut;
 import com.br.recycle.api.payload.DonationInput;
 
-
 @Component
 public class DonationDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 	
 	public Donation toDomainObject(DonationInput donationInput) {
 		return modelMapper.map(donationInput, Donation.class);
