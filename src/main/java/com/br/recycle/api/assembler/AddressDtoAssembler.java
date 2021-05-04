@@ -1,21 +1,18 @@
 package com.br.recycle.api.assembler;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AddressDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 
 	public Address toDomainObject(AddressInput addressInput) {
 		return modelMapper.map(addressInput, Address.class);

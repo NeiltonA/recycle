@@ -14,7 +14,6 @@ import lombok.ToString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class AddressInput  {
 
-
 	@ApiModelProperty(example = "Rua Juca", required = false)
 	private String street;
 
