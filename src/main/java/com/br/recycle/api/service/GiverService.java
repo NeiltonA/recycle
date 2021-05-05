@@ -1,7 +1,6 @@
 package com.br.recycle.api.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,11 +18,11 @@ import com.br.recycle.api.exception.GiverNotFoundException;
 import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.model.User;
+import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.repository.UserRepository;
 
 import lombok.extern.log4j.Log4j2;
-
 
 @Service
 @Log4j2
@@ -33,28 +32,32 @@ public class GiverService {
 
 	@Autowired
 	private GiverRepository repository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private CooperativeRepository coopRepository;
+
 	@PersistenceContext
 	private EntityManager manager;
-	
+
 	@Transactional
 	public Giver save(Long id) {
-		
+
 		if (!userRepository.findById(id).isPresent()) {
 			throw new UserNotFoundException(id);
 		}
-		
-		Optional<Giver> foundGiver = repository.findByUserId(id);
 
-		if (foundGiver.isPresent()) {
+		if (verifyGiver(id)) {
 			log.error("Doador já cadastrado!");
-			throw new BusinessException(
-					String.format("Já existe um doador cadastrado com o código de usuário %s", id));
+			throw new BusinessException(String.format("Já existe um doador cadastrado com o código de usuário %s", id));
 
+		}else if(verifyCooperative(id)) {
+			throw new BusinessException(
+					String.format("já existe um usuário do código (%s)  associado com a Cooperativa", id));
 		}
+		
 		Giver giver = new Giver();
 		User user = new User();
 		user.setId(id);
@@ -79,15 +82,25 @@ public class GiverService {
 	public Giver buscarOuFalhar(Long giverId) {
 		return repository.findById(giverId).orElseThrow(() -> new GiverNotFoundException(giverId));
 	}
-	
-	
+
+	public boolean verifyCooperative(Long id) {
+		boolean cooperative = coopRepository.findByUserId(id).isPresent();
+		return cooperative;
+	}
+
+	public boolean verifyGiver(Long id) {
+		boolean giver = repository.findByUserId(id).isPresent();
+		return giver;
+	}
+
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public List<GiverResponseBean> consultByAll() {
-	
-		return manager
-				.createNativeQuery("select u.name, u.email, u.cpf_cnpj, u.cell_phone,  a.city, a.complement, a.neighborhood, a.number, a.state, a.street, a.zip_code from giver g inner join users u on g.id_giver=u.id_user inner join address a on u.id_user=a.id_user")
+
+		return manager.createNativeQuery(
+				"select u.name, u.email, u.cpf_cnpj, u.cell_phone,  a.city, a.complement, a.neighborhood, a.number, a.state, a.street, a.zip_code from giver g inner join users u on g.id_giver=u.id_user inner join address a on u.id_user=a.id_user")
 				.unwrap(org.hibernate.query.Query.class)
-				.setResultTransformer(new org.hibernate.transform.AliasToBeanResultTransformer(GiverResponseBean.class)).list();
+				.setResultTransformer(new org.hibernate.transform.AliasToBeanResultTransformer(GiverResponseBean.class))
+				.list();
 
 	}
 

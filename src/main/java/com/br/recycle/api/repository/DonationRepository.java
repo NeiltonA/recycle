@@ -11,5 +11,7 @@ import com.br.recycle.api.model.Donation;
 public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     Optional<Donation> findByCode(String code);
+    
+   
 
 }
