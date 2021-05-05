@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.CooperativeRepository;
+import com.br.recycle.api.repository.GiverRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CooperativeServiceTest {
@@ -26,6 +27,9 @@ public class CooperativeServiceTest {
 
 	@Mock
     private CooperativeRepository repository;
+	
+	@Mock
+    private GiverRepository gvrepository;
 	
 	@InjectMocks
     private CooperativeService service;
