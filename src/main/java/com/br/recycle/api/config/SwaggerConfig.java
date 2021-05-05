@@ -36,9 +36,9 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apinfo() {
-		return new ApiInfoBuilder().title("Spring Boot REST API")
+		return new ApiInfoBuilder().title("API - RECYCLE")
 				.description("\"Spring Boot REST API- Api to Facilitate Oil Collection and Reuse in the Third Sector\"")
-				.version("1.0.0").license("Apache License Version 1.0")
+				.version("1.0.0").license("Version: 1.0")
 				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0\"").build();
 	}
 
