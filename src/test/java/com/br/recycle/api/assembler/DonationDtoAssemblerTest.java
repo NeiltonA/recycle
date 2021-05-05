@@ -76,7 +76,7 @@ public class DonationDtoAssemblerTest {
     /**
      * Método de teste contendo o cenário de transformação do objeto
      * de dominio para o objeto de saída da aplicação que será uma resposta
-     * de uma lista de endereço
+     * de uma lista
      */
     @Test
     public void testToCollectionModelSucess() {

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * aos dados da giver
  *
  * @author Caio Henrique do Carmo Bastos
- * @since 03/05/2021
+ * @since 04/05/2021
  */
 @ExtendWith(SpringExtension.class)
 public class GiverDtoAssemblerTest {
@@ -55,7 +55,7 @@ public class GiverDtoAssemblerTest {
     /**
      * Método de teste contendo o cenário de transformação do objeto
      * de dominio para o objeto de saída da aplicação que será uma resposta
-     * de uma lista de endereço
+     * de uma lista
      */
     @Test
     public void testToCollectionModelSucess() {

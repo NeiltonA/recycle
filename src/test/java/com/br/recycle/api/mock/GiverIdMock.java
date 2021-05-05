@@ -14,6 +14,8 @@ public class GiverIdMock {
     public static Giver getMockGiver() {
         Giver giver = new Giver();
         giver.setId(1L);
+        giver.setCode("Teste");
+        giver.setUser(UserMock.getMockUserDto());
 
         return giver;
     }
