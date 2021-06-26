@@ -58,8 +58,8 @@ public class PwService {
 	     Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 		
 		@SuppressWarnings("deprecation")
-		String token = ("Bearer " + (Jwts.builder().setSubject(Long.toString(user.getId())).setIssuedAt(new Date())
-				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact()));
+		String token = (Jwts.builder().setSubject(Long.toString(user.getId())).setIssuedAt(new Date())
+				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact());
 
 		user.setToken(token);
 		user.setTokenCreationDate(LocalDateTime.now());

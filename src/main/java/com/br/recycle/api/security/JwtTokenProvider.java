@@ -50,12 +50,12 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         JwtAuthenticationResponse jwt = new JwtAuthenticationResponse();
-        jwt.setAccessToken("Bearer " + (Jwts.builder()
+        jwt.setAccessToken(Jwts.builder()
                 .setSubject(Long.toString(mainUser.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact()));
+                .compact());
         jwt.setExpirationDateToken(expiryDate);
         jwt.setFlowIndicator(mainUser.getFlowIndicator());
         jwt.setActive(mainUser.getActive());
