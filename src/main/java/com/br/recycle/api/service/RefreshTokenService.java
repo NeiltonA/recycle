@@ -1,8 +1,8 @@
 package com.br.recycle.api.service;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -15,6 +15,9 @@ import com.br.recycle.api.model.RefreshToken;
 import com.br.recycle.api.repository.RefreshTokenRepository;
 import com.br.recycle.api.repository.UserRepository;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class RefreshTokenService {
 	
@@ -25,6 +28,9 @@ public class RefreshTokenService {
   @Autowired
   private RefreshTokenRepository refreshTokenRepository;
 
+  @Value("${recycle.jwtSecret}")
+  private String jwtSecret;
+  
   @Autowired
   private UserRepository userRepository;
 
@@ -37,7 +43,15 @@ public class RefreshTokenService {
 
     refreshToken.setUser(userRepository.findById(userId).get());
     refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
-    refreshToken.setToken(UUID.randomUUID().toString());
+    
+    Date now = new Date();
+    Date expiryDate = new Date(now.getTime());
+	
+	@SuppressWarnings("deprecation")
+	String refreshtoken = (Jwts.builder().setSubject(Long.toString(userId)).setIssuedAt(new Date())
+			.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact());
+	
+    refreshToken.setToken(refreshtoken);
 
     refreshToken = refreshTokenRepository.save(refreshToken);
     return refreshToken;

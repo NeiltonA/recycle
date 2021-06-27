@@ -46,7 +46,7 @@ public class AuthController {
 	@Autowired
 	JwtTokenProvider tokenProvider;
 
-	@PostMapping("/signin")
+	@PostMapping("/access")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 		try {
 			Authentication authentication = authenticationManager.authenticate(
@@ -73,7 +73,7 @@ public class AuthController {
 
 	}
 
-	@PostMapping("/refreshtoken")
+	@PostMapping("/refresh")
 	public ResponseEntity<?> refreshtoken(@RequestBody TokenRefreshRequest request) {
 		try {
 			String requestRefreshToken = request.getRefreshToken();
