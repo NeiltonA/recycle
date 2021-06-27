@@ -16,9 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.br.recycle.api.security.AuthTokenFilter;
 import com.br.recycle.api.security.CustomUserDetailsService;
 import com.br.recycle.api.security.JwtAuthenticationEntryPoint;
-import com.br.recycle.api.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,10 +35,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+		return new AuthTokenFilter();
+	}
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -99,7 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated();
 
         // Add our custom JWT security filter
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 }
