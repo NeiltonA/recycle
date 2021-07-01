@@ -46,8 +46,7 @@ public class CooperativeDtoAssemblerTest {
         Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(CooperativeInputMock.getMockCooperativeInput());
         assertNotNull(cooperative);
         assertEquals("Recycle do brasil LTDA", cooperative.getCompanyName());
-        assertEquals("Juca do brasil LTDA", cooperative.getResponsibleName());
-        assertEquals("29090890025", cooperative.getCpfResponsible());
+        assertEquals("Juca do brasil LTDA", cooperative.getFantasyName());
         assertEquals("52288720000106", cooperative.getCnpj());
         assertEquals(Long.valueOf(1), cooperative.getUser().getId());
     }
@@ -61,8 +60,7 @@ public class CooperativeDtoAssemblerTest {
         CooperativeDtoOut cooperativeDtoOut = cooperativeDtoAssembler.toModel(CooperativeMock.getMockCooperative());
         assertNotNull(cooperativeDtoOut);
         assertEquals("Recycle do brasil LTDA", cooperativeDtoOut.getCompanyName());
-        assertEquals("Juca do brasil LTDA", cooperativeDtoOut.getResponsibleName());
-        assertEquals("29090890025", cooperativeDtoOut.getCpfResponsible());
+        assertEquals("Juca do brasil LTDA", cooperativeDtoOut.getFantasyName());
         assertEquals("52288720000106", cooperativeDtoOut.getCnpj());
         assertEquals(Long.valueOf(1), cooperativeDtoOut.getUser().getId());
     }
@@ -77,14 +75,12 @@ public class CooperativeDtoAssemblerTest {
         List<CooperativeDtoOut> cooperativeDtoOuts = cooperativeDtoAssembler.toCollectionModel(CooperativeMock.getMockCollectionCooperative());
         assertNotNull(cooperativeDtoOuts);
         assertEquals("Recycle do brasil LTDA", cooperativeDtoOuts.get(0).getCompanyName());
-        assertEquals("Juca do brasil LTDA", cooperativeDtoOuts.get(0).getResponsibleName());
-        assertEquals("29090890025", cooperativeDtoOuts.get(0).getCpfResponsible());
+        assertEquals("Juca do brasil LTDA", cooperativeDtoOuts.get(0).getFantasyName());
         assertEquals("52288720000106", cooperativeDtoOuts.get(0).getCnpj());
         assertEquals(Long.valueOf(1), cooperativeDtoOuts.get(0).getUser().getId());
 
         assertEquals("Recycle do USA LTDA", cooperativeDtoOuts.get(1).getCompanyName());
-        assertEquals("Juca do USA LTDA", cooperativeDtoOuts.get(1).getResponsibleName());
-        assertEquals("45090890030", cooperativeDtoOuts.get(1).getCpfResponsible());
+        assertEquals("Juca do brasil LTDA", cooperativeDtoOuts.get(0).getFantasyName());
         assertEquals("25288720000250", cooperativeDtoOuts.get(1).getCnpj());
         assertEquals(Long.valueOf(1), cooperativeDtoOuts.get(1).getUser().getId());
     }

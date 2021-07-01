@@ -78,7 +78,6 @@ public class CooperativeControllerTest {
 		CooperativeInput input = new CooperativeInput();
 		input.setCnpj("0987898789809");
 		input.setCompanyName("teste");
-		input.setCpfResponsible("59517244061");
 		input.setUser(user);
 
 		Cooperative cooperative = new Cooperative();
@@ -103,7 +102,6 @@ public class CooperativeControllerTest {
 		CooperativeInput input = new CooperativeInput();
 		input.setCnpj("0987898789809");
 		input.setCompanyName("teste");
-		input.setCpfResponsible("59517244061");
 		input.setUser(user);
 
 		Cooperative cooperative = new Cooperative();
