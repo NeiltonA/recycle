@@ -68,7 +68,7 @@ public class AuthController {
 					.ok(new JwtAuthenticationResponse(jwt, userDetails.getFlowIndicator(), userDetails.getActive(),
 							userDetails.getAuthorities().toString(), refreshToken.getToken(), userDetails.getId()));
 		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
+			throw new BusinessException("Usuário ou senha ínvalido!");
 		}
 
 	}
