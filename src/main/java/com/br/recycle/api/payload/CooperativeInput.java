@@ -3,7 +3,6 @@ package com.br.recycle.api.payload;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CNPJ;
-import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -23,11 +22,11 @@ public class CooperativeInput  {
     private String companyName; 
 
     @ApiModelProperty(example = "Juca do brasil LTDA", required = true)
-    private String responsibleName;
+    private String fantasyName;
     
-    @ApiModelProperty(example = "29090890025", required = true)
-    @CPF(message = "CPF inválido")
-    private String cpfResponsible;
+//    @ApiModelProperty(example = "29090890025", required = true)
+//    @CPF(message = "CPF inválido")
+//    private String cpfResponsible;
     
     
     @ApiModelProperty(example = "52288720000106", required = true)

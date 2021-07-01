@@ -36,11 +36,13 @@ public class Cooperative implements Serializable {
     @Column(name = "company_name")
     private String companyName; //Razão social
 
-    @Column(name = "responsible_name")
-    private String responsibleName;// nome do responsavel
+    //@Column(name = "responsible_name")
+   // private String responsibleName;// nome do responsavel
 
-    @Column(name = "cpf_responsible")
-    private String cpfResponsible;
+    //@Column(name = "cpf_responsible")
+    //private String cpfResponsible;
+    @Column(name = "fantasy_name")
+    private String fantasyName;
 
     @Column(name = "cnpj")
     private String cnpj;
