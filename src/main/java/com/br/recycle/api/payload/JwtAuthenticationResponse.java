@@ -8,6 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Classe responsável por mapear os dados de resposta da
+ * aplicação para a autenticação de JWT
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,7 +19,6 @@ import lombok.Setter;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class JwtAuthenticationResponse {
     private String accessToken;
-   // private Date expirationDateToken;
     private String flowIndicator;
     private Boolean active;
     private String userType;
@@ -23,20 +26,5 @@ public class JwtAuthenticationResponse {
     private String type = "Bearer";
     private Long id;
     private String name;
-
-	public JwtAuthenticationResponse(String accessToken,String flowIndicator, Boolean active,
-			String userType, String refreshToken, Long id, String name) {
-		this.accessToken = accessToken;
-		//this.expirationDateToken = expirationDateToken;
-		this.flowIndicator = flowIndicator;
-		this.active = active;
-		this.userType = userType;
-		this.refreshToken = refreshToken;
-		//this.type = type;
-		this.name = name;
-		this.id = id;
-	}
-	
-	
 }
 

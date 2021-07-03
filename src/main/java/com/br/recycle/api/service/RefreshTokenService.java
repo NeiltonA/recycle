@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.exception.TokenRefreshException;
+import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.RefreshToken;
 import com.br.recycle.api.repository.RefreshTokenRepository;
 import com.br.recycle.api.repository.UserRepository;
@@ -60,7 +61,7 @@ public class RefreshTokenService {
   public RefreshToken verifyExpiration(RefreshToken token) {
     if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
       refreshTokenRepository.delete(token);
-      throw new TokenRefreshException(token.getToken(), "O token de atualização expirou. Faça uma nova solicitação de login!");
+      throw new TokenRefreshException("O token de atualização expirou. Faça uma nova solicitação de login!");
     }
 
     return token;
@@ -68,6 +69,7 @@ public class RefreshTokenService {
 
   @Transactional
   public int deleteByUserId(Long userId) {
-    return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+    return refreshTokenRepository.deleteByUser(userRepository.findById(userId)
+    		.orElseThrow(() -> new UserNotFoundException(userId)));
   }
 }

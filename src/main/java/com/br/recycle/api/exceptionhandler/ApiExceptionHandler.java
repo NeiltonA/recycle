@@ -28,6 +28,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.EntityNotFoundException;
+import com.br.recycle.api.exception.InternalServerException;
+import com.br.recycle.api.exception.TokenRefreshException;
+import com.br.recycle.api.exception.UserInvalidException;
+import com.br.recycle.api.exception.UserNotFoundException;
+import com.br.recycle.api.exception.BadRequestException;
 import com.br.recycle.api.exception.BusinessException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -96,7 +101,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	    return handleExceptionInternal(ex, problem, headers, status, request);
 	}
 	
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({ Exception.class, InternalServerException.class })
 	public ResponseEntity<Object> handleUncaughtException(Exception ex, WebRequest request) {
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;		
 		ProblemType problemType = ProblemType.SYSTEM_ERROR;
@@ -109,6 +114,52 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
+	/**
+	 * Método responsável por tratar a exceção do tipo <b>BAD REQUEST - 400</b>,
+	 * quando um valor do campo está inválido.
+	 * @param {@code Exception} - exception
+	 * @param {@code WebRequest} - request
+	 * @return {@code ResponseEntity<Object>} 
+	 * 		- retorna um objeto em formato JSON com o retorno 400.
+	 */
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<Object> handleBadRequest(Exception exception, WebRequest request) {
+		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+		ProblemType problemType = ProblemType.INVALID_DATA;
+		String detail = exception.getMessage();
+		
+		log.error(exception.getMessage(), exception);
+		
+		Problem problem = createProblemBuilder(httpStatus, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
+	}
+	
+	/**
+	 * Método responsável por tratar a exceção do tipo <b>FORBIDDEN - 403</b>,
+	 * quando um valor do campo está inválido.
+	 * @param {@code Exception} - exception
+	 * @param {@code WebRequest} - request
+	 * @return {@code ResponseEntity<Object>} 
+	 * 		- retorna um objeto em formato JSON com o retorno 403.
+	 */
+	@ExceptionHandler({ TokenRefreshException.class, UserInvalidException.class })
+	public ResponseEntity<Object> handleForbidden(Exception exception, WebRequest request) {
+		HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+		ProblemType problemType = ProblemType.ACESS_DENIED;
+		String detail = exception.getMessage();
+		
+		log.error(exception.getMessage(), exception);
+		
+		Problem problem = createProblemBuilder(httpStatus, problemType, detail)
+				.userMessage("O usuário não tem permissão para acessar neste momento.")
+				.build();
+		
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
 	}
 	
 	@Override
@@ -224,9 +275,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 	}
 	
-	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex,
-														   WebRequest request) {
+	@ExceptionHandler({ EntityNotFoundException.class, UserNotFoundException.class })
+	public ResponseEntity<?> handleEntityNotFoundException(Exception ex, WebRequest request) {
 		
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;

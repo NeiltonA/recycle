@@ -21,10 +21,10 @@
 		<jjwt.version>0.11.2</jjwt.version>
 		<spring-cloud.version>Hoxton.SR10</spring-cloud.version>
 		<modelmapper.version>2.3.0</modelmapper.version>
-		
-		 <junit-jupiter.version>5.3.2</junit-jupiter.version>
-        <mockito.version>2.24.0</mockito.version>
-        
+
+		<junit-jupiter.version>5.3.2</junit-jupiter.version>
+		<mockito.version>2.24.0</mockito.version>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -83,7 +83,10 @@
 			<version>0.11.2</version>
 			<scope>runtime</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.google.code.bean-matchers</groupId>
@@ -97,14 +100,14 @@
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		  <!-- junit 5 -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
+
+		<!-- junit 5 -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
