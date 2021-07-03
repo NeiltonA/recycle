@@ -14,8 +14,7 @@ public class CooperativeInputMock {
     public static CooperativeInput getMockCooperativeInput() {
         CooperativeInput cooperativeInput = new CooperativeInput();
         cooperativeInput.setCompanyName("Recycle do brasil LTDA");
-        cooperativeInput.setResponsibleName("Juca do brasil LTDA");
-        cooperativeInput.setCpfResponsible("29090890025");
+        cooperativeInput.setFantasyName("Juca do brasil LTDA");
         cooperativeInput.setCnpj("52288720000106");
         cooperativeInput.setUser(UserIdInputMock.getMockUser());
 

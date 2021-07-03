@@ -39,8 +39,7 @@ public class CooperativeServiceTest {
 		Cooperative cooperative = new Cooperative();
 		cooperative.setCnpj("0987898789809");
 		cooperative.setCompanyName("teste");
-		cooperative.setCpfResponsible("0987898789");
-		cooperative.setResponsibleName("Teste");
+		cooperative.setFantasyName("Teste");
 		User user = new User();
 		user.setId(1L);
 		cooperative.setUser(user);
@@ -53,8 +52,7 @@ public class CooperativeServiceTest {
 		Cooperative cooperative = new Cooperative();
 		cooperative.setCnpj("0987898789809");
 		cooperative.setCompanyName("teste");
-		cooperative.setCpfResponsible("0987898789");
-		cooperative.setResponsibleName("Teste");
+		cooperative.setFantasyName("Teste");
 		cooperative.setId(1L);
 		given(repository.findById(1L)).willReturn(Optional.of(cooperative));
 		Cooperative coop = service.findOrFail(1L);

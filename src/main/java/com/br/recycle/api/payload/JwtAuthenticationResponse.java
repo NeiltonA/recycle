@@ -22,9 +22,10 @@ public class JwtAuthenticationResponse {
     private String refreshToken;
     private String type = "Bearer";
     private Long id;
+    private String name;
 
 	public JwtAuthenticationResponse(String accessToken,String flowIndicator, Boolean active,
-			String userType, String refreshToken, Long id) {
+			String userType, String refreshToken, Long id, String name) {
 		this.accessToken = accessToken;
 		//this.expirationDateToken = expirationDateToken;
 		this.flowIndicator = flowIndicator;
@@ -32,6 +33,7 @@ public class JwtAuthenticationResponse {
 		this.userType = userType;
 		this.refreshToken = refreshToken;
 		//this.type = type;
+		this.name = name;
 		this.id = id;
 	}
 	
