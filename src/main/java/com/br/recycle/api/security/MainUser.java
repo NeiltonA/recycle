@@ -13,10 +13,10 @@ import com.br.recycle.api.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MainUser implements UserDetails {
-    private Long id;
+	private static final long serialVersionUID = 1L;
 
+	private Long id;
     private String name;
-
     private String username;
 
     @JsonIgnore
