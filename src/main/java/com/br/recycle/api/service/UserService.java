@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.br.recycle.api.exception.AppException;
 import com.br.recycle.api.exception.BusinessException;
@@ -71,12 +70,14 @@ public class UserService {
 
 	@Transactional
 	public User update(User user) {
+		Optional<User> foundUser = repository.findByEmail(user.getEmail());
 
-		if (StringUtils.isEmpty(user.getRole())) {
-			Object nameGroup = findByGroup(user.getId());
-			user.setRole((RoleName.valueOf(nameGroup.toString())));
+		if (foundUser.isEmpty() || !foundUser.get().getEmail().equals(user.getEmail())) {
+			log.error("Email não pode ser alterado!");
+			throw new BusinessException(
+					String.format("Email não pode ser alterado! %s", user.getEmail()));
+
 		}
-
 		return repository.save(user);
 	}
 

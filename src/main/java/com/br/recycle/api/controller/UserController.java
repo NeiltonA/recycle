@@ -11,14 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,7 +66,7 @@ public class UserController {
 	@Autowired
 	private UserDtoAssembler userDtoAssembler;
 
-	@PreAuthorize("hasRole('USER')")
+	//@PreAuthorize("hasRole('USER')")
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserDtoOut> findAll() {
 		try {
@@ -103,7 +101,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "Method responsible for changing the user")
-	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn user) {
 		try {
@@ -112,6 +110,7 @@ public class UserController {
 			Optional<User> use = userRepository.findById(id);
 			if (use.isPresent()) {
 				us.setId(use.get().getId());
+				us.setPassword(use.get().getPassword());
 				us = service.update(us);
 				return ResponseEntity.ok(new ApiResponse(true, "Usuário alterado com sucesso!"));
 			}
