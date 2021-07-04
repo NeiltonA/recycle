@@ -17,6 +17,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Classe responsável por conter os dados de entrada de cadastro
+ * do usuário para a requisição.
+ */
 @Getter
 @Setter
 @ToString

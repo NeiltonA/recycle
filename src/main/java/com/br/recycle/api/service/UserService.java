@@ -1,6 +1,7 @@
 package com.br.recycle.api.service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -12,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.br.recycle.api.exception.AppException;
 import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.NotAcceptableException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.Role;
 import com.br.recycle.api.model.User;
@@ -28,10 +31,7 @@ import lombok.extern.log4j.Log4j2;
 public class UserService {
 
 	@Autowired
-	private UserRepository repository;
-
-//	@Autowired
-//	private GrupoService cadastroGrupo;
+	private UserRepository userRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -42,31 +42,57 @@ public class UserService {
 	@Autowired
 	RoleRepository roleRepository;
 
+	/**
+	 * Método responsável por buscar todos os usuários cadastrados na base de dados.
+	 * @return {@code List<User>} 
+	 * 		- Caso o retorno da base esteja vazio, retorna que nenhum conteúdo foi encontrado.
+	 * 		- Caso o retorno da base tenha conteúdo, é retorno a lista de usuários.
+	 */
+	public List<User> findAll() {
+		List<User> users = userRepository.findAll();
+		
+		if (users.isEmpty()) {
+			throw new NoContentException("Nenhum usuário cadastrado na aplicação");
+		}
+		return users;
+	}
+	
+	/**
+	 * Método responsável por realizar a comunicação com a base de dados para cadastrar
+	 * o usuário e antes realizar algumas verificações.
+	 * @param {@code User} - user
+	 * @return {@code User}
+	 * 		- Caso o email que é informado no cadastro, seja o mesmo que já esteja cadastrado
+	 * 	é lançado uma exception do tipo <i>NOT ACCEPTABLE</i>
+	 * 		- Caso as senhas infromadas não sejam iguais, é lançada uma esception 
+	 * 	<i>UNPROCESSABLE ENTITY</i>
+	 * 		- Caso o tipo de usuário seja diferente do que é esperado, é lançado uma exception
+	 * 	<i>BUSINESS EXCEPTION</i> informando que o grupo não está correto.
+	 * 		- Caso esteja correto as informações, é cadastrado com sucesso o usuário.
+	 */
 	@Transactional
 	public User save(User user) {
 
-		Optional<User> foundUser = repository.findByEmail(user.getEmail());
+		Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
 
-		if (foundUser.isPresent() && !foundUser.get().equals(user)) {
-			log.error("Email já cadastrado!");
-			throw new BusinessException(
+		if (userOptional.isPresent() && !userOptional.get().equals(user)) {
+			log.error("Email já cadastrado.");
+			throw new NotAcceptableException(
 					String.format("Já existe um usuário cadastrado com o e-mail %s", user.getEmail()));
-
 		}
-		
 		
 		if (!user.getPassword().matches(user.getConfirmPassword())) {
-			throw new BusinessException(
-					String.format("Senhas não conferem."));
+			log.error("Senhas não conferem.");
+			throw new UnprocessableEntityException(
+					String.format("As senhas informadas, não conferem."));
 		}
+		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-
 		Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
-				.orElseThrow(() -> new AppException("Grupo do usuário não definido."));
+				.orElseThrow(() -> new BusinessException("Grupo do usuário não definido."));
 
 		user.setRoles(Collections.singleton(userRole));
-		return repository.save(user);
-
+		return userRepository.save(user);
 	}
 
 	@Transactional
@@ -77,7 +103,7 @@ public class UserService {
 			user.setRole((RoleName.valueOf(nameGroup.toString())));
 		}
 
-		return repository.save(user);
+		return userRepository.save(user);
 	}
 
 	@Transactional
@@ -92,11 +118,19 @@ public class UserService {
 		user.setRole((RoleName.valueOf(nameGroup.toString())));
 		user.setPassword(passwordEncoder.encode(novoPassword));
 
-		return repository.save(user);
+		return userRepository.save(user);
 	}
 
+	/**
+	 * Método responsável por buscar um usuário na base de dados por 
+	 * id que está cadastrado.
+	 * @param {@code Long} - userId 
+	 * @return {@code User} - 
+	 * 		- Caso encontrar o usuário por ID, é retornado os dados do usuário.
+	 * 		- Caso não encontre o registro na base, é retornado um erro de usuário na encontrado.
+	 */
 	public User fetchOrFail(Long userId) {
-		return repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 	}
 
 	public Object findByGroup(Long userId) {
@@ -106,5 +140,7 @@ public class UserService {
 				.getSingleResult();
 		return group;
 	}
+
+
 
 }

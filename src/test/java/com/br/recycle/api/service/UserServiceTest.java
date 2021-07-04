@@ -46,7 +46,7 @@ public class UserServiceTest {
 
 		given(userRepository.findById(id)).willReturn(Optional.of(user));
 
-		User expected  =userService.fetchOrFail(id);
+		User expected  = userService.fetchOrFail(id);
 
 		assertThat(expected).isNotNull();
 

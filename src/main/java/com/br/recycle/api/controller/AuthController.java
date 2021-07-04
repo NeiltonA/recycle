@@ -34,8 +34,8 @@ import com.br.recycle.api.validation.AuthValidation;
 import io.swagger.annotations.Api;
 
 /**
- * Classe responsável por ser a Contreller e conter o Endpoint 
- * de autenticação da aplicação.
+ * Classe responsável por ser a Contreller e conter o Endpoint de autenticação
+ * da aplicação.
  */
 @RestController
 @RequestMapping(UriConstants.URI_BASE_AUTH)
@@ -45,22 +45,23 @@ public class AuthController {
 	private AuthenticationManager authenticationManager;
 	private RefreshTokenService refreshTokenService;
 	private JwtTokenProvider tokenProvider;
-	
+
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService, 
-						  JwtTokenProvider tokenProvider) {
+	public AuthController(AuthenticationManager authenticationManager, RefreshTokenService refreshTokenService,
+			JwtTokenProvider tokenProvider) {
 		this.authenticationManager = authenticationManager;
 		this.refreshTokenService = refreshTokenService;
 		this.tokenProvider = tokenProvider;
 	}
 
 	/**
-	 * Método responsável por autenticar os dados de login do usuário para acessar a aplicação.
+	 * Método responsável por autenticar os dados de login do usuário para acessar a
+	 * aplicação.
+	 * 
 	 * @param {@code LoginRequest} - loginRequest
-	 * @return {@code ResponseEntity<?>} 
-	 * 		- Uma resposta de saída da aplicação com os dados da autenticação do usuário.
-	 * 		- Caso tenha algum erro, retorna o status <b>403</b> informando que 
-	 *		o usuário ou senha está inválido.
+	 * @return {@code ResponseEntity<?>} - Uma resposta de saída da aplicação com os
+	 *         dados da autenticação do usuário. - Caso tenha algum erro, retorna o
+	 *         status <b>403</b> informando que o usuário ou senha está inválido.
 	 */
 	@PostMapping(UriConstants.URI_AUTH_ACCESS)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -74,60 +75,59 @@ public class AuthController {
 			String jwt = tokenProvider.generateJwtToken(userDetails);
 			RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-			JwtAuthenticationResponse jwtAuthenticationResponse = 
-					AuthAssembler.toModelResponse(jwt, userDetails, refreshToken);
-		
+			JwtAuthenticationResponse jwtAuthenticationResponse = AuthAssembler.toModelResponse(jwt, userDetails,
+					refreshToken);
+
 			return ResponseEntity.ok(jwtAuthenticationResponse);
-			
+
 		} catch (Exception exception) {
 			throw new UserInvalidException("Usuário ou senha, ínvalido!");
 		}
-
 	}
 
 	/**
 	 * Método responsável autenticar um <i>refreshToken</i> informado na requisição.
+	 * 
 	 * @param {@code TokenRefreshRequest} - refreshRequest
-	 * @return {@code ResponseEntity<?>} 
-	 * 		- Uma resposta de saída da aplicação com o token e o refreshToken
-	 * 		- Caso um dado seja informado inválido, retorna o status <b>400</b>, informando
-	 * 		onde está o erro na requisição e o motivo.
-	 * 		- Caso tenha algum erro, retorna o status <b>403</b> informando que 
-	 *		que o token não foi encontrado.
-	 *		- Caso tenha algum erro, retorna o status <b>500</b> informando que
-	 *		houve erro na aplicação. 
+	 * @return {@code ResponseEntity<?>} - Uma resposta de saída da aplicação com o
+	 *         token e o refreshToken - Caso um dado seja informado inválido,
+	 *         retorna o status <b>400</b>, informando onde está o erro na
+	 *         requisição e o motivo. - Caso tenha algum erro, retorna o status
+	 *         <b>403</b> informando que que o token não foi encontrado. - Caso
+	 *         tenha algum erro, retorna o status <b>500</b> informando que houve
+	 *         erro na aplicação.
 	 */
 	@PostMapping(UriConstants.URI_AUTH_REFRESH)
 	public ResponseEntity<?> refreshtoken(@RequestBody TokenRefreshRequest refreshRequest) {
 		try {
-			
+
 			String requestRefreshToken = AuthValidation.validate(refreshRequest.getRefreshToken());
 
-			return refreshTokenService.findByToken(requestRefreshToken)
-					.map(refreshTokenService::verifyExpiration)
-					.map(RefreshToken::getUser)
-					.map(user -> {
+			return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+					.map(RefreshToken::getUser).map(user -> {
 						String token = tokenProvider.generateTokenFromUsername(user.getEmail());
 						return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-					}).orElseThrow(
-							() -> new TokenRefreshException("O token de atualização não está no banco de dados!"));
-		
+					})
+					.orElseThrow(() -> new TokenRefreshException("O token de atualização não está no banco de dados!"));
+
 		} catch (BadRequestException exception) {
 			throw new BadRequestException(exception.getMessage(), exception);
-		
+
 		} catch (TokenRefreshException exception) {
 			throw new TokenRefreshException(exception.getMessage(), exception);
-		
+
 		} catch (Exception e) {
 			throw new InternalServerException(e.getMessage(), e);
 		}
 	}
 
 	/**
-	 * Método responsável realizar o logout da aplicação, com os dados de sair da aplicação.
+	 * Método responsável realizar o logout da aplicação, com os dados de sair da
+	 * aplicação.
+	 * 
 	 * @param {@code LogOutRequest} - logOutRequest
-	 * @return {@code ResponseEntity<?>} 
-	 * 		- Uma resposta de saída da aplicação no qual o logout foi realizado com sucesso
+	 * @return {@code ResponseEntity<?>} - Uma resposta de saída da aplicação no
+	 *         qual o logout foi realizado com sucesso
 	 */
 	@PostMapping(UriConstants.URI_AUTH_LOGOUT)
 	public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
