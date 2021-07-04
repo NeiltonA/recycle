@@ -56,7 +56,7 @@ public class UserController {
 	private PwService pwService;
 	private SendEmail sendEmail;
 	private UserDtoAssembler userDtoAssembler;
-
+	
 	@Autowired
 	public UserController(UserRepository userRepository, UserService userService, PwService pwService,
 			SendEmail sendEmail, UserDtoAssembler userDtoAssembler) {
