@@ -12,6 +12,7 @@ public enum ProblemType {
     UNREADABLE_MESSAGE("/mensagem-incompreensivel", "Mensagem incompreensível"),
     RESOURCE_NOT_FOUND("/recurso-nao-encontrado", "Recurso não encontrado"),
     ENTITY_IN_USE("/entidade-em-uso", "Entidade em uso"),
+    UNPROCESSABLE_ENTITY("/entidade-nao-processada", "Entidade não processada"),
     BUSINESS_ERROR("/erro-na-requisicao", "Falha na chamada");
 
     private String title;

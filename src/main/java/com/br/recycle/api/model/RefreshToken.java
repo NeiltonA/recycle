@@ -15,19 +15,18 @@ import lombok.Data;
 @Data
 @Entity(name = "refreshtoken")
 public class RefreshToken {
-	
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
 
-  @OneToOne
-  @JoinColumn(name = "id_user")
-  private User user;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
 
-  @Column(nullable = false, unique = true)
-  private String token;
+	@OneToOne
+	@JoinColumn(name = "id_user")
+	private User user;
 
-  @Column(nullable = false)
-  private Instant expiryDate;
+	@Column(nullable = false, unique = true)
+	private String token;
 
+	@Column(nullable = false)
+	private Instant expiryDate;
 }

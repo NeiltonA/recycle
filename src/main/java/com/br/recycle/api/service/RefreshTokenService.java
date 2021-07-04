@@ -21,55 +21,54 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class RefreshTokenService {
-	
 
-  @Value("${recycle.jwtRefreshExpirationInMs}")
-  private Long refreshTokenDurationMs;
+	@Value("${recycle.jwtRefreshExpirationInMs}")
+	private Long refreshTokenDurationMs;
 
-  @Autowired
-  private RefreshTokenRepository refreshTokenRepository;
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
 
-  @Value("${recycle.jwtSecret}")
-  private String jwtSecret;
-  
-  @Autowired
-  private UserRepository userRepository;
+	@Value("${recycle.jwtSecret}")
+	private String jwtSecret;
 
-  public Optional<RefreshToken> findByToken(String token) {
-    return refreshTokenRepository.findByToken(token);
-  }
+	@Autowired
+	private UserRepository userRepository;
 
-  public RefreshToken createRefreshToken(Long userId) {
-    RefreshToken refreshToken = new RefreshToken();
+	public Optional<RefreshToken> findByToken(String token) {
+		return refreshTokenRepository.findByToken(token);
+	}
 
-    refreshToken.setUser(userRepository.findById(userId).get());
-    refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
-    
-    Date now = new Date();
-    Date expiryDate = new Date(now.getTime());
-	
 	@SuppressWarnings("deprecation")
-	String refreshtoken = (Jwts.builder().setSubject(Long.toString(userId)).setIssuedAt(new Date())
-			.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact());
-	
-    refreshToken.setToken(refreshtoken);
+	public RefreshToken createRefreshToken(Long userId) {
+		RefreshToken refreshToken = new RefreshToken();
 
-    refreshToken = refreshTokenRepository.save(refreshToken);
-    return refreshToken;
-  }
+		refreshToken.setUser(userRepository.findById(userId).get());
+		refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
 
-  public RefreshToken verifyExpiration(RefreshToken token) {
-    if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-      refreshTokenRepository.delete(token);
-      throw new TokenRefreshException("O token de atualização expirou. Faça uma nova solicitação de login!");
-    }
+		Date now = new Date();
+		Date expiryDate = new Date(now.getTime());
 
-    return token;
-  }
+		String refreshtoken = (Jwts.builder().setSubject(Long.toString(userId)).setIssuedAt(new Date())
+				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact());
 
-  @Transactional
-  public int deleteByUserId(Long userId) {
-    return refreshTokenRepository.deleteByUser(userRepository.findById(userId)
-    		.orElseThrow(() -> new UserNotFoundException(userId)));
-  }
+		refreshToken.setToken(refreshtoken);
+
+		refreshToken = refreshTokenRepository.save(refreshToken);
+		return refreshToken;
+	}
+
+	public RefreshToken verifyExpiration(RefreshToken token) {
+		if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+			refreshTokenRepository.delete(token);
+			throw new TokenRefreshException("O token de atualização expirou. Faça uma nova solicitação de login!");
+		}
+
+		return token;
+	}
+
+	@Transactional
+	public int deleteByUserId(Long userId) {
+		return refreshTokenRepository
+				.deleteByUser(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
+	}
 }

@@ -11,7 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 import com.br.recycle.api.exception.BadRequestException;
+import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.TokenRefreshException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.exception.UserNotFoundException;
 
 /**
@@ -37,6 +40,19 @@ public class ApiExceptionHandlerTest {
 	
 	/**
 	 * Método responsável por validar o cenário de exceção quando é lançada
+	 * uma exception <b>NoContent</b> e o ControllerAdvice trata.
+	 */
+	@Test
+	public void testHandleNoContentSuccess() {
+		NoContentException noContentException = new NoContentException("Não existe conteúdo na base de dados");
+		
+		ResponseEntity<?> handleNoContent = apiExceptionHandler.handleNoContent(noContentException, webRequest);
+		assertNotNull(handleNoContent);
+		assertEquals(HttpStatus.NO_CONTENT, handleNoContent.getStatusCode());
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de exceção quando é lançada
 	 * uma exception <b>BadRequest</b> e o ControllerAdvice trata.
 	 */
 	@Test
@@ -46,6 +62,32 @@ public class ApiExceptionHandlerTest {
 		ResponseEntity<Object> handleBadRequest = apiExceptionHandler.handleBadRequest(badRequestException, webRequest);
 		assertNotNull(handleBadRequest);
 		assertEquals(HttpStatus.BAD_REQUEST, handleBadRequest.getStatusCode());
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de exceção quando é lançada
+	 * uma exception <b>NotAcceptable</b> e o ControllerAdvice trata.
+	 */
+	@Test
+	public void testHandleNotAcceptableSuccess() {
+		NotAcceptableException notAcceptableException = new NotAcceptableException("Requisição não aceita pelo servidor");
+		
+		ResponseEntity<Object> notAcceptable = apiExceptionHandler.handleNotAcceptable(notAcceptableException, webRequest);
+		assertNotNull(notAcceptable);
+		assertEquals(HttpStatus.NOT_ACCEPTABLE, notAcceptable.getStatusCode());
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de exceção quando é lançada
+	 * uma exception <b>NotAcceptable</b> e o ControllerAdvice trata.
+	 */
+	@Test
+	public void testHandleUnprocessableEntitysSuccess() {
+		UnprocessableEntityException unprocessableEntityException = new UnprocessableEntityException("Entidade não processada pelo servidor");
+		
+		ResponseEntity<Object> unprocessableEntity = apiExceptionHandler.handleUnprocessableEntitys(unprocessableEntityException, webRequest);
+		assertNotNull(unprocessableEntity);
+		assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, unprocessableEntity.getStatusCode());
 	}
 	
 	/**

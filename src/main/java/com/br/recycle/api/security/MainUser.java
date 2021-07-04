@@ -12,118 +12,118 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.br.recycle.api.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Classe responsável por mapear os dados do usuário principal para 
+ * acessar a aplicação.
+ */
 public class MainUser implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-    private String name;
-    private String username;
+	private String name;
+	private String username;
 
-    @JsonIgnore
-    private String email;
+	@JsonIgnore
+	private String email;
 
-    @JsonIgnore
-    private Boolean active;
+	@JsonIgnore
+	private Boolean active;
 
-    @JsonIgnore
-    private String flowIndicator;
-    @JsonIgnore
-    private String password;
+	@JsonIgnore
+	private String flowIndicator;
 
-    private Collection<? extends GrantedAuthority> authorities;
+	@JsonIgnore
+	private String password;
 
-    public MainUser(Long id, String name, String email, Boolean active, String flowIndicator, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-        this.flowIndicator = flowIndicator;
-        this.active = active;
-    }
+	private Collection<? extends GrantedAuthority> authorities;
 
-    public static MainUser create(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getName())
-        ).collect(Collectors.toList());
+	public MainUser(Long id, String name, String email, Boolean active, String flowIndicator, String password,
+			Collection<? extends GrantedAuthority> authorities) {
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.authorities = authorities;
+		this.flowIndicator = flowIndicator;
+		this.active = active;
+	}
 
-        return new MainUser(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getActive(),
-                user.getFlowIndicator().name(),
-                user.getPassword(),
-                authorities
-        );
-    }
+	public static MainUser create(User user) {
+		List<GrantedAuthority> authorities = user.getRoles().stream()
+				.map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 
-    public Long getId() {
-        return id;
-    }
+		return new MainUser(user.getId(), user.getName(), user.getEmail(), user.getActive(),
+				user.getFlowIndicator().name(), user.getPassword(), authorities);
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Boolean getActive() {
-        return active;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public String getFlowIndicator() {
-        return flowIndicator;
-    }
+	public Boolean getActive() {
+		return active;
+	}
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+	public String getFlowIndicator() {
+		return flowIndicator;
+	}
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public String getUsername() {
+		return username;
+	}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
+	@Override
+	public String getPassword() {
+		return password;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MainUser that = (MainUser) o;
-        return Objects.equals(id, that.id);
-    }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		MainUser that = (MainUser) o;
+		return Objects.equals(id, that.id);
+	}
 
-        return Objects.hash(id);
-    }
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(id);
+	}
 }

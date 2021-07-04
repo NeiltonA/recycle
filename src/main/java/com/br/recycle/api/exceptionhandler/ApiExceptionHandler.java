@@ -29,7 +29,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.InternalServerException;
+import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.TokenRefreshException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.exception.UserInvalidException;
 import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.exception.BadRequestException;
@@ -117,6 +120,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	/**
+	 * Método responsável por tratar a exceção do tipo <b>NO CONTENT - 204</b>,
+	 * quando a requisição é realizada com sucesso, mas a base de dados não tem conteúdo.
+	 * Essa resposta não tem um conteúdo para apresentar.
+	 * @param {@code Exception} - exception
+	 * @param {@code WebRequest} - request
+	 */
+	@ExceptionHandler(NoContentException.class)
+	public ResponseEntity<?> handleNoContent(Exception exception, WebRequest request) {		
+		return ResponseEntity.noContent().build();
+	}
+	
+	/**
 	 * Método responsável por tratar a exceção do tipo <b>BAD REQUEST - 400</b>,
 	 * quando um valor do campo está inválido.
 	 * @param {@code Exception} - exception
@@ -128,6 +143,52 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleBadRequest(Exception exception, WebRequest request) {
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		ProblemType problemType = ProblemType.INVALID_DATA;
+		String detail = exception.getMessage();
+		
+		log.error(exception.getMessage(), exception);
+		
+		Problem problem = createProblemBuilder(httpStatus, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
+	}
+	
+	/**
+	 * Método responsável por tratar a exceção do tipo <b>NOT ACCEPTABLE - 406</b>,
+	 * quando uma resposta no servidor não é aceita
+	 * @param {@code Exception} - exception
+	 * @param {@code WebRequest} - request
+	 * @return {@code ResponseEntity<Object>} 
+	 * 		- retorna um objeto em formato JSON com o retorno 406.
+	 */
+	@ExceptionHandler(NotAcceptableException.class)
+	public ResponseEntity<Object> handleNotAcceptable(Exception exception, WebRequest request) {
+		HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+		ProblemType problemType = ProblemType.ENTITY_IN_USE;
+		String detail = exception.getMessage();
+		
+		log.error(exception.getMessage(), exception);
+		
+		Problem problem = createProblemBuilder(httpStatus, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
+	}
+	
+	/**
+	 * Método responsável por tratar a exceção do tipo <b>UNPROCESSABLE ENTITY - 422</b>,
+	 * quando uma entidade não é processada pelo servidor
+	 * @param {@code Exception} - exception
+	 * @param {@code WebRequest} - request
+	 * @return {@code ResponseEntity<Object>} 
+	 * 		- retorna um objeto em formato JSON com o retorno 422.
+	 */
+	@ExceptionHandler(UnprocessableEntityException.class)
+	public ResponseEntity<Object> handleUnprocessableEntitys(Exception exception, WebRequest request) {
+		HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+		ProblemType problemType = ProblemType.UNPROCESSABLE_ENTITY;
 		String detail = exception.getMessage();
 		
 		log.error(exception.getMessage(), exception);
@@ -160,6 +221,63 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 		
 		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
+	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleEntityNotFoundException(AccessDeniedException ex, WebRequest request) {
+
+		HttpStatus status = HttpStatus.FORBIDDEN;
+		ProblemType problemType = ProblemType.ACESS_DENIED;
+		String detail = ex.getMessage();
+
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.userMessage("Você não possui permissão para executar essa operação.")
+				.build();
+
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
+	@ExceptionHandler({ EntityNotFoundException.class, UserNotFoundException.class })
+	public ResponseEntity<?> handleEntityNotFoundException(Exception ex, WebRequest request) {
+		
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
+		String detail = ex.getMessage();
+		
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
+	@ExceptionHandler(EntityInUseException.class)
+	public ResponseEntity<?> handleEntityInUseException(EntityInUseException ex, WebRequest request) {
+		
+		HttpStatus status = HttpStatus.CONFLICT;
+		ProblemType problemType = ProblemType.ENTITY_IN_USE;
+		String detail = ex.getMessage();
+		
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<?> handleBusinessException(BusinessException ex, WebRequest request) {
+
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		ProblemType problemType = ProblemType.BUSINESS_ERROR;
+		String detail = ex.getMessage();
+		
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 	}
 	
 	@Override
@@ -260,62 +378,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, headers, status, request);
 	}
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<?> handleEntityNotFoundException(AccessDeniedException ex, WebRequest request) {
 
-		HttpStatus status = HttpStatus.FORBIDDEN;
-		ProblemType problemType = ProblemType.ACESS_DENIED;
-		String detail = ex.getMessage();
-
-		Problem problem = createProblemBuilder(status, problemType, detail)
-				.userMessage(detail)
-				.userMessage("Você não possui permissão para executar essa operação.")
-				.build();
-
-		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-	}
-	
-	@ExceptionHandler({ EntityNotFoundException.class, UserNotFoundException.class })
-	public ResponseEntity<?> handleEntityNotFoundException(Exception ex, WebRequest request) {
-		
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		ProblemType problemType = ProblemType.RESOURCE_NOT_FOUND;
-		String detail = ex.getMessage();
-		
-		Problem problem = createProblemBuilder(status, problemType, detail)
-				.userMessage(detail)
-				.build();
-		
-		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-	}
-	
-	@ExceptionHandler(EntityInUseException.class)
-	public ResponseEntity<?> handleEntityInUseException(EntityInUseException ex, WebRequest request) {
-		
-		HttpStatus status = HttpStatus.CONFLICT;
-		ProblemType problemType = ProblemType.ENTITY_IN_USE;
-		String detail = ex.getMessage();
-		
-		Problem problem = createProblemBuilder(status, problemType, detail)
-				.userMessage(detail)
-				.build();
-		
-		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-	}
-	
-	@ExceptionHandler(BusinessException.class)
-	public ResponseEntity<?> handleBusinessException(BusinessException ex, WebRequest request) {
-
-		HttpStatus status = HttpStatus.BAD_REQUEST;
-		ProblemType problemType = ProblemType.BUSINESS_ERROR;
-		String detail = ex.getMessage();
-		
-		Problem problem = createProblemBuilder(status, problemType, detail)
-				.userMessage(detail)
-				.build();
-		
-		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-	}
 	
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
