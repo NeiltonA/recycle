@@ -56,7 +56,7 @@ public class UserController {
 	private PwService pwService;
 	private SendEmail sendEmail;
 	private UserDtoAssembler userDtoAssembler;
-	
+
 	@Autowired
 	public UserController(UserRepository userRepository, UserService userService, PwService pwService,
 			SendEmail sendEmail, UserDtoAssembler userDtoAssembler) {
@@ -70,35 +70,40 @@ public class UserController {
 	/**
 	 * Método responsável por conter o endpoint que busca todos os usuários na base
 	 * de dados.
+	 * 
 	 * @return {@code List<UserDtoOut} - Retorna uma lista de usuários.
 	 */
-	//@PreAuthorize("hasRole('USER')")
+	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for find all users")
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserDtoOut> findAll() {
 		List<User> users = userService.findAll();
+		
 		return userDtoAssembler.toCollectionModel(users);
 	}
 
 	/**
 	 * Método responsável por conter o endpoint que busca o usuário por ID na base
 	 * de dados.
+	 * 
 	 * @param {@codeLong} - id
 	 * @return {@code UserDtoOut} - Retorna os dados do usuário por ID
 	 */
 	@ApiOperation(value = "Method responsible for find user by id")
 	@GetMapping(value = UriConstants.URI_USER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDtoOut findById(@PathVariable("id") Long id) {
-		User usersList = userService.fetchOrFail(id);
+		User usersList = userService.findById(id);
+		
 		return userDtoAssembler.toModel(usersList);
 	}
 
 	/**
-	 * Método responsável por conter o endpoint que cadastra o usuário de acordo
-	 * com os dados informados na entrada.
+	 * Método responsável por conter o endpoint que cadastra o usuário de acordo com
+	 * os dados informados na entrada.
+	 * 
 	 * @param {@code UserInput} - userInput
 	 * @return {@code ResponseEntity<ApiResponse>} - Uma entidade de API de sucesso
-	 * 		do cadastro de sucesso do usuário.
+	 *         do cadastro de sucesso do usuário.
 	 */
 	@ApiOperation(value = "Method responsible for user's a create")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -106,27 +111,27 @@ public class UserController {
 	public ResponseEntity<ApiResponse> save(@RequestBody @Valid UserInput userInput) {
 		User user = userDtoAssembler.toDomainObject(userInput);
 		userService.save(user);
+		
 		log.info("Registered successfully -> []");
 		return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Usuário registrado com sucesso!"));
 	}
 
-	@ApiOperation(value = "Method responsible for  data update user")
+	/**
+	 * Método responsável por conter o endpoint que atualizar parcialmente o usuário de acordo com
+	 * os dados informados na entrada e o id do usuário.
+	 * 
+	 * @param {@code Long} - id 
+	 * @param {@code Long} - userDtoIn
+	 * @return {@code ResponseEntity<ApiResponse>} - Uma entidade de API de sucesso
+	 *         de atualização de sucesso do usuário.
+	 */
+	@ApiOperation(value = "Method responsible for updating data the user")
 	@PatchMapping(value = UriConstants.URI_USER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Object update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn userDtoIn) {
-		try {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn userDtoIn) {
+		User user = userDtoAssembler.toDomainObject(userDtoIn);
+		user = userService.update(user, id);
 
-			User user = userDtoAssembler.toDomainObject(userDtoIn);
-			Optional<User> userOptional = userRepository.findById(id);
-			if (userOptional.isPresent()) {
-				user.setId(userOptional.get().getId());
-				user.setPassword(userOptional.get().getPassword());
-				user = userService.update(user);
-				return ResponseEntity.ok(new ApiResponse(true, "Usuário alterado com sucesso!"));
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+		return ResponseEntity.ok(new ApiResponse(true, "Usuário alterado com sucesso!"));
 	}
 
 	@ResponseStatus(HttpStatus.OK)

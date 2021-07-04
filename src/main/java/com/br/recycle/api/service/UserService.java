@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.NoContentException;
@@ -95,20 +94,36 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
+	/**
+	 * Método de serviço para atualizar os dados de usuário de acordo com o Id
+	 * informado. Caso o id não seja encontrado na busca, é retornado que os dados 
+	 * não foram encontrados.
+	 * @param {@code User} - user
+	 * @param {@code Long} - id
+	 * @return {@code User} 
+	 * 		- Caso o email informado na atualização seja diferente do email cadastrado
+	 * 	retorna que a transação nao pode ser aceita.
+	 * 		- Caso esteja tudo correto, os dados serão atualizados e salvo na base de dados.
+	 */
 	@Transactional
-	public User update(User user) {
+	public User update(User user, Long id) {
+		User userActual = findById(id);
 
-		if (StringUtils.isEmpty(user.getRole())) {
-			Object nameGroup = findByGroup(user.getId());
-			user.setRole((RoleName.valueOf(nameGroup.toString())));
+		user.setId(userActual.getId());
+		user.setPassword(userActual.getPassword());
+		user.setRoles(userActual.getRoles());
+		
+		if (!userActual.getEmail().matches(user.getEmail())) {
+			log.error("Email não pode ser alterado!");
+			throw new NotAcceptableException(
+					String.format("Email não pode ser alterado! %s", user.getEmail()));
 		}
-
 		return userRepository.save(user);
 	}
 
 	@Transactional
 	public User changePassword(Long userId, String passwordAtual, String novoPassword) {
-		User user = fetchOrFail(userId);
+		User user = findById(userId);
 
 		if (!passwordEncoder.matches(passwordAtual, user.getPassword())) {
 			throw new BusinessException("A senha atual informada não coincide com a password do user.");
@@ -129,7 +144,7 @@ public class UserService {
 	 * 		- Caso encontrar o usuário por ID, é retornado os dados do usuário.
 	 * 		- Caso não encontre o registro na base, é retornado um erro de usuário na encontrado.
 	 */
-	public User fetchOrFail(Long userId) {
+	public User findById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 	}
 

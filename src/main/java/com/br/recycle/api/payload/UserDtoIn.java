@@ -1,8 +1,11 @@
 package com.br.recycle.api.payload;
 
+import javax.validation.constraints.NotEmpty;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +17,6 @@ import lombok.ToString;
 public class UserDtoIn{
 
 	
-
 	private String name;
 	private String email;
 	private String cellPhone;
