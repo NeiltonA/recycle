@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
@@ -106,7 +106,7 @@ public class UserService {
 		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
-				.orElseThrow(() -> new BusinessException("Grupo do usuário não definido."));
+				.orElseThrow(() -> new EntityNotFoundException("Grupo do usuário não definido."));
 
 		user.setRoles(Collections.singleton(userRole));
 		return userRepository.save(user);

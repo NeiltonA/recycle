@@ -19,8 +19,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.NotAcceptableException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.Flow;
 import com.br.recycle.api.model.Role;
@@ -97,15 +99,39 @@ public class UserServiceTest {
 	
 	/**
 	 * Método responsável por realizar o cadastro de um usuário na base de dados
-	 * e salvar esses dados.
+	 * e lançar a exception relacionado os emails são diferentes.
 	 */
 	@Test
 	public void testSaveNotAcceptable() {
 		
 		given(userRepository.findByEmail(getMockUserRequestErro().getEmail())).willReturn(Optional.of(getMockUserRequest()));
 
-
 		assertThrows(NotAcceptableException.class, () -> userService.save(getMockUserRequestErro()));	
+	}
+	
+	/**
+	 * Método responsável por realizar o cadastro de um usuário na base de dados
+	 * e lançar a exception relacionado as senhas são diferentes.
+	 */
+	@Test
+	public void testSaveUnprocessableEntity() {
+		
+		given(userRepository.findByEmail(getMockUserRequestErro().getEmail())).willReturn(Optional.empty());
+		
+		assertThrows(UnprocessableEntityException.class, () -> userService.save(getMockUserRequestErro()));	
+	}
+
+	/**
+	 * Método responsável por realizar o cadastro de um usuário na base de dados
+	 * e lançar a exception relacionado ao grupo de usuário.
+	 */
+	@Test
+	public void testSaveEntityNotFound() {
+		
+		given(userRepository.findByEmail(getMockUserRequest().getEmail())).willReturn(Optional.empty());
+		given(passwordEncoder.encode(getMockUserRequest().getPassword())).willReturn("$2a$10$WXaRSUd08sUk67sQvxTDZO0XT7vVl2iWDJpcZAgP/xUuIncV6J/UC"); 
+
+		assertThrows(EntityNotFoundException.class, () -> userService.save(getMockUserRequest()));	
 	}
 
 	/**
@@ -134,7 +160,7 @@ public class UserServiceTest {
 		assertAll(
 				() -> assertEquals(Long.valueOf(1), user.getId()),
 				() -> assertEquals("Caio Henrique Teste", user.getName()),
-				() -> assertEquals("caio.cbastos@hotmail.com", user.getEmail()),
+				() -> assertEquals("caio12bastos@gmail.com", user.getEmail()),
 				() -> assertEquals(RoleName.ROLE_USER, user.getRole()),
 				() -> assertEquals("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy", user.getPassword()),
 				() -> assertEquals("11983512009", user.getCellPhone()),
@@ -143,13 +169,58 @@ public class UserServiceTest {
 		);
 	}
 	
+	/**
+	 * Método responsável por validar o cenário de procurar 
+	 * o id do usuário onde não se encontra na base de dados.
+	 */
 	@Test
 	public void testFindByIdNotFound() {
 		given(userRepository.findById(id)).willThrow(new UserNotFoundException());
 		
 		assertThrows(UserNotFoundException.class, () -> userService.findById(id));
 	}
+	
+	/**
+	 * Método responsável por validar o cenário onde é atualizado 
+	 * em partes os dados de usuário.
+	 */
+	@Test
+	public void testUpdateSuccess() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUser()));
+		doReturn(getMockUser()).when(userRepository).save(getMockUser());
 
+		User user = userService.update(getMockUser(), 1L);
+		assertNotNull(user);
+	}
+	
+	/**
+	 * Método responsável por validar o cenário onde é os emails
+	 * são diferentes.
+	 */
+	@Test
+	public void testUpdateNotAcceptable() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUserRequestErro()));
+
+		assertThrows(NotAcceptableException.class, () -> userService.update(getMockUser(), 1L));
+
+	}
+	
+	/**
+	 * Método responsável por realizar a mudança na senha na base de dados
+	 * de acordo com o id do usuário.
+	 */
+	@Test
+	public void testChangePasswordSuccess() {
+		
+		given(userRepository.findById(1L)).willReturn(Optional.of(getMockUserRequestSave()));
+		doReturn(getMockUserRequest()).when(userRepository).save(getMockUserRequest());
+
+		User userResponse = userService.changePassword(1L, "caioBastos123", "caioBastos1234");
+		assertNotNull(userResponse);	
+	}
+
+	//User(id=4, name=Caio Henrique do Carmo Bastos, email=caio@gmail.com, role=null, password=$2a$10$WXaRSUd08sUk67sQvxTDZO0XT7vVl2iWDJpcZAgP/xUuIncV6J/UC, confirmPassword=null, cellPhone=11983512009, individualRegistration=47150956882, flowIndicator=C, roles=[Role(id=1, name=ROLE_USER)], token=Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNjI1NDM4NjQ1LCJleHAiOjE2MjU0OTkxMjV9.F0hDkwL2x0vdGDQAWTHQZbxfemOa_sCnWsMqO46CcWPHJbMvAc1CXFsim7caaO-H-asNuH6Ox6-YKBMeFByovw, tokenCreationDate=2021-07-04T19:44:06, active=true)
+	
 	private List<User> getMockUsers() {
 		User user = new User();
 		user.setId(1L);
@@ -182,7 +253,7 @@ public class UserServiceTest {
 		User user = new User();
 		user.setId(1L);
 		user.setName("Caio Henrique Teste");
-		user.setEmail("caio.cbastos@hotmail.com");
+		user.setEmail("caio12bastos@gmail.com");
 		user.setRole(RoleName.ROLE_USER);
 		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
 		user.setCellPhone("11983512009");
@@ -230,7 +301,7 @@ public class UserServiceTest {
 		user.setEmail("caio.cbastos@hotmail.com");
 		user.setRole(RoleName.ROLE_USER);
 		user.setPassword("$2a$10$WXaRSUd08sUk67sQvxTDZO0XT7vVl2iWDJpcZAgP/xUuIncV6J/UC");
-		user.setConfirmPassword("caioBastos123");
+		user.setConfirmPassword("caioBastos1");
 		user.setCellPhone("11983512009");
 		user.setIndividualRegistration("61061700020");
 		user.setFlowIndicator(Flow.D);
