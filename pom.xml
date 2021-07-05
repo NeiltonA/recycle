@@ -195,6 +195,26 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>1.6.4</version>
+					<configuration>
+						<targetClasses>
+							<param>com.br.recycle.api.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>com.br.recycle.api.*</param>
+						</targetTests>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-junit5-plugin</artifactId>
+							<version>0.14</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 			<!-- Maven plugin to use perticular java version to compile code -->
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
 				<configuration> <source>1.8</source> <target>1.8</target> </configuration> 

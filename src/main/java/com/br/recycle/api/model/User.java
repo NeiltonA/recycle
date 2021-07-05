@@ -31,14 +31,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Entity
-
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "email" }) })
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Entity
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "email" }) })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 7422560922720116772L;
