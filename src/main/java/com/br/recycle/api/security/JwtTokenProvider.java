@@ -27,11 +27,12 @@ public class JwtTokenProvider {
 	private int jwtExpirationInMs;
 
 	public String generateJwtToken(MainUser userPrincipal) {
-		return generateTokenFromUsername(userPrincipal.getEmail());
+		return generateTokenFromUsername(userPrincipal.getEmail(), userPrincipal);
 	}
 
-	public String generateTokenFromUsername(String username) {
+	public String generateTokenFromUsername(String username, MainUser userPrincipal) {
 		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+				.setId(userPrincipal.getId().toString())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
