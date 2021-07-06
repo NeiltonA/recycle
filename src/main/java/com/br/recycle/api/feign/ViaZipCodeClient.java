@@ -5,10 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.br.recycle.api.bean.AddressResponseBean;
+import com.br.recycle.api.commons.UriConstants;
 
-@FeignClient(url="https://viacep.com.br/ws/", name = "viacep")
+@FeignClient(url = UriConstants.URI_ZIP_CORREIO, name = "viacep")
 public interface ViaZipCodeClient {
-	
-	 @GetMapping("{zipCode}/json")
+
+	@GetMapping("{zipCode}/json")
 	AddressResponseBean searchAddress(@PathVariable("zipCode") String zipCode);
 }
