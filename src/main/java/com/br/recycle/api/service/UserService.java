@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
@@ -25,21 +25,27 @@ import com.br.recycle.api.repository.UserRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Classe responsável por realizar os serviços das transações de comunicação
+ * com a base de dados. 
+ */
 @Service
 @Log4j2
 public class UserService {
 
-	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
 	private PasswordEncoder passwordEncoder;
+	private RoleRepository roleRepository;
 
 	@PersistenceContext
 	private EntityManager manager;
 
 	@Autowired
-	RoleRepository roleRepository;
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.roleRepository = roleRepository;
+	}
 
 	/**
 	 * Método responsável por buscar todos os usuários cadastrados na base de dados.
@@ -54,6 +60,18 @@ public class UserService {
 			throw new NoContentException("Nenhum usuário cadastrado na aplicação");
 		}
 		return users;
+	}
+	
+	/**
+	 * Método responsável por realizar o serviço de deletar um usuário.
+	 * Primeiro busca o usuário na base de acordo com o Id dele e em seguida
+	 * realiza a deleção da base de dados.
+	 * @param {@code Long} - id
+	 */
+	public void deleteById(Long id) {
+		findById(id);
+		
+		userRepository.deleteById(id);
 	}
 	
 	/**
@@ -88,7 +106,7 @@ public class UserService {
 		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
-				.orElseThrow(() -> new BusinessException("Grupo do usuário não definido."));
+				.orElseThrow(() -> new EntityNotFoundException("Grupo do usuário não definido."));
 
 		user.setRoles(Collections.singleton(userRole));
 		return userRepository.save(user);
@@ -121,16 +139,27 @@ public class UserService {
 		return userRepository.save(user);
 	}
 
+	/**
+	 * Método responsável por realizar a alteração da senha do usuário. De acordo
+	 * com o id informado, realiza a busca dos dados do usuário na base de dados e 
+	 * faz a alteração para a nova senha.
+	 * @param {@code Long} - userId
+	 * @param {@code String} - passwordAtual
+	 * @param {@code String} - novoPassword
+	 * @return
+	 * 		- Caso a senha atual informada na requisição, não coincidir com a senha
+	 * 	que está salva na base de dados, é retornado que a entidade não pode ser processada.
+	 * 		- Caso esteja tudo correto, é alterado com sucesso a senha na base de dados.
+	 */
 	@Transactional
 	public User changePassword(Long userId, String passwordAtual, String novoPassword) {
 		User user = findById(userId);
 
 		if (!passwordEncoder.matches(passwordAtual, user.getPassword())) {
-			throw new BusinessException("A senha atual informada não coincide com a password do user.");
+			throw new UnprocessableEntityException(
+					String.format("Desculpe. A senha atual informada, não coincide com a senha no cadastro do usuário: '%s'", user.getName()));
 		}
 
-		Object nameGroup = findByGroup(userId);
-		user.setRole((RoleName.valueOf(nameGroup.toString())));
 		user.setPassword(passwordEncoder.encode(novoPassword));
 
 		return userRepository.save(user);

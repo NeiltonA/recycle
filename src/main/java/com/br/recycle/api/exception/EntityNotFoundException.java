@@ -1,6 +1,6 @@
 package com.br.recycle.api.exception;
 
-public abstract class EntityNotFoundException extends BusinessException {
+public class EntityNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
