@@ -10,6 +10,10 @@ import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
 
+/**
+ * Classe responsável por transformar os dados relacionado aos modelos da cooperativa
+ * 
+ */
 @Component
 public class CooperativeDtoAssembler {
 
@@ -27,7 +31,5 @@ public class CooperativeDtoAssembler {
 		return cooperatives.stream()
 				.map(cooperative -> toModel(cooperative))
 				.collect(Collectors.toList());
-	}
-
-	
+	}	
 }

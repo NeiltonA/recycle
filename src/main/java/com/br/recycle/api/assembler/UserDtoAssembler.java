@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.br.recycle.api.model.User;
@@ -12,12 +11,14 @@ import com.br.recycle.api.payload.UserDtoIn;
 import com.br.recycle.api.payload.UserDtoOut;
 import com.br.recycle.api.payload.UserInput;
 
-
+/**
+ * Classe responsável por transformar os dados relacionado aos modelos do Usuário.
+ * 
+ */
 @Component
 public class UserDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 	
 	public User toDomainObject(UserInput userInput) {
 		return modelMapper.map(userInput, User.class);
@@ -33,15 +34,7 @@ public class UserDtoAssembler {
 				.collect(Collectors.toList());
 	}
 	
-	
-	
 	public User toDomainObject(UserDtoIn userDtoIn) {
 		return modelMapper.map(userDtoIn, User.class);
 	}
-	
-	public void copyToDomainObject(UserDtoIn userDtoIn, User user) {
-		modelMapper.map(userDtoIn, user);
-	}
-	
-	
 }

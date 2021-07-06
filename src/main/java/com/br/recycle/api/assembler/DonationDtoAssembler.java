@@ -10,6 +10,10 @@ import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.payload.DonationDtoOut;
 import com.br.recycle.api.payload.DonationInput;
 
+/**
+ * Classe responsável por transformar os dados relacionado aos modelos da doação.
+ * 
+ */
 @Component
 public class DonationDtoAssembler {
 
@@ -27,7 +31,5 @@ public class DonationDtoAssembler {
 		return donations.stream()
 				.map(donation -> toModel(donation))
 				.collect(Collectors.toList());
-	}
-
-	
+	}	
 }

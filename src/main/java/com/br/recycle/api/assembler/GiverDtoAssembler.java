@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.GiverDtoOut;
 
+/**
+ * Classe responsável por transformar os dados relacionado aos modelos do Doador.
+ * 
+ */
 @Component
 public class GiverDtoAssembler {
 

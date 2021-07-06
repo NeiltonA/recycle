@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Classe responsável por transformar os dados relacionado aos modelos de Endereço.
+ * 
+ */
 @Component
 public class AddressDtoAssembler {
 
@@ -21,7 +25,6 @@ public class AddressDtoAssembler {
 	public AddressDtoOut toModel(Address address) {
 		return modelMapper.map(address, AddressDtoOut.class);
 	}
-
 
 	public List<AddressDtoOut> toCollectionModel(List<Address> addresss) {
 		return addresss.stream().map(address -> toModel(address)).collect(Collectors.toList());
