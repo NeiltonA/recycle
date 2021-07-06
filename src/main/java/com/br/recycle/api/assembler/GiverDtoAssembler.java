@@ -4,18 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.GiverDtoOut;
 
-
 @Component
 public class GiverDtoAssembler {
 
-	@Autowired
-	private ModelMapper modelMapper;
+	private ModelMapper modelMapper = new ModelMapper();
 	
 	public GiverDtoOut toModel(Giver giver) {
 		return modelMapper.map(giver, GiverDtoOut.class);
@@ -26,6 +23,4 @@ public class GiverDtoAssembler {
 				.map(giver -> toModel(giver))
 				.collect(Collectors.toList());
 	}
-
-	
 }
