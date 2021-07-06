@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.AddressDtoAssembler;
 import com.br.recycle.api.bean.AddressResponseBean;
+import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
@@ -35,42 +36,52 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Classe responsável por ser a Contreller e conter o Endpoint de endereços
+ * da aplicação.
+ */
 @Log4j2
 @RestController
-@RequestMapping("/api/v1/address")
+@RequestMapping(UriConstants.URI_BASE_ACCESS)
 @Api(value = "Address", description = "REST API for Address", tags = { "Address" })
 public class AddressController {
 
-	@Autowired
-	private AddressRepository repository;
-
-	@Autowired
+	private AddressRepository addressRepository;
 	private AddressService addressService;
+	private AddressDtoAssembler addressDtoAssembler;
+	private ViaZipCodeClient viaZipCodeClient;
 
 	@Autowired
-	private AddressDtoAssembler assembler;
-
-	@Autowired
-	private ViaZipCodeClient service;
-
-	@ApiOperation(value = "Method responsible for returning the list of addresses")
+	public AddressController(AddressRepository addressRepository, AddressService addressService,
+			AddressDtoAssembler addressDtoAssembler, ViaZipCodeClient viaZipCodeClient) {
+		this.addressRepository = addressRepository;
+		this.addressService = addressService;
+		this.addressDtoAssembler = addressDtoAssembler;
+		this.viaZipCodeClient = viaZipCodeClient;
+	}
+	
+	/**
+	 * Método responsável por conter o endpoint que busca todos os endereços na base
+	 * de dados.
+	 * 
+	 * @return {@code List<AddressDtoOut} - Retorna uma lista de endereços.
+	 */
 	// PreAuthorize("hasRole('USER')")
+	@ApiOperation(value = "Method responsible for returning the list of addresses")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<AddressDtoOut> getAll() {
-		try {
-			List<Address> addresses = repository.findAll();
-			 return assembler.toCollectionModel(addresses);
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+		
+		List<Address> addresses = addressService.findAll();
+		
+		return addressDtoAssembler.toCollectionModel(addresses);
 	}
 
-	@ApiOperation(value = "Method responsible for returning the address via Zip Code")
 	// @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-	@GetMapping(value = "/zip_code/{zipCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Method responsible for returning the address via Zip Code")
+	@GetMapping(value = UriConstants.URI_ACCESS_ZIPCODE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) throws Exception {
 		try {
-			AddressResponseBean bean = service.searchAddress(zipCode);
+			AddressResponseBean bean = viaZipCodeClient.searchAddress(zipCode);
 			Dictionary dic = new Dictionary();
 			dic.setZipCode(bean.getCep());
 			dic.setStreet(bean.getLogradouro());
@@ -87,11 +98,11 @@ public class AddressController {
 
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for searching the address by ID")
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public AddressDtoOut getById(@PathVariable("id") long id) {
 		try {
 			Address add = addressService.findOrFail(id);
-			 return assembler.toModel(add);
+			 return addressDtoAssembler.toModel(add);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -102,7 +113,7 @@ public class AddressController {
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> save(@Valid @RequestBody AddressInput address) {
 		try {
-			Address add = assembler.toDomainObject(address);
+			Address add = addressDtoAssembler.toDomainObject(address);
 
 			addressService.save(add);
 			return ResponseEntity.ok(new ApiResponse(true, "Address registrada com sucesso."));
@@ -113,12 +124,12 @@ public class AddressController {
 
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
-	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput address) {
 		try {
-			Address addr = assembler.toDomainObject(address);
+			Address addr = addressDtoAssembler.toDomainObject(address);
 			
-			Optional<Address> add = repository.findById(id);
+			Optional<Address> add = addressRepository.findById(id);
 			if (add.isPresent()) {
 				addr.setId(add.get().getId());
 				addressService.save(addr);
@@ -132,12 +143,12 @@ public class AddressController {
 
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for removing the address")
-	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
-			Optional<Address> add = repository.findById(id);
+			Optional<Address> add = addressRepository.findById(id);
 			if (add.isPresent()) {
-				repository.deleteById(id);
+				addressRepository.deleteById(id);
 				return new ResponseEntity<>(HttpStatus.OK);
 			} else {
 				return ResponseEntity.notFound().build();
