@@ -92,7 +92,7 @@ public class UserService {
 
 		Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
 
-		if (userOptional.isPresent() && !userOptional.get().getEmail().equals(user.getEmail())) {
+		if (userOptional.isPresent() && !userOptional.get().equals(user)) {
 			log.error("Email já cadastrado.");
 			throw new NotAcceptableException(
 					String.format("Já existe um usuário cadastrado com o e-mail %s", user.getEmail()));

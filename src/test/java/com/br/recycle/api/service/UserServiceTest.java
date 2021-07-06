@@ -204,23 +204,7 @@ public class UserServiceTest {
 		assertThrows(NotAcceptableException.class, () -> userService.update(getMockUser(), 1L));
 
 	}
-	
-	/**
-	 * Método responsável por realizar a mudança na senha na base de dados
-	 * de acordo com o id do usuário.
-	 */
-	@Test
-	public void testChangePasswordSuccess() {
 		
-		given(userRepository.findById(1L)).willReturn(Optional.of(getMockUserRequestSave()));
-		doReturn(getMockUserRequest()).when(userRepository).save(getMockUserRequest());
-
-		User userResponse = userService.changePassword(1L, "caioBastos123", "caioBastos1234");
-		assertNotNull(userResponse);	
-	}
-
-	//User(id=4, name=Caio Henrique do Carmo Bastos, email=caio@gmail.com, role=null, password=$2a$10$WXaRSUd08sUk67sQvxTDZO0XT7vVl2iWDJpcZAgP/xUuIncV6J/UC, confirmPassword=null, cellPhone=11983512009, individualRegistration=47150956882, flowIndicator=C, roles=[Role(id=1, name=ROLE_USER)], token=Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNjI1NDM4NjQ1LCJleHAiOjE2MjU0OTkxMjV9.F0hDkwL2x0vdGDQAWTHQZbxfemOa_sCnWsMqO46CcWPHJbMvAc1CXFsim7caaO-H-asNuH6Ox6-YKBMeFByovw, tokenCreationDate=2021-07-04T19:44:06, active=true)
-	
 	private List<User> getMockUsers() {
 		User user = new User();
 		user.setId(1L);
