@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.Address;
+import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +29,8 @@ public class AddressServiceTest {
 	@InjectMocks
 	private AddressService addressService;
 	
+	
+	
 	/**
 	 * Método responsável por validar o cenário onde é solicitado a busca
 	 * de todos os endereços na base de dados e retorna uma lista de endereços.
@@ -35,7 +38,8 @@ public class AddressServiceTest {
 	@Test
 	public void testFindAllSuccess() {
 		given(addressRepository.findAll()).willReturn(getMockAddress());
-		List<Address> addresses = addressService.findAll(1L);
+		
+		List<Address> addresses = addressService.findAll(null);
 		assertNotNull(addresses);
 		assertEquals(1, addresses.size());
 		
@@ -72,6 +76,10 @@ public class AddressServiceTest {
 		address.setNeighborhood("Pq Teste");
 		address.setState("SP");
 		address.setCity("Taboao da Serra");
+		
+		User user = new User();
+		user.setId(1L);
+		address.setUser(user);
 		
 		return List.of(address);
 	}
