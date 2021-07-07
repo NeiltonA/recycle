@@ -21,6 +21,7 @@ public final class UriConstants {
 	public static final String URI_USER_RESET_PASSWORD = "/reset-password";
 
 	public static final String URI_BASE_ACCESS = "/api/v1/address";
+	public static final String URI_ADDRESS_ID_USER = "/api/v1/address/";
 	public static final String URI_ACCESS_ZIPCODE = "/zip_code/{zipCode}";
 	public static final String URI_ACCESS_ID = "/{id}";
 	public static final String URI_ZIP_CORREIO = "https://viacep.com.br/ws/";

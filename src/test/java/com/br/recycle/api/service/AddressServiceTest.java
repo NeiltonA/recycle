@@ -35,8 +35,7 @@ public class AddressServiceTest {
 	@Test
 	public void testFindAllSuccess() {
 		given(addressRepository.findAll()).willReturn(getMockAddress());
-
-		List<Address> addresses = addressService.findAll();
+		List<Address> addresses = addressService.findAll(1L);
 		assertNotNull(addresses);
 		assertEquals(1, addresses.size());
 		
@@ -60,7 +59,7 @@ public class AddressServiceTest {
 	public void testFindAllNoContent() {
 		given(addressRepository.findAll()).willReturn(Collections.emptyList());
 
-		assertThrows(NoContentException.class, () -> addressService.findAll());
+		assertThrows(NoContentException.class, () -> addressService.findAll(1L));
 	}
 
 	private List<Address> getMockAddress() {

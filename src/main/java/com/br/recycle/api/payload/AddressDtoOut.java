@@ -21,5 +21,5 @@ public class AddressDtoOut {
 	private String neighborhood;
 	private String state;
 	private String city;
-	private UserDtoOut user;
+	private Long  userId;
 }

@@ -72,7 +72,7 @@ public class AddressDtoAssemblerTest {
         assertEquals("Jundiai", addressDtoOut.getNeighborhood());
         assertEquals("SP", addressDtoOut.getState());
         assertEquals("São Paulo", addressDtoOut.getCity());
-        assertEquals(Long.valueOf(1), addressDtoOut.getUser().getId());
+        assertEquals(Long.valueOf(1), addressDtoOut.getUserId());
     }
 
     /**
@@ -92,7 +92,7 @@ public class AddressDtoAssemblerTest {
         assertEquals("Jundiai", addressDtoOuts.get(0).getNeighborhood());
         assertEquals("SP", addressDtoOuts.get(0).getState());
         assertEquals("São Paulo", addressDtoOuts.get(0).getCity());
-        assertEquals(Long.valueOf(1), addressDtoOuts.get(0).getUser().getId());
+        
 
         assertEquals("Rua Carlos Teste", addressDtoOuts.get(1).getStreet());
         assertEquals("456", addressDtoOuts.get(1).getNumber());
@@ -100,6 +100,6 @@ public class AddressDtoAssemblerTest {
         assertEquals("Pq Piramaba", addressDtoOuts.get(1).getNeighborhood());
         assertEquals("RJ", addressDtoOuts.get(1).getState());
         assertEquals("Rio de Janeiro", addressDtoOuts.get(1).getCity());
-        assertEquals(Long.valueOf(1), addressDtoOuts.get(1).getUser().getId());
+       
     }
 }

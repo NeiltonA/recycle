@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.AddressDtoAssembler;
@@ -68,10 +68,11 @@ public class AddressController {
 	 */
 	// PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for returning the list of addresses")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<AddressDtoOut> getAll() {
+	//@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<AddressDtoOut> getAll(@RequestParam(required = false) Long user) {
 		
-		List<Address> addresses = addressService.findAll();
+		List<Address> addresses = addressService.findAll(user);
 		
 		return addressDtoAssembler.toCollectionModel(addresses);
 	}
