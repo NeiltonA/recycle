@@ -6,10 +6,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.commons.UriConstants;
+
 import io.swagger.annotations.Api;
 
+/**
+ * Classe de controller para mapear a saúde da aplicação e verificar
+ * se está retornando 200.
+ *
+ */
 @RestController
-@RequestMapping("/api/v1/available")
+@RequestMapping(UriConstants.URI_BASE_AVAILABLE)
 @Api(value = "Available", description = "REST API for Available", tags = { "Available" })
 public class AvailableController {
 

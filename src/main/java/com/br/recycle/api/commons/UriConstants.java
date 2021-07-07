@@ -24,4 +24,6 @@ public final class UriConstants {
 	public static final String URI_ACCESS_ZIPCODE = "/zip_code/{zipCode}";
 	public static final String URI_ACCESS_ID = "/{id}";
 	public static final String URI_ZIP_CORREIO = "https://viacep.com.br/ws/";
+	
+	public static final String URI_BASE_AVAILABLE = "/api/v1/available";
 }

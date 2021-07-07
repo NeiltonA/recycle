@@ -4,6 +4,8 @@ import com.br.recycle.api.mock.AddressInputMock;
 import com.br.recycle.api.mock.AddressMock;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
+import com.br.recycle.api.util.Dictionary;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -101,5 +103,21 @@ public class AddressDtoAssemblerTest {
         assertEquals("RJ", addressDtoOuts.get(1).getState());
         assertEquals("Rio de Janeiro", addressDtoOuts.get(1).getCity());
         assertEquals(Long.valueOf(1), addressDtoOuts.get(1).getUser().getId());
+    }
+    
+    /**
+     * Método responsável por validar o cenário onde transforma 
+     * os dados do bean de endereço para os dados de dictionary.
+     */
+    @Test
+    public void testToDictionarySuccess() {
+    	Dictionary dictionary = addressDtoAssembler.toDictionary(AddressMock.getMockAddressBean());
+    	assertNotNull(dictionary);
+    	assertEquals("Pq Pinheiros", dictionary.getNeighborhood());
+    	assertEquals("06766200", dictionary.getZipCode());
+    	assertEquals("", dictionary.getComplement());
+    	assertEquals("Rua Doutor Carlo Siqueira Neto", dictionary.getStreet());
+    	assertEquals("SP", dictionary.getState());
+    	assertEquals("Taboao da Serra", dictionary.getCity());  
     }
 }
