@@ -25,15 +25,29 @@ public class JwtTokenProvider {
 
 	@Value("${recycle.jwtExpirationInMs}")
 	private int jwtExpirationInMs;
+	
+	@Value("${recycle.jwtRefreshExpirationInMs}")
+	private int refreshTokenDurationMs;
 
 	public String generateJwtToken(MainUser userPrincipal) {
-		return generateTokenFromUsername(userPrincipal.getEmail(), userPrincipal.getId());
+		boolean refresh = false;
+		return generateTokenFromUsername(userPrincipal.getEmail(), userPrincipal.getId(), refresh);
 	}
 
-	public String generateTokenFromUsername(String username, Long id) {
+	public String generateTokenFromUsername(String username, Long id, boolean refresh) {
+		     long expirationRefreshEhToken = 0;
+			if (refresh) {
+				expirationRefreshEhToken = this.refreshTokenDurationMs;
+			}else {
+				expirationRefreshEhToken = this.jwtExpirationInMs;	
+			}
+		
+		
+		
 		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
-				.setId(id.toString())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
+				.setId(id.toString()) //jti: Json Token Identifier ou ID único para o token;
+				.setAudience("Recycle") //Audience, quem vai consumir o seu token;
+				.setExpiration(new Date((new Date()).getTime() + expirationRefreshEhToken)) //exp: Expiration, tempo para utilização do token;
 				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
 	}
 
