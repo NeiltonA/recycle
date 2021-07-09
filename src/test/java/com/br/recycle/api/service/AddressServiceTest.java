@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.br.recycle.api.exception.AddressNotFoundException;
+import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
@@ -63,7 +63,7 @@ public class AddressServiceTest {
 	public void testFindAllNoContent() {
 		given(addressRepository.findAll()).willReturn(Collections.emptyList());
 
-		assertThrows(AddressNotFoundException.class, () -> addressService.findAll(null));
+		assertThrows(NoContentException.class, () -> addressService.findAll(null));
 	}
 
 	private List<Address> getMockAddress() {
