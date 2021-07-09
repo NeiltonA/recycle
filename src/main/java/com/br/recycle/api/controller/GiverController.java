@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.GiverDtoAssembler;
+import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.ApiResponse;
@@ -33,7 +33,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/v1/giver")
+@RequestMapping(UriConstants.URI_BASE_GIVER)
 @Api(value = "Giver", description = "REST API for Flow Giver", tags = { "Giver" })
 public class GiverController {
 
@@ -58,7 +58,7 @@ public class GiverController {
 	}
 
 	@ApiOperation(value = "Method responsible for searching the giver by ID")
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = UriConstants.URI_GIVER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GiverDtoOut getById(@PathVariable("id") Long id) {
 		try {
 			Giver giver = service.buscarOuFalhar(id);
@@ -68,10 +68,9 @@ public class GiverController {
 		}
 	}
 
-	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+	//@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the giver")
-	@PostMapping(value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	
+	@PostMapping(value = UriConstants.URI_GIVER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> save(@PathVariable @Valid Long id ) {
 		try {
 			service.save(id);
@@ -82,9 +81,8 @@ public class GiverController {
 		}
 	}
 
-
 	@ApiOperation(value = "Method responsible for removing the giver")
-	@DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = UriConstants.URI_GIVER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
 		try {
 			Optional<Giver> giv = repository.findById(id);
