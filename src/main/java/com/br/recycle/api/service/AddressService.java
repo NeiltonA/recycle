@@ -1,5 +1,6 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
+import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
 
 import lombok.extern.log4j.Log4j2;
@@ -48,17 +50,15 @@ public class AddressService {
 	//@Cacheable(cacheNames = "Address", key="#user", condition = "#user != null")
 	public List<Address> findAll(Long user) {
 		log.info("Address No cache");
-		List<Address> response;
-		if (user !=null) {
+		List<Address> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
 			response = addressRepository.findByUserId(user);
-		}else {
+			return validateEmpty(response);
+		} else {
 			response = addressRepository.findAll();
+			return validateEmpty(response);
 		}
-		if (response.isEmpty()) {
-			throw new NoContentException(null);
-		}
-
-		return response;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class AddressService {
 	public void save(Address address) {
 		try {
 			addressRepository.save(address);			
-		} catch (Exception e) {
+		} catch (Exception exception) {
 			throw new InternalServerException("Erro ao salvar os dados de cadastro do endereço.");
 		}
 	}
@@ -114,6 +114,7 @@ public class AddressService {
 		try {
 			Address addressActual = findOrFail(id);
 			address.setId(addressActual.getId());
+			address.setUser(getUser(addressActual));
 			
 			addressRepository.save(address);
 		} catch (DataIntegrityViolationException e) {
@@ -169,6 +170,33 @@ public class AddressService {
 	 */
 	private String validateNull(String newValue, String oldValue) {
 		return Objects.isNull(newValue) ? oldValue : newValue;
+	}
+	
+	/**
+	 * Método responsável por validar se a lista de endereços está vazia.
+	 * Caso esteja vazia, retorna uma resposta de sucesso mas sem conteúdo.
+	 * @param {@code List<Address>} - addresses
+	 * @return {@code List<Address>} - Caso não tenha erro, retorna a lista de endereços.
+	 */
+	private List<Address> validateEmpty(List<Address> addresses) {
+		if (addresses.isEmpty()) {
+			throw new NoContentException("A lista de endereços está vazia.");
+		}
+		
+		return addresses;
+	}
+	
+	/**
+	 * Método responsável por montar o id do usuário e não permitir 
+	 * sua alteração ou deixar o valor nulo.
+	 * @param {@code Address} - addressActual
+	 * @return {@code User} - user
+	 */
+	private User getUser(Address addressActual) {
+		User user = new User();
+		user.setId(addressActual.getUser().getId());
+		
+		return user;
 	}
 	
 //	@Transactional
