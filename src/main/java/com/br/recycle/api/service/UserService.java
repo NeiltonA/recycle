@@ -9,6 +9,9 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +56,9 @@ public class UserService {
 	 * 		- Caso o retorno da base esteja vazio, retorna que nenhum conteúdo foi encontrado.
 	 * 		- Caso o retorno da base tenha conteúdo, é retorno a lista de usuários.
 	 */
+	@Cacheable(cacheNames = "User", key="#root.method.name")
 	public List<User> findAll() {
+		log.info("User No cache");
 		List<User> users = userRepository.findAll();
 		
 		if (users.isEmpty()) {
@@ -68,6 +73,7 @@ public class UserService {
 	 * realiza a deleção da base de dados.
 	 * @param {@code Long} - id
 	 */
+	@CacheEvict(cacheNames = "User", key="#id")
 	public void deleteById(Long id) {
 		findById(id);
 		
@@ -88,6 +94,7 @@ public class UserService {
 	 * 		- Caso esteja correto as informações, é cadastrado com sucesso o usuário.
 	 */
 	@Transactional
+	@CacheEvict(cacheNames = "User", allEntries = true)
 	public User save(User user) {
 
 		Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
@@ -124,6 +131,7 @@ public class UserService {
 	 * 		- Caso esteja tudo correto, os dados serão atualizados e salvo na base de dados.
 	 */
 	@Transactional
+	@CachePut(cacheNames = "User", key = "#user.getId()")
 	public User update(User user, Long id) {
 		User userActual = findById(id);
 
@@ -173,10 +181,12 @@ public class UserService {
 	 * 		- Caso encontrar o usuário por ID, é retornado os dados do usuário.
 	 * 		- Caso não encontre o registro na base, é retornado um erro de usuário na encontrado.
 	 */
+	@Cacheable(cacheNames = "User", key="#userId")
 	public User findById(Long userId) {
 		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 	}
 
+	@Cacheable(cacheNames = "User", key="#userId")
 	public Object findByGroup(Long userId) {
 		Object group = manager.createNativeQuery(
 				"select s.name from users u inner join user_roles r on u.id_user= r.user_id  inner join roles s on s.id = r.role_id and u.id_user ='"

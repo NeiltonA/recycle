@@ -127,19 +127,12 @@ public class AddressController {
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput address) {
-		try {
+
 			Address addr = addressDtoAssembler.toDomainObject(address);
 			
-			Optional<Address> add = addressRepository.findById(id);
-			if (add.isPresent()) {
-				addr.setId(add.get().getId());
-				addressService.save(addr);
-				return ResponseEntity.ok(new ApiResponse(true, "Address alterada com sucesso."));
-			}
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+			addr = addressService.update(addr, id);
+			return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
+	
 	}
 
 	// @PreAuthorize("hasRole('USER')")
