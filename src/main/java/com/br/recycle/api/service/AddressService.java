@@ -45,7 +45,6 @@ public class AddressService {
 	 * 		- Caso a base de dados esteja vazia, retorna que não foi encontrado conteúdo.
 	 * 		- Caso esteja preenchida, retorna os endereços cadastrados.
 	 */
-	
 	@Cacheable(cacheNames = "Address", key="#user", condition = "#user != null")
 	public List<Address> findAll(Long user) {
 		log.info("Address No cache");
