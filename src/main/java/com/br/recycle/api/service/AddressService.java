@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.exception.AddressNotFoundException;
 import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.repository.AddressRepository;
 
@@ -55,7 +56,7 @@ public class AddressService {
 			response = addressRepository.findAll();
 		}
 		if (response.isEmpty()) {
-			throw new AddressNotFoundException((String.format(MSG_ADDRESS_NO_CONTENT, user)));
+			throw new NoContentException(null);
 		}
 
 		return response;

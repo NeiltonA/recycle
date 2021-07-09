@@ -73,7 +73,7 @@ public class AddressController {
 	public List<AddressDtoOut> getAll(@RequestParam(required = false) Long user) {
 		
 		List<Address> addresses = addressService.findAll(user);
-		
+
 		return addressDtoAssembler.toCollectionModel(addresses);
 	}
 
