@@ -7,12 +7,11 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.exception.AddressNotFoundException;
-import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaZipCodeClient;
@@ -29,7 +28,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class AddressService {
 
-	private static final String MSG_ADDRESS_EM_USO = "Address de código %d não pode ser removida, pois está em uso";
+	//private static final String MSG_ADDRESS_EM_USO = "Address de código %d não pode ser removida, pois está em uso";
 
 	private AddressRepository addressRepository;
 	private ViaZipCodeClient viaZipCodeClient;
@@ -62,12 +61,31 @@ public class AddressService {
 		return response;
 	}
 
+	/**
+	 * Método responsável por salvar os dados de endereço na base de dados.
+	 * @param {@code Address} - address
+	 * @return 
+	 * 		- Caso ocorra tudo corretamente, o endereço é salvo com sucesso e retornado.
+	 * 		- Caso ocorra algum problema, retorna que houve um erro na base de dados.
+	 */
 	@Transactional
 	//@CacheEvict(cacheNames = "Address", allEntries = true)
-	public Address save(Address address) {
-		return addressRepository.save(address);
+	public void save(Address address) {
+		try {
+			addressRepository.save(address);			
+		} catch (Exception e) {
+			throw new InternalServerException("Erro ao salvar os dados de cadastro do endereço.");
+		}
 	}
 	
+	/**
+	 * Método responsável por realizar a ação de alterar parcialmente os dados de endereço
+	 * de acordo com o que foi informado no parâmetro.
+	 * Realiza uma validação de comparação dos dados atuais com os novos dados informados.
+	 * @param {@code Address} - address
+	 * 		- Os novos dados a serem atualizados na base de dados
+	 * @param {@code Long} - id
+	 */
 	@Transactional
 	//@CachePut(cacheNames = "Address", key = "#address.getId()")
 	public void updatePartial(final Address address, Long id) {
@@ -83,6 +101,13 @@ public class AddressService {
 		}
 	}
 
+	/**
+	 * Método responsável por realizar a ação de alterar por completo os dados de endereço
+	 * de acordo com o que foi informado no parâmetro.
+	 * @param {@code Address} - address
+	 * 		- Os novos dados a serem atualizados na base de dados
+	 * @param {@code Long} - id
+	 */
 	@Transactional
 	//@CachePut(cacheNames = "Address", key = "#address.getId()")
 	public void update(final Address address, Long id) {
@@ -96,28 +121,17 @@ public class AddressService {
 		}
 	}
 
-	@Transactional
-	//@CacheEvict(cacheNames = "Address", key="#addressId")
-	public void remove(Long addressId) {
-		try {
-			addressRepository.deleteById(addressId);
-			addressRepository.flush();
-
-		} catch (EmptyResultDataAccessException e) {
-			throw new AddressNotFoundException(addressId);
-
-		} catch (DataIntegrityViolationException e) {
-			throw new EntityInUseException(String.format(MSG_ADDRESS_EM_USO, addressId));
-		}
-	}
-
+	/**
+	 * Método responsável por buscar o endereço por ID e validar e se está presente na base de dados.
+	 * @param {@code Long} - addressId
+	 * @return {@code Address}
+	 * 		- Caso o endereço seja encontrado, é retornado os dados
+	 * 		- Caso o endereço não esteja na base de dados, retorna que o a entidade endereço 
+	 * 	não foi encontrada.
+	 */
 	//@Cacheable(cacheNames = "Address", key="#addressId")
 	public Address findOrFail(Long addressId) {
 		return addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(addressId));
-	}
-	
-	private String validateNull(String newValue, String oldValue) {
-		return Objects.isNull(newValue) ? oldValue : newValue;
 	}
 
 	/**
@@ -134,4 +148,41 @@ public class AddressService {
 			throw new UnprocessableEntityException("De acordo com o CEP informado não está relacionado a nenhum endereço");
 		}	
 	}
+
+	/**
+	 * Método resposnável por realizar a deleção do endereço da base de dados.
+	 * @param {@code Long} id
+	 */
+	public void deleteById(Long id) {
+		findOrFail(id);
+		addressRepository.deleteById(id);
+	}
+	
+	/**
+	 * Método responsável por validar se os dados novos a serem inseridos estão nulos.
+	 * Caso eles estiverem nulos, é considerado os dados velhos, na hora do retorno.
+	 * @param {@code String} - newValue
+	 * @param {@code String} - oldValue
+	 * @return {@code String}
+	 * 		- Caso os dados novos sejam diferentes de nulo, é retornado o novo valor.
+	 * 		- Caso os dados novos sejam iguais a nulo, é retorno o valor antigo.
+	 */
+	private String validateNull(String newValue, String oldValue) {
+		return Objects.isNull(newValue) ? oldValue : newValue;
+	}
+	
+//	@Transactional
+//	@CacheEvict(cacheNames = "Address", key="#addressId")
+//	public void remove(Long addressId) {
+//		try {
+//			addressRepository.deleteById(addressId);
+//			addressRepository.flush();
+//
+//		} catch (EmptyResultDataAccessException e) {
+//			throw new AddressNotFoundException(addressId);
+//
+//		} catch (DataIntegrityViolationException e) {
+//			throw new EntityInUseException(String.format(MSG_ADDRESS_EM_USO, addressId));
+//		}
+//	}
 }

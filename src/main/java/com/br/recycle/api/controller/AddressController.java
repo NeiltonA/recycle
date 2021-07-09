@@ -1,7 +1,6 @@
 package com.br.recycle.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -23,13 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.recycle.api.assembler.AddressDtoAssembler;
 import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.commons.UriConstants;
-import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.ApiResponse;
-import com.br.recycle.api.repository.AddressRepository;
 import com.br.recycle.api.service.AddressService;
 import com.br.recycle.api.util.Dictionary;
 import com.br.recycle.api.validation.AddressValidation;
@@ -46,14 +43,11 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Address", description = "REST API for Address", tags = { "Address" })
 public class AddressController {
 
-	private AddressRepository addressRepository;
 	private AddressService addressService;
 	private AddressDtoAssembler addressDtoAssembler;
 
 	@Autowired
-	public AddressController(AddressRepository addressRepository, AddressService addressService,
-			AddressDtoAssembler addressDtoAssembler) {
-		this.addressRepository = addressRepository;
+	public AddressController(AddressService addressService, AddressDtoAssembler addressDtoAssembler) {
 		this.addressService = addressService;
 		this.addressDtoAssembler = addressDtoAssembler;
 	}
@@ -89,36 +83,55 @@ public class AddressController {
 		AddressValidation.validate(zipCode);
 		AddressResponseBean addressResponseBean = addressService.searchAddress(zipCode);
 		Dictionary dictionary = addressDtoAssembler.toDictionary(addressResponseBean);
-		
+
 		return ResponseEntity.ok().body(dictionary);
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que busca o endereço por ID.
+	 * 
+	 * @param {@code Long} - id
+	 * @return {@code AddressDtoOut} - Retorna os dados de endereço para a resposta.
+	 */
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for searching the address by ID")
 	@GetMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public AddressDtoOut getById(@PathVariable("id") long id) {
-		try {
-			Address add = addressService.findOrFail(id);
-			return addressDtoAssembler.toModel(add);
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+	public AddressDtoOut getById(@PathVariable("id") Long id) {
+
+		Address address = addressService.findOrFail(id);
+
+		return addressDtoAssembler.toModel(address);
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que salva os dados de endereço na
+	 * base de dados.
+	 * 
+	 * @param {@code AddressInput} - address
+	 * @return {@code ResponseEntity<ApiResponse>} - Retorna a mensagem de cadastro
+	 *         feito com Sucesso.
+	 */
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the address")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> save(@Valid @RequestBody AddressInput address) {
-		try {
-			Address add = addressDtoAssembler.toDomainObject(address);
+	public ResponseEntity<ApiResponse> save(@Valid @RequestBody AddressInput addressInput) {
 
-			addressService.save(add);
-			return ResponseEntity.ok(new ApiResponse(true, "Address registrada com sucesso."));
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+		Address address = addressDtoAssembler.toDomainObject(addressInput);
+		addressService.save(address);
+
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiResponse(true, "Endereço registrado com sucesso."));
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que atualiza parcialmente os dados
+	 * de endereço do usuário.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code AddressPartialInput} - addressPartialInput
+	 * @return {@code ResponseEntity<ApiResponse>} - Retorna que o endereço foi
+	 *         alterado com sucesso.
+	 */
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -132,6 +145,15 @@ public class AddressController {
 
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que atualiza por completo os dados
+	 * de endereço do usuário.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code AddressInput} - addressInput
+	 * @return {@code ResponseEntity<ApiResponse>} - Retorna que o endereço foi
+	 *         alterado com sucesso.
+	 */
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -144,21 +166,21 @@ public class AddressController {
 
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que deleta um usuário da base de
+	 * dados.
+	 * 
+	 * @param {@code Long} id
+	 * @return {@code ResponseEntity<Void>} - Retorna vazio com HttpStatus 204 de
+	 *         uma deleção feita com sucesso.
+	 */
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for removing the address")
 	@DeleteMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
-		try {
-			Optional<Address> add = addressRepository.findById(id);
-			if (add.isPresent()) {
-				addressRepository.deleteById(id);
-				return new ResponseEntity<>(HttpStatus.OK);
-			} else {
-				return ResponseEntity.notFound().build();
-			}
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+	public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
 
+		addressService.deleteById(id);
+
+		return ResponseEntity.noContent().build();
 	}
 }
