@@ -46,7 +46,7 @@ public class AddressService {
 	 * 		- Caso esteja preenchida, retorna os endereços cadastrados.
 	 */
 	
-	@Cacheable(cacheNames = "Address", key="#user")
+	
 	public List<Address> findAll(Long user) {
 		log.info("Address No cache");
 		List<Address> response;

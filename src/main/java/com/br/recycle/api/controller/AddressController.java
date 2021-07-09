@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -125,7 +126,7 @@ public class AddressController {
 
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
-	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput address) {
 
 			Address addr = addressDtoAssembler.toDomainObject(address);
