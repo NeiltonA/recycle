@@ -6,15 +6,16 @@ import java.util.Objects;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.exception.AddressNotFoundException;
 import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
+import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.repository.AddressRepository;
 
@@ -29,13 +30,14 @@ import lombok.extern.log4j.Log4j2;
 public class AddressService {
 
 	private static final String MSG_ADDRESS_EM_USO = "Address de código %d não pode ser removida, pois está em uso";
-	public static final String CACHE_NAME = "address";
-	//private static final String MSG_ADDRESS_NO_CONTENT = "Não existem endereços cadatrados associado com o código cliente %d";
+
 	private AddressRepository addressRepository;
+	private ViaZipCodeClient viaZipCodeClient;
 	
 	@Autowired
-	public AddressService(AddressRepository addressRepository) {
+	public AddressService(AddressRepository addressRepository, ViaZipCodeClient viaZipCodeClient) {
 		this.addressRepository = addressRepository;
+		this.viaZipCodeClient = viaZipCodeClient;
 	}
 
 	/**
@@ -44,7 +46,7 @@ public class AddressService {
 	 * 		- Caso a base de dados esteja vazia, retorna que não foi encontrado conteúdo.
 	 * 		- Caso esteja preenchida, retorna os endereços cadastrados.
 	 */
-	@Cacheable(cacheNames = "Address", key="#user", condition = "#user != null")
+	//@Cacheable(cacheNames = "Address", key="#user", condition = "#user != null")
 	public List<Address> findAll(Long user) {
 		log.info("Address No cache");
 		List<Address> response;
@@ -61,7 +63,7 @@ public class AddressService {
 	}
 
 	@Transactional
-	@CacheEvict(cacheNames = "Address", allEntries = true)
+	//@CacheEvict(cacheNames = "Address", allEntries = true)
 	public Address save(Address address) {
 		return addressRepository.save(address);
 	}
@@ -95,7 +97,7 @@ public class AddressService {
 	}
 
 	@Transactional
-	@CacheEvict(cacheNames = "Address", key="#addressId")
+	//@CacheEvict(cacheNames = "Address", key="#addressId")
 	public void remove(Long addressId) {
 		try {
 			addressRepository.deleteById(addressId);
@@ -117,5 +119,19 @@ public class AddressService {
 	private String validateNull(String newValue, String oldValue) {
 		return Objects.isNull(newValue) ? oldValue : newValue;
 	}
-	
+
+	/**
+	 * Método responsável por buscar o endereço de acordo com o CEP informado.
+	 * @param {@code String} zipCode
+	 * @return {@code AddressResponseBean}
+	 * 		- Caso o CEP seja informado contenha conteúdo, será retornado os dados de endereço.
+	 * 		- Caso ocorra algum erro, será lançado a exceção que a entidade não pode ser procesada.
+	 */
+	public AddressResponseBean searchAddress(String zipCode) {
+		try {
+			return viaZipCodeClient.searchAddress(zipCode);
+		} catch (Exception e) {
+			throw new UnprocessableEntityException("De acordo com o CEP informado não está relacionado a nenhum endereço");
+		}	
+	}
 }

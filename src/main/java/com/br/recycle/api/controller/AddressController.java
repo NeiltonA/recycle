@@ -24,7 +24,6 @@ import com.br.recycle.api.assembler.AddressDtoAssembler;
 import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BusinessException;
-import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
@@ -33,16 +32,15 @@ import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.repository.AddressRepository;
 import com.br.recycle.api.service.AddressService;
 import com.br.recycle.api.util.Dictionary;
+import com.br.recycle.api.validation.AddressValidation;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j2;
 
 /**
- * Classe responsável por ser a Contreller e conter o Endpoint de endereços
- * da aplicação.
+ * Classe responsável por ser a Contreller e conter o Endpoint de endereços da
+ * aplicação.
  */
-@Log4j2
 @RestController
 @RequestMapping(UriConstants.URI_BASE_ACCESS)
 @Api(value = "Address", description = "REST API for Address", tags = { "Address" })
@@ -51,17 +49,15 @@ public class AddressController {
 	private AddressRepository addressRepository;
 	private AddressService addressService;
 	private AddressDtoAssembler addressDtoAssembler;
-	private ViaZipCodeClient viaZipCodeClient;
 
 	@Autowired
 	public AddressController(AddressRepository addressRepository, AddressService addressService,
-			AddressDtoAssembler addressDtoAssembler, ViaZipCodeClient viaZipCodeClient) {
+			AddressDtoAssembler addressDtoAssembler) {
 		this.addressRepository = addressRepository;
 		this.addressService = addressService;
 		this.addressDtoAssembler = addressDtoAssembler;
-		this.viaZipCodeClient = viaZipCodeClient;
 	}
-	
+
 	/**
 	 * Método responsável por conter o endpoint que busca todos os endereços na base
 	 * de dados.
@@ -72,30 +68,29 @@ public class AddressController {
 	@ApiOperation(value = "Method responsible for returning the list of addresses")
 	@GetMapping
 	public List<AddressDtoOut> getAll(@RequestParam(required = false) Long user) {
-		
+
 		List<Address> addresses = addressService.findAll(user);
 
 		return addressDtoAssembler.toCollectionModel(addresses);
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que busca o endereço por CEP.
+	 * 
+	 * @param {@code String} zipCode
+	 * @return {@code ResponseEntity<Dictionary} - Retorna os dados de endereço de
+	 *         acordo com o CEP
+	 */
 	// @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for returning the address via Zip Code")
 	@GetMapping(value = UriConstants.URI_ACCESS_ZIPCODE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) throws Exception {
-		try {
-			AddressResponseBean bean = viaZipCodeClient.searchAddress(zipCode);
-			Dictionary dic = new Dictionary();
-			dic.setZipCode(bean.getCep());
-			dic.setStreet(bean.getLogradouro());
-			dic.setComplement(bean.getComplemento());
-			dic.setNeighborhood(bean.getBairro());
-			dic.setCity(bean.getLocalidade());
-			dic.setState(bean.getUf());
-			return dic.getZipCode() != null ? ResponseEntity.ok().body(dic) : ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			log.error("Error querying zip code -> [] ", e);
-			throw new BusinessException(e.getMessage(), e);
-		}
+	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) {
+
+		AddressValidation.validate(zipCode);
+		AddressResponseBean addressResponseBean = addressService.searchAddress(zipCode);
+		Dictionary dictionary = addressDtoAssembler.toDictionary(addressResponseBean);
+		
+		return ResponseEntity.ok().body(dictionary);
 	}
 
 	// @PreAuthorize("hasRole('USER')")
@@ -104,7 +99,7 @@ public class AddressController {
 	public AddressDtoOut getById(@PathVariable("id") long id) {
 		try {
 			Address add = addressService.findOrFail(id);
-			 return addressDtoAssembler.toModel(add);
+			return addressDtoAssembler.toModel(add);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -127,25 +122,26 @@ public class AddressController {
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressPartialInput addressPartialInput) {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id,
+			@RequestBody AddressPartialInput addressPartialInput) {
 
-			Address address = addressDtoAssembler.toDomainPartialObject(addressPartialInput);
-			addressService.updatePartial(address, id);
-			
-			return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
-	
+		Address address = addressDtoAssembler.toDomainPartialObject(addressPartialInput);
+		addressService.updatePartial(address, id);
+
+		return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
+
 	}
-	
-	//@PreAuthorize("hasRole('USER')")
+
+	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput addressInput) {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput addressInput) {
 
-			Address address = addressDtoAssembler.toDomainObject(addressInput);
-			addressService.update(address, id);
-			
-			return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
-	
+		Address address = addressDtoAssembler.toDomainObject(addressInput);
+		addressService.update(address, id);
+
+		return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
+
 	}
 
 	// @PreAuthorize("hasRole('USER')")
