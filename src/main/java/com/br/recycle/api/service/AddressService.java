@@ -1,13 +1,12 @@
 package com.br.recycle.api.service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,21 +66,17 @@ public class AddressService {
 		return addressRepository.save(address);
 	}
 	
-	@CachePut(cacheNames = "Address", key = "#address.getId()")
-	public Address update(final Address address, Long id) {
+	//@CachePut(cacheNames = "Address", key = "#address.getId()")
+	public void update(final Address address, Long id) {
 		try {
-		Optional<Address> add = addressRepository.findById(id);
-		if (add.isPresent()) {
-			address.setId(add.get().getId());
-			addressRepository.save(address);
-		}else {
-			throw new AddressNotFoundException(
-					String.format("Endereço não encontrado!"));
-		}
+			Address addressActual = findOrFail(id);
+			addressActual.setComplement(Objects.isNull(address.getComplement()) ? addressActual.getComplement() : address.getComplement());
+			addressActual.setNumber(Objects.isNull(address.getNumber()) ? addressActual.getNumber() : address.getNumber());
+			
+			addressRepository.save(addressActual);
 		} catch (DataIntegrityViolationException e) {
 			throw new AddressNotFoundException(String.format("Erro ao alterar o endereço"));
 		}
-		return address;
 	}
 
 	@Transactional

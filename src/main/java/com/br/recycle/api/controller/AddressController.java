@@ -27,6 +27,7 @@ import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
+import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.repository.AddressRepository;
 import com.br.recycle.api.service.AddressService;
@@ -125,14 +126,27 @@ public class AddressController {
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput address) {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressPartialInput addressPartialInput) {
 
-			Address addr = addressDtoAssembler.toDomainObject(address);
+			Address address = addressDtoAssembler.toDomainPartialObject(addressPartialInput);
 			
-			addr = addressService.update(addr, id);
+			addressService.update(address, id);
+			
 			return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
 	
 	}
+	
+	// @PreAuthorize("hasRole('USER')")
+	//@ApiOperation(value = "Method responsible for changing the address")
+	//@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	//	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput address) {
+
+		//	Address addr = addressDtoAssembler.toDomainObject(address);
+			
+			//addr = addressService.update(addr, id);
+			//return ResponseEntity.ok(new ApiResponse(true, "Endereço alterado com sucesso."));
+			//	
+//	}
 
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for removing the address")

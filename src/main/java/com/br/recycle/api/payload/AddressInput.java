@@ -45,5 +45,4 @@ public class AddressInput  {
 
 	@ApiModelProperty(example = "1", required = true)
 	private UserIdInput user;
-
 }
