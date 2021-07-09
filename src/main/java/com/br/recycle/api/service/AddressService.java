@@ -66,14 +66,29 @@ public class AddressService {
 		return addressRepository.save(address);
 	}
 	
+	@Transactional
+	//@CachePut(cacheNames = "Address", key = "#address.getId()")
+	public void updatePartial(final Address address, Long id) {
+		try {
+			Address addressActual = findOrFail(id);
+
+			addressActual.setComplement(validateNull(address.getComplement(), addressActual.getComplement()));
+			addressActual.setNumber(validateNull(address.getNumber(), addressActual.getNumber()));
+			
+			addressRepository.save(addressActual);
+		} catch (DataIntegrityViolationException e) {
+			throw new AddressNotFoundException(String.format("Erro ao alterar o endereço"));
+		}
+	}
+
+	@Transactional
 	//@CachePut(cacheNames = "Address", key = "#address.getId()")
 	public void update(final Address address, Long id) {
 		try {
 			Address addressActual = findOrFail(id);
-			addressActual.setComplement(Objects.isNull(address.getComplement()) ? addressActual.getComplement() : address.getComplement());
-			addressActual.setNumber(Objects.isNull(address.getNumber()) ? addressActual.getNumber() : address.getNumber());
+			address.setId(addressActual.getId());
 			
-			addressRepository.save(addressActual);
+			addressRepository.save(address);
 		} catch (DataIntegrityViolationException e) {
 			throw new AddressNotFoundException(String.format("Erro ao alterar o endereço"));
 		}
@@ -94,9 +109,13 @@ public class AddressService {
 		}
 	}
 
-	@Cacheable(cacheNames = "Address", key="#addressId")
+	//@Cacheable(cacheNames = "Address", key="#addressId")
 	public Address findOrFail(Long addressId) {
 		return addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(addressId));
+	}
+	
+	private String validateNull(String newValue, String oldValue) {
+		return Objects.isNull(newValue) ? oldValue : newValue;
 	}
 	
 }
