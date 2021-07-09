@@ -4,6 +4,8 @@ import com.br.recycle.api.mock.AddressInputMock;
 import com.br.recycle.api.mock.AddressMock;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
+import com.br.recycle.api.util.Dictionary;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -54,6 +57,19 @@ public class AddressDtoAssemblerTest {
         assertEquals("SP", address.getState());
         assertEquals("São Paulo", address.getCity());
         assertEquals(Long.valueOf(1), address.getUser().getId());
+    }
+    
+    /**
+     * Método de teste contendo o cenário de transformação de objeto
+     * de entrada parcial para o objeto de dominio da aplicação.
+     */
+    @Test
+    public void testToDomainPartialObjectSucess() {
+
+        Address address = addressDtoAssembler.toDomainPartialObject(AddressInputMock.getMockAddressInputPartial());
+        assertNotNull(address);
+        assertEquals("123", address.getNumber());
+        assertEquals("AP123", address.getComplement());
     }
 
     /**
@@ -101,5 +117,22 @@ public class AddressDtoAssemblerTest {
         assertEquals("RJ", addressDtoOuts.get(1).getState());
         assertEquals("Rio de Janeiro", addressDtoOuts.get(1).getCity());
        
+    }
+    
+    /**
+     * Método responsável por validar o cenário de mapear os dados do dicionário.
+     */
+    @Test
+    public void testToDictionarySuccess() {
+    	Dictionary dictionary = addressDtoAssembler.toDictionary(AddressMock.getMockAddressBean());
+    	
+    	assertAll(
+    			() -> assertEquals("Pq Pinheiros", dictionary.getNeighborhood()),
+    			() -> assertEquals("06766200", dictionary.getZipCode()),
+    			() -> assertEquals("Teste", dictionary.getComplement()),
+    			() -> assertEquals("Taboao da Serra", dictionary.getCity()),
+    			() -> assertEquals("Rua Teste Carlos Siqueira", dictionary.getStreet()),
+    			() -> assertEquals("SP", dictionary.getState())
+    	);
     }
 }

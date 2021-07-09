@@ -1,6 +1,7 @@
 package com.br.recycle.api.mock;
 
 import com.br.recycle.api.payload.AddressInput;
+import com.br.recycle.api.payload.AddressPartialInput;
 
 /**
  * Classe de mock para atender os cenários de endereço entrada
@@ -24,4 +25,12 @@ public class AddressInputMock {
 
         return addressInput;
     }
+
+	public static AddressPartialInput getMockAddressInputPartial() {
+		AddressPartialInput addressInput = new AddressPartialInput();
+        addressInput.setNumber("123");
+        addressInput.setComplement("AP123");
+
+        return addressInput;
+	}
 }

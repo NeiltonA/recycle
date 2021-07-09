@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -202,7 +203,7 @@ public class AddressServiceTest {
 		
 		assertThrows(AddressNotFoundException.class, () -> addressService.findOrFail(1L));
 	}
-	
+
 	private Address getMockAddressNew() {
 		Address address = new Address();
 		address.setId(1L);

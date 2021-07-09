@@ -1,5 +1,6 @@
 package com.br.recycle.api.mock;
 
+import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.model.Address;
 
 import java.util.List;
@@ -49,4 +50,16 @@ public class AddressMock {
 
         return List.of(address1, address2);
     }
+
+	public static AddressResponseBean getMockAddressBean() {
+		AddressResponseBean addressResponseBean = new AddressResponseBean();
+		addressResponseBean.setBairro("Pq Pinheiros");
+		addressResponseBean.setCep("06766200");
+		addressResponseBean.setComplemento("Teste");
+		addressResponseBean.setLocalidade("Taboao da Serra");
+		addressResponseBean.setLogradouro("Rua Teste Carlos Siqueira");
+		addressResponseBean.setUf("SP");
+		
+		return addressResponseBean;
+	}
 }
