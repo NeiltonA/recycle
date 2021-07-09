@@ -31,7 +31,7 @@ public class AddressService {
 
 	private static final String MSG_ADDRESS_EM_USO = "Address de código %d não pode ser removida, pois está em uso";
 	public static final String CACHE_NAME = "address";
-	private static final String MSG_ADDRESS_NO_CONTENT = "Não existem endereços cadatrados associado com o código cliente %d";
+	//private static final String MSG_ADDRESS_NO_CONTENT = "Não existem endereços cadatrados associado com o código cliente %d";
 	private AddressRepository addressRepository;
 	
 	@Autowired
@@ -46,7 +46,7 @@ public class AddressService {
 	 * 		- Caso esteja preenchida, retorna os endereços cadastrados.
 	 */
 	
-	@Cacheable(cacheNames = "Address", key="#user")
+	@Cacheable(cacheNames = "Address", key="#user", condition = "#user != null")
 	public List<Address> findAll(Long user) {
 		log.info("Address No cache");
 		List<Address> response;
