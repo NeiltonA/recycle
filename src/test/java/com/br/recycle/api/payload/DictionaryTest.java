@@ -1,4 +1,4 @@
-package com.br.recycle.api.util;
+package com.br.recycle.api.payload;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;

@@ -4,7 +4,7 @@ import com.br.recycle.api.mock.AddressInputMock;
 import com.br.recycle.api.mock.AddressMock;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
-import com.br.recycle.api.util.Dictionary;
+import com.br.recycle.api.payload.Dictionary;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

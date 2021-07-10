@@ -11,7 +11,7 @@ import com.br.recycle.api.model.Address;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
-import com.br.recycle.api.util.Dictionary;
+import com.br.recycle.api.payload.Dictionary;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos de Endereço.

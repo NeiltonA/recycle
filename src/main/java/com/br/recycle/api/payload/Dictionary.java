@@ -1,4 +1,4 @@
-package com.br.recycle.api.util;
+package com.br.recycle.api.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

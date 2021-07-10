@@ -27,8 +27,8 @@ import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.Dictionary;
 import com.br.recycle.api.service.AddressService;
-import com.br.recycle.api.util.Dictionary;
 import com.br.recycle.api.validation.AddressValidation;
 
 import io.swagger.annotations.Api;
