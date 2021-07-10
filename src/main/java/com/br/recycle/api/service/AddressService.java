@@ -132,7 +132,8 @@ public class AddressService {
 	 */
 	//@Cacheable(cacheNames = "Address", key="#addressId")
 	public Address findOrFail(Long addressId) {
-		return addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(addressId));
+		return addressRepository.findById(addressId)
+				.orElseThrow(() -> new AddressNotFoundException(addressId));
 	}
 
 	/**

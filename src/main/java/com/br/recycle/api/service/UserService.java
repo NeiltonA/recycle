@@ -183,7 +183,8 @@ public class UserService {
 	 */
 	@Cacheable(cacheNames = "User", key="#userId")
 	public User findById(Long userId) {
-		return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+		return userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException(userId));
 	}
 
 	@Cacheable(cacheNames = "User", key="#userId")

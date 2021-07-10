@@ -126,7 +126,7 @@ public class UserController {
 	 */
 	@ApiOperation(value = "Method responsible for updating data the user")
 	@PatchMapping(value = UriConstants.URI_USER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody @Valid UserDtoIn userDtoIn) {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody UserDtoIn userDtoIn) {
 		
 		User user = userDtoAssembler.toDomainObject(userDtoIn);
 		user = userService.update(user, id);
