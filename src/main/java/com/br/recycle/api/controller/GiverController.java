@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +23,8 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.GiverDtoOut;
+import com.br.recycle.api.payload.GiverIdInput;
+import com.br.recycle.api.payload.GiverRequest;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.service.GiverService;
 
@@ -70,15 +71,11 @@ public class GiverController {
 
 	//@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the giver")
-	@PostMapping(value = UriConstants.URI_GIVER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> save(@PathVariable @Valid Long id ) {
-		try {
-			service.save(id);
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> save(@RequestBody GiverRequest giverRequest) {
+			service.save(giverRequest.getUser().getId());
 			log.info("Registered successfully -> []");
-		        return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doador registrado com sucesso."));
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
+		    return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doador registrado com sucesso."));
 	}
 
 	@ApiOperation(value = "Method responsible for removing the giver")
@@ -88,7 +85,7 @@ public class GiverController {
 			Optional<Giver> giv = repository.findById(id);
 			if (giv.isPresent()) {
 				repository.deleteById(id);
-				return new ResponseEntity<>(HttpStatus.OK);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
