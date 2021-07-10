@@ -3,6 +3,7 @@ package com.br.recycle.api.payload;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -35,6 +36,7 @@ public class UserInput{
 	@NotEmpty(message = "{validation.mail.notEmpty}")
 	@Email(regexp = ".*@.*\\..*", message = "Email inválido!")
 	@NotEmpty
+	@NotBlank
 	private String email;
 	
 	@ApiModelProperty(example = "11 99999999", required = false)
@@ -42,14 +44,18 @@ public class UserInput{
 	
 	@ApiModelProperty(example = "10364680032", required = false)
 	@CPF(message = "CPF inválido")
+	@NotEmpty
+	@NotBlank
 	private String individualRegistration;
 	
 	@ApiModelProperty(example = "admin123", required = true)
 	@NotEmpty
+	@NotBlank
 	private String password;
 	
 	@ApiModelProperty(example = "admin123", required = true)
 	@NotEmpty
+	@NotBlank
 	private String confirmPassword;
 	
 	@ApiModelProperty(example = "\"D = Doador\",\"C = Cooperativa\",\"A = Admin\"",  required = true)
