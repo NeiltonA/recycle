@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.GiverDtoAssembler;
@@ -23,7 +23,6 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.GiverDtoOut;
-import com.br.recycle.api.payload.GiverIdInput;
 import com.br.recycle.api.payload.GiverRequest;
 import com.br.recycle.api.repository.GiverRepository;
 import com.br.recycle.api.service.GiverService;
@@ -48,14 +47,10 @@ public class GiverController {
 	private GiverService service;
 
 	@ApiOperation(value = "Method responsible for returning the list of givers")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<GiverDtoOut> getAll() {
-		try {
-			List<Giver> givers = repository.findAll();
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<GiverDtoOut> getAll(@RequestParam(required = false) Long user) {
+			List<Giver> givers = service.findAll(user);
 			return giverDtoAssembler.toCollectionModel(givers);
-		} catch (Exception e) {
-			throw new BusinessException(e.getMessage(), e);
-		}
 	}
 
 	@ApiOperation(value = "Method responsible for searching the giver by ID")

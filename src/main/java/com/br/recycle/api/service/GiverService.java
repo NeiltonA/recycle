@@ -1,6 +1,8 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +17,7 @@ import com.br.recycle.api.bean.GiverResponseBean;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.GiverNotFoundException;
+import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UserNotFoundException;
 import com.br.recycle.api.model.Giver;
 import com.br.recycle.api.model.User;
@@ -41,6 +44,20 @@ public class GiverService {
 
 	@PersistenceContext
 	private EntityManager manager;
+	
+	public List<Giver> findAll(Long user) {
+		
+		List<Giver> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
+			response = repository.findByUserId(user);
+			return validateEmpty(response);
+		} else {
+			response = repository.findAll();
+			return validateEmpty(response);
+		}
+	}
+	
 
 	@Transactional
 	public Giver save(Long id) {
@@ -89,7 +106,7 @@ public class GiverService {
 	}
 
 	public boolean verifyGiver(Long id) {
-		boolean giver = repository.findByUserId(id).isPresent();
+		boolean giver = !repository.findByUserId(id).isEmpty();
 		return giver;
 	}
 
@@ -102,6 +119,14 @@ public class GiverService {
 				.setResultTransformer(new org.hibernate.transform.AliasToBeanResultTransformer(GiverResponseBean.class))
 				.list();
 
+	}
+
+	private List<Giver> validateEmpty(List<Giver> givers) {
+		if (givers.isEmpty()) {
+			throw new NoContentException("A lista de doador está vazia.");
+		}
+		
+		return givers;
 	}
 
 }

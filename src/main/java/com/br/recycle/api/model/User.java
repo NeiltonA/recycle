@@ -37,7 +37,7 @@ import lombok.ToString;
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Entity
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "individual_registration" }) })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 7422560922720116772L;
@@ -51,7 +51,7 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private String name;
 
-	@NaturalId
+	
 	@Column(nullable = false)
 	private String email;
 
@@ -69,7 +69,7 @@ public class User implements Serializable {
 	@Column(name = "cell_phone")
 	private String cellPhone;
 
-	
+	@NaturalId
 	@Column(name = "individual_registration")
 	private String individualRegistration;
 

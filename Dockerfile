@@ -1,17 +1,11 @@
-
+  
 FROM openjdk:11
-ARG PROFILE
-ARG ADDITIONAL_OPTS
-
-ENV PROFILE=${PROFILE}
-ENV ADDITIONAL_OPTS=${ADDITIONAL_OPTS}
-
-WORKDIR /apt/recycle
-
-COPY /target/recycle*.jar recycle.jar
-
-SHELL ["/bin/sh", "-c"]
-
+EXPOSE 5005
 EXPOSE 8080
+COPY target/recycle-0.0.1.jar recycle-0.0.1.jar
+ENTRYPOINT ["java","-jar","/recycle-0.0.1.jar"]
 
-CMD java ${ADDITIONAL_OPTS} -jar recycle.jar --spring.profile.active=${PROFILE}
+
+
+
+
