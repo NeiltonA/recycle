@@ -17,7 +17,7 @@ public class CnpjValidation {
 
 	public static void validate(String cnpj) {
 		
-		Pattern pattern = Pattern.compile("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})");
+		Pattern pattern = Pattern.compile("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})|(^\\d{2}\\.\\d{3}\\.\\d{3}\\/\\d{4}\\-\\d{2}$)");
 		Matcher matcher = pattern.matcher(cnpj); 
 	    if (!matcher.matches()) {
 			throw new BadRequestException("O CNPJ informado está com o tamanho inválido.");

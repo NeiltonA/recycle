@@ -99,6 +99,20 @@ public class UserServiceTest {
 	
 	/**
 	 * Método responsável por realizar o cadastro de um usuário na base de dados
+	 * e salvar esses dados, mas com o CPF já cadastrado lança a exceção..
+	 */
+	@Test
+	public void testSaveNotAcceptableCPF() {
+		
+		given(userRepository.findByIndividualRegistration(getMockUserRequest().getIndividualRegistration())).willReturn(Optional.of(getMockUserRequestErro()));
+		given(userRepository.findByEmail(getMockUserRequest().getEmail())).willReturn(Optional.empty());
+
+		assertThrows(NotAcceptableException.class, () -> userService.save(getMockUserRequest()));	
+			
+	}
+	
+	/**
+	 * Método responsável por realizar o cadastro de um usuário na base de dados
 	 * e lançar a exception relacionado os emails são diferentes.
 	 */
 	@Test
@@ -287,7 +301,7 @@ public class UserServiceTest {
 		user.setPassword("$2a$10$WXaRSUd08sUk67sQvxTDZO0XT7vVl2iWDJpcZAgP/xUuIncV6J/UC");
 		user.setConfirmPassword("caioBastos1");
 		user.setCellPhone("11983512009");
-		user.setIndividualRegistration("61061700020");
+		user.setIndividualRegistration("61061700021");
 		user.setFlowIndicator(Flow.D);
 		user.setRoles(Set.of(getMockRole().get()));
 		

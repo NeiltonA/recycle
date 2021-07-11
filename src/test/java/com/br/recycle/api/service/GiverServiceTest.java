@@ -75,6 +75,29 @@ public class GiverServiceTest {
 	}
 	
 	/*
+	 * Método responsável por validar o cenário de busca de doador, com o id do USER.
+	 */
+	@Test
+	public void testFindAllByUserIdSuccess() {
+		given(giverRepository.findByUserId(1L)).willReturn(getMockGivers());
+		
+		List<Giver> givers = giverService.findAll(1L);
+		
+		assertAll(
+				() -> assertEquals(Long.valueOf(1), givers.get(0).getId()),
+				() -> assertEquals("b43b7541-3447-4bce-bc2c-571ff382b6ec", givers.get(0).getCode()),
+				
+				() -> assertEquals(Long.valueOf(1), givers.get(0).getUser().getId()),
+				() -> assertEquals("Teste 1", givers.get(0).getUser().getName()),
+				() -> assertEquals("develo11.tecnologia@gmail.com", givers.get(0).getUser().getEmail()),
+				() -> assertEquals("11 983512000", givers.get(0).getUser().getCellPhone()),
+				() -> assertEquals("10364680032", givers.get(0).getUser().getIndividualRegistration()),
+				() -> assertEquals(Flow.D, givers.get(0).getUser().getFlowIndicator()),
+				() -> assertEquals(true, givers.get(0).getUser().getActive())
+		);
+	}
+	
+	/*
 	 * Método responsável por validar o cenário de busca de todos os doadores,
 	 * mas a base de dados está vazia, então retorna um conteúdo vazio.
 	 */

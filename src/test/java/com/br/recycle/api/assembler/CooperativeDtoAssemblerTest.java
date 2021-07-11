@@ -4,6 +4,8 @@ import com.br.recycle.api.mock.CooperativeInputMock;
 import com.br.recycle.api.mock.CooperativeMock;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.CooperativeDtoOut;
+import com.br.recycle.api.payload.DictionaryCnpj;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,5 +85,20 @@ public class CooperativeDtoAssemblerTest {
         assertEquals("Juca do brasil LTDA", cooperativeDtoOuts.get(0).getFantasyName());
         assertEquals("25288720000250", cooperativeDtoOuts.get(1).getCnpj());
         assertEquals(Long.valueOf(1), cooperativeDtoOuts.get(1).getUser().getId());
+    }
+    
+    /**
+     * Método responsável por validar o cenário de teste da transformação de dados
+     * do bean do CNPJ para os dados de saída de um dicionario de CNPJ.
+     */
+    @Test
+    public void testToDictionarySuccess() {
+    	DictionaryCnpj dictionaryCnpj = cooperativeDtoAssembler.toDictionary(CooperativeMock.getMockDictionaryCnpj());
+    	assertNotNull(dictionaryCnpj);
+    	assertEquals("Empresa fantasia", dictionaryCnpj.getFantasyName());
+    	assertEquals("Empresa real", dictionaryCnpj.getSocialReason());
+    	assertEquals("Ativa", dictionaryCnpj.getSituation());
+    	assertEquals("Teste", dictionaryCnpj.getType());
+    	assertEquals("SP", dictionaryCnpj.getState());
     }
 }

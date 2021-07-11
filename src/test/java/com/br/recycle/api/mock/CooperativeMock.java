@@ -1,5 +1,6 @@
 package com.br.recycle.api.mock;
 
+import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.model.Cooperative;
 
 import java.util.List;
@@ -38,4 +39,15 @@ public class CooperativeMock {
 
         return List.of(cooperative1, cooperative2);
     }
+
+	public static CnpjResponseBean getMockDictionaryCnpj() {
+		CnpjResponseBean cnpjResponseBean = new CnpjResponseBean();
+		cnpjResponseBean.setFantasia("Empresa fantasia");
+		cnpjResponseBean.setNome("Empresa real");
+		cnpjResponseBean.setSituacao("Ativa");
+		cnpjResponseBean.setTipo("Teste");
+		cnpjResponseBean.setUf("SP");
+		
+		return cnpjResponseBean;
+	}
 }

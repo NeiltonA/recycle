@@ -35,7 +35,6 @@ public class CooperativeDtoAssembler {
 				.collect(Collectors.toList());
 	}	
 	
-	
 	public DictionaryCnpj toDictionary(CnpjResponseBean cnpjResponseBean) {
 		DictionaryCnpj dictionary = new DictionaryCnpj();
 		dictionary.setFantasyName(cnpjResponseBean.getFantasia());
