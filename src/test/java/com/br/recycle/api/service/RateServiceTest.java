@@ -10,11 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import com.br.recycle.api.exception.EntityNotFoundException;
+import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.RatingNotFoundException;
 import com.br.recycle.api.mock.CooperativeMock;
 import com.br.recycle.api.mock.GiverMock;
 import com.br.recycle.api.model.Rate;
@@ -58,6 +64,85 @@ public class RateServiceTest {
 		assertThrows(NoContentException.class, () -> rateService.findAll());
 	}
 	
+	/*
+	 * Método responsável por validar o cenário de busca das avalições
+	 * por ID.
+	 */
+	@Test
+	public void testFindOrFailSuccess() {
+		given(rateRepository.findById(1L)).willReturn(Optional.of(getMockRate()));
+		Rate rate = rateService.findOrFail(1L);
+		assertNotNull(rate);
+	}
+	
+	/*
+	 * Método responsável por validar o cenário de busca as avalições por ID,
+	 * mas não tem dados na busca
+	 */
+	@Test
+	public void testFindAllRatingNotFound() {
+		given(rateRepository.findById(1L)).willThrow(RatingNotFoundException.class);
+		assertThrows(RatingNotFoundException.class, () -> rateService.findOrFail(1L));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário onde os dados de avaliação
+	 * é salvo na base de dados.
+	 */
+	@Test
+	public void testSaveSuccess() {
+		doReturn(getMockRate()).when(rateRepository).save(getMockRate());
+		
+		Rate rate = rateService.save(getMockRate());
+		assertNotNull(rate);
+	}
+	
+	/**
+	 * Método responsável por validar o cenário onde os dados de avaliação
+	 * é salvo na base de dados, mas ocorre um erro interno.
+	 */
+	@Test
+	public void testSaveInternalServerError() {
+		doThrow(InternalServerException.class).when(rateRepository).save(getMockRate());
+		
+		assertThrows(InternalServerException.class, () -> rateService.save(getMockRate()));
+
+	}
+	
+	/*
+	 * Método responsável por validar o cenário onde os dados da avaliação
+	 * são atualizados.
+	 */
+	@Test
+	public void testUpdateSuccess() {
+		given(rateRepository.findById(1L)).willReturn(Optional.of(getMockRate()));
+		doReturn(getMockRate()).when(rateRepository).save(getMockRate());
+		
+		rateService.update(1L, getMockRate());
+	}
+	
+	/*
+	 * Método responsável por validar o cenário onde os dados da avaliação
+	 * são atualizados.
+	 */
+	@Test
+	public void testUpdateEntityNotFound() {
+		given(rateRepository.findById(1L)).willReturn(Optional.empty());
+		
+		assertThrows(EntityNotFoundException.class, () -> rateService.update(1L, getMockRate()));
+	}
+	
+	private Rate getMockRate() {
+		Rate rate = new Rate();
+		rate.setId(1L);
+		rate.setComment("Otimo");
+		rate.setNote(10L);
+		rate.setGiver(GiverMock.getMockToModel());
+		rate.setCooperative(CooperativeMock.getMockCooperative());
+		
+		return rate;
+	}
+
 	private List<Rate> getMockRates() {
 		Rate rate = new Rate();
 		rate.setId(1L);

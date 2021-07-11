@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -34,7 +33,6 @@ public class Rate implements Serializable {
     @Column(name = "id_rate")
     private Long id;
 
-    @NotEmpty
     private Long note;
 
     private String comment;
