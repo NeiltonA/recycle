@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.br.recycle.api.exception.DonationNotFoundException;
+import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.AvailabilityDays;
 import com.br.recycle.api.model.AvailabilityPeriod;
@@ -49,7 +48,7 @@ public class DonationServiceTest {
 	public void testFindAllSuccess() {
 		given(donationRepository.findAll()).willReturn(getMockDonation());
 		
-		List<Donation> donations = donationService.findAll();
+		List<Donation> donations = donationService.findAll(null);
 		assertNotNull(donations);
 	}
 
@@ -61,7 +60,7 @@ public class DonationServiceTest {
 	public void testFindAllNoContent() {
 		given(donationRepository.findAll()).willReturn(Collections.emptyList());
 		
-		assertThrows(NoContentException.class, () -> donationService.findAll());
+		assertThrows(NoContentException.class, () -> donationService.findAll(null));
 	}
 	
 	/**

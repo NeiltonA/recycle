@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.DonationDtoAssembler;
@@ -52,9 +53,9 @@ public class DonationController {
 	 */
 	@ApiOperation(value = "Method responsible for returning the list of donations")
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<DonationDtoOut> getAll() {
-		List<Donation> donations = donationService.findAll();
+	public List<DonationDtoOut> getAll(@RequestParam(required = false) Long user) {
 
+		List<Donation> donations = donationService.findAll(user);
 		return donationDtoAssembler.toCollectionModel(donations);
 	}
 
