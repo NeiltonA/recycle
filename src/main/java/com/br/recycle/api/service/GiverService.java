@@ -1,6 +1,8 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -38,21 +40,24 @@ public class GiverService {
 		this.userService = userService;
 		this.cooperativeRepository = cooperativeRepository;
 	}
-
+	
 	/**
 	 * O método é responsável por conter a busca de todos os cadastros de doadores.
 	 * @return {@code List<Giver>}
 	 * 		- Caso tem cadastro ativo, ele retorna a lusta de Doadores.
 	 * 		- Caso o cadastro esteja vazio, retorna que a lista está vazia com a exceção.
 	 */
-	public List<Giver> findaAll() {
-		List<Giver> givers = giverRepository.findAll();
+	public List<Giver> findAll(Long user) {
 		
-		if (givers.isEmpty()) {
-			throw new NoContentException("Não existe cadastros de doadores no momento.");
+		List<Giver> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
+			response = giverRepository.findByUserId(user);
+			return validateEmpty(response);
+		} else {
+			response = giverRepository.findAll();
+			return validateEmpty(response);
 		}
-		
-		return givers;
 	}
 	
 	/**
@@ -97,9 +102,9 @@ public class GiverService {
 	 * @param {@code Long} - id
 	 */
 	public void verifyGiver(Long id) {
-		Optional<Giver> giverPresent = giverRepository.findByUserId(id);
+		List<Giver> giverPresent = giverRepository.findByUserId(id);
 		
-		if (giverPresent.isPresent()) {
+		if (!giverPresent.isEmpty()) {
 			throw new UnprocessableEntityException(String.format("Já existe um doador cadastrado com o código de usuário %s", id));
 		}
 	}
@@ -117,7 +122,7 @@ public class GiverService {
 			throw new UnprocessableEntityException(String.format("já existe um usuário do código (%s)  associado com a Cooperativa", id));
 		}
 	}
-
+	
 	/**
 	 * Método responsável por reaizar a deleção dos dados do doador na base de dados através do ID.
 	 * @param {@code Long} id
@@ -127,7 +132,15 @@ public class GiverService {
 		giverRepository.deleteById(id);
 	}
 
-//	@Transactional
+	private List<Giver> validateEmpty(List<Giver> givers) {
+		if (givers.isEmpty()) {
+			throw new NoContentException("Não existe cadastros de doadores no momento.");
+		}
+		
+		return givers;
+	}
+
+	//	@Transactional
 //	public void excluir(Long giverId) {
 //		try {
 //			giverRepository.deleteById(giverId);

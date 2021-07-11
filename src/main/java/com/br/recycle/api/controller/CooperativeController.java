@@ -12,22 +12,28 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.CooperativeDtoAssembler;
+import com.br.recycle.api.bean.CnpjResponseBean;
+import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
+import com.br.recycle.api.payload.DictionaryCnpj;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
+import com.br.recycle.api.validation.CnpjValidation;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,15 +55,29 @@ public class CooperativeController {
     private CooperativeService service;
 
     @ApiOperation(value = "Method responsible for returning the list of cooperatives")
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CooperativeDtoOut> getAll() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CooperativeDtoOut> getAll(@RequestParam(required = false) Long user) {
         try {
-            List<Cooperative> cooperatives = repository.findAll();
+            List<Cooperative> cooperatives = service.findAll(user);
             return assembler.toCollectionModel(cooperatives);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
     }
+    
+	@ApiOperation(value = "Method responsible for returning the cnpj via revenue-ws")
+	@GetMapping(value = UriConstants.URI_REVENUE_CNPJ, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<DictionaryCnpj> getCnpj(@PathVariable String cnpj) {
+
+		CnpjValidation.validate(cnpj);
+		CnpjResponseBean cnpjResponseBean = service.searchCnpj(cnpj);
+		DictionaryCnpj dictionaryCnpj = assembler.toDictionary(cnpjResponseBean);
+			if (dictionaryCnpj.getSocialReason() ==null) {
+				throw new UnprocessableEntityException("De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
+			}
+		return ResponseEntity.ok().body(dictionaryCnpj);
+	}
+
 
     @ApiOperation(value = "Method responsible for searching the cooperative by ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,6 +121,14 @@ public class CooperativeController {
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);
         }
+    }
+    
+    @ApiOperation(value = "Method responsible for updating the cooperative")
+    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> updatePatch(@PathVariable("id") long id, @RequestBody CooperativeInput cooperative) {
+        	Cooperative coop = assembler.toDomainObject(cooperative);
+        	service.updatePatch(coop, id);
+         return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
     }
 
     @ApiOperation(value = "Method responsible for removing the cooperative") // cooperative

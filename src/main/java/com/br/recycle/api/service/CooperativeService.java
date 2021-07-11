@@ -1,5 +1,9 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +11,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.CooperativeNotFoundException;
 import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.NoContentException;
+import com.br.recycle.api.exception.UnprocessableEntityException;
+import com.br.recycle.api.feign.ViaCnpjClient;
 import com.br.recycle.api.model.Cooperative;
+import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.repository.GiverRepository;
 
@@ -23,8 +32,34 @@ public class CooperativeService {
     private CooperativeRepository repository;
     
     @Autowired
+    private ViaCnpjClient viaCnpjClient;
+    
+    @Autowired
     private GiverRepository gvRepository;
 
+    
+	public List<Cooperative> findAll(Long user) {
+		
+		List<Cooperative> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
+			response = repository.findByUserId(user);
+			return validateEmpty(response);
+		} else {
+			response = repository.findAll();
+			return validateEmpty(response);
+		}
+	}
+    
+    
+	public CnpjResponseBean searchCnpj(String cnpj) {
+		try {
+			return viaCnpjClient.searchCnpj(cnpj);
+		} catch (Exception e) {
+			throw new UnprocessableEntityException("De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
+		}	
+	}
+    
     @Transactional
     public Cooperative save(Cooperative cooperative) {
     	
@@ -40,6 +75,27 @@ public class CooperativeService {
     	
         return repository.save(cooperative);
     }
+    
+	@Transactional
+	public void updatePatch(final Cooperative cooperative, Long id) {
+		try {
+			Cooperative cooperativeActual = findOrFail(id);
+			cooperative.setId(cooperativeActual.getId());
+			cooperative.setUser(getUser(cooperativeActual));
+			if (cooperative.getCompanyName() == null) {
+				cooperative.setCompanyName(cooperativeActual.getCompanyName());
+			}
+			if (cooperative.getFantasyName() == null) {
+				cooperative.setFantasyName(cooperativeActual.getFantasyName());
+			}
+			if (cooperative.getCnpj() == null) {
+				cooperative.setCnpj(cooperativeActual.getCnpj());
+			}
+			repository.save(cooperative);
+		} catch (DataIntegrityViolationException e) {
+			throw new CooperativeNotFoundException(String.format("Erro ao alterar o endereço"));
+		}
+	}
 
     @Transactional
     public void remove(Long cooperativeId) {
@@ -56,11 +112,11 @@ public class CooperativeService {
     }
     
     public boolean verifyCooperative(Long id) {
-    	boolean cooperative  = repository.findByUserId(id).isPresent();
+    	boolean cooperative  = !repository.findByUserId(id).isEmpty();
         return cooperative;
     }
     public boolean verifyGiver(Long id) {
-    	boolean giver  = gvRepository.findByUserId(id).isPresent();
+    	boolean giver  = !gvRepository.findByUserId(id).isEmpty();
         return giver;
     }
 
@@ -68,4 +124,18 @@ public class CooperativeService {
         return repository.findById(id).orElseThrow(() -> new CooperativeNotFoundException(id));
     }
 
+	private User getUser(Cooperative cooperativeActual) {
+		User user = new User();
+		user.setId(cooperativeActual.getUser().getId());
+		
+		return user;
+	}
+	
+	private List<Cooperative> validateEmpty(List<Cooperative> cooperatives) {
+		if (cooperatives.isEmpty()) {
+			throw new NoContentException("A lista de Cooperativa está vazia.");
+		}
+		
+		return cooperatives;
+	}
 }

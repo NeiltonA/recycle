@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
+import com.br.recycle.api.payload.DictionaryCnpj;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos da cooperativa
@@ -32,4 +34,17 @@ public class CooperativeDtoAssembler {
 				.map(cooperative -> toModel(cooperative))
 				.collect(Collectors.toList());
 	}	
+	
+	
+	public DictionaryCnpj toDictionary(CnpjResponseBean cnpjResponseBean) {
+		DictionaryCnpj dictionary = new DictionaryCnpj();
+		dictionary.setFantasyName(cnpjResponseBean.getFantasia());
+		dictionary.setSocialReason(cnpjResponseBean.getNome());
+		dictionary.setSituation(cnpjResponseBean.getSituacao());
+		dictionary.setType(cnpjResponseBean.getTipo());
+		dictionary.setState(cnpjResponseBean.getUf());
+
+		
+		return dictionary;
+	}
 }

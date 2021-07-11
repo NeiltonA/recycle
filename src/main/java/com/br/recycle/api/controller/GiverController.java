@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.GiverDtoAssembler;
@@ -54,12 +54,10 @@ public class GiverController {
 	 * @return {@code List<GiverDtoOut} - Retorna uma lista de doadores.
 	 */
 	@ApiOperation(value = "Method responsible for returning the list of givers")
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<GiverDtoOut> getAll() {
-
-		List<Giver> givers = giverService.findaAll();
-
-		return giverDtoAssembler.toCollectionModel(givers);
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<GiverDtoOut> getAll(@RequestParam(required = false) Long user) {
+			List<Giver> givers = giverService.findAll(user);
+			return giverDtoAssembler.toCollectionModel(givers);
 	}
 
 	/**

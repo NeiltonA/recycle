@@ -4,13 +4,25 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
-    image: recycle
+    image: recycle/api
     ports:
-    - '8080:8080'
+      - '8080:8080'
+      - '5005:5005'
     environment:
       - ADDITIONAL_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1G -Xms128m -XX:MaxMetaspaceSize=128m
-      - PROFILE=dev
-
-   
-   
-
+      - Dspring.profiles.active=dev
+    links:
+      - db
+      
+  db:
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_DATABASE=recycle
+      - MYSQL_USER=root1
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./docker/volume_mysql:/var/lib/mysql

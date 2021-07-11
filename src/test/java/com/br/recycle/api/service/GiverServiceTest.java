@@ -58,7 +58,7 @@ public class GiverServiceTest {
 	public void testFindAllSuccess() {
 		given(giverRepository.findAll()).willReturn(getMockGivers());
 		
-		List<Giver> givers = giverService.findaAll();
+		List<Giver> givers = giverService.findAll(null);
 		
 		assertAll(
 				() -> assertEquals(Long.valueOf(1), givers.get(0).getId()),
@@ -82,7 +82,7 @@ public class GiverServiceTest {
 	public void testFindAllNoContent() {
 		given(giverRepository.findAll()).willReturn(Collections.emptyList());
 		
-		assertThrows(NoContentException.class, () -> giverService.findaAll());
+		assertThrows(NoContentException.class, () -> giverService.findAll(null));
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class GiverServiceTest {
 	@Test
 	public void testSaveSuccess() {
 		given(userService.findById(1L)).willReturn(getMockUser());
-		given(giverRepository.findByUserId(1L)).willReturn(Optional.empty());
+		given(giverRepository.findByUserId(1L)).willReturn(Collections.emptyList());
 		given(cooperativeRepository.findById(1L)).willReturn(Optional.empty());
 		doReturn(getMockGiverSave()).when(giverRepository).save(getMockGiverSave());
 		
@@ -141,7 +141,7 @@ public class GiverServiceTest {
 	@Test
 	public void testSaveGiverUnprocessableEntity() {
 		given(userService.findById(1L)).willReturn(getMockUser());
-		given(giverRepository.findByUserId(1L)).willReturn(Optional.of(getMockGiver()));
+		given(giverRepository.findByUserId(1L)).willReturn(List.of(getMockGiver()));
 		
 		assertThrows(UnprocessableEntityException.class, () -> giverService.save(1L));
 	}
@@ -152,7 +152,7 @@ public class GiverServiceTest {
 	@Test
 	public void testSaveCooperativeUnprocessableEntity() {
 		given(userService.findById(1L)).willReturn(getMockUser());
-		given(giverRepository.findByUserId(1L)).willReturn(Optional.empty());
+		given(giverRepository.findByUserId(1L)).willReturn(Collections.emptyList());
 		given(cooperativeRepository.findById(1L)).willReturn(Optional.of(getMockCooperative()));
 		
 		assertThrows(UnprocessableEntityException.class, () -> giverService.save(1L));
