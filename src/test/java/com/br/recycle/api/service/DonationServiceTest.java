@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.br.recycle.api.exception.DonationNotFoundException;
 import com.br.recycle.api.exception.EntityNotFoundException;
+import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.AvailabilityDays;
 import com.br.recycle.api.model.AvailabilityPeriod;
@@ -51,6 +53,29 @@ public class DonationServiceTest {
 		List<Donation> donations = donationService.findAll(null);
 		assertNotNull(donations);
 	}
+	
+	/**
+	 * Método responsável por validar o cenário de teste da busca de todos as doações.
+	 */
+	@Test
+	public void testFindAllByIdGiverSuccess() {
+		given(donationRepository.findByGiverUserId(1L)).willReturn(getMockDonation());
+		
+		List<Donation> donations = donationService.findAll(1L);
+		assertNotNull(donations);
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de teste da busca de todos as doações.
+	 */
+	@Test
+	public void testFindAllByIdCooperativeSuccess() {
+		given(donationRepository.findByGiverUserId(1L)).willReturn(Collections.emptyList());
+		given(donationRepository.findByCooperativeUserId(1L)).willReturn(getMockDonation());
+		
+		List<Donation> donations = donationService.findAll(1L);
+		assertNotNull(donations);
+	}
 
 	/**
 	 * Método responsável por validar o cenário de teste da busca de todos as doações,
@@ -72,6 +97,17 @@ public class DonationServiceTest {
 		
 		Donation donation = donationService.save(getMockDonationSave());
 		assertNotNull(donation);
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de salvar os dados na base dados, 
+	 * mas ocorre erro ao salvar os dados.
+	 */
+	@Test
+	public void testSaveInternal() {
+		doThrow(InternalServerException.class).when(donationRepository).save(getMockDonationSave());
+		
+		assertThrows(InternalServerException.class, () -> donationService.save(getMockDonationSave()));
 	}
 	
 	/**
