@@ -47,7 +47,7 @@ public class CooperativeControllerTest {
 
 		when(assemble.toCollectionModel(coo)).thenReturn(new ArrayList<CooperativeDtoOut>());
 
-		when(repository.findAll()).thenReturn(new ArrayList<>());
+		when(service.findAll(null)).thenReturn(new ArrayList<>());
 
 		List<CooperativeDtoOut> coop = controller.getAll(null);
 		assertNotNull(coop, NOT_NULL);
