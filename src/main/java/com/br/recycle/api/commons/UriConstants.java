@@ -36,4 +36,7 @@ public final class UriConstants {
 	public static final String URI_FLOW_DONATION_CONFIRMED = "/confirmed";
 	public static final String URI_FLOW_DONATION_CANCEL = "/cancel";
 	public static final String URI_FLOW_DONATION_DELIVERY = "/deliver";	
+	
+	public static final String URI_BASE_DONATION = "/api/v1/donation";
+	public static final String URI_DONATION_ID = "/{id}";
 }

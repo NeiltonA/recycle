@@ -2,6 +2,7 @@ package com.br.recycle.api.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -145,23 +146,21 @@ public class UserService {
 		user.setRoles(userActual.getRoles());
 		user.setToken(userActual.getToken());
 		user.setFlowIndicator(userActual.getFlowIndicator());
-		user.setIndividualRegistration(userActual.getIndividualRegistration());
 		if (!userActual.getIndividualRegistration().matches(user.getIndividualRegistration())) {
 		log.error("CPF não pode ser alterado!");
 		throw new NotAcceptableException(
 				String.format("CPF não pode ser alterado! %s", user.getIndividualRegistration()));
      	}
 		
-		
-		if (user.getEmail() ==null) {
+		if (Objects.isNull(user.getEmail())) {
 			user.setEmail(userActual.getEmail());
 		}
 			
-		if(user.getName() == null) {
+		if(Objects.isNull(user.getName())) {
 			user.setName(userActual.getName());
 		}
 		
-		if(user.getCellPhone() == null) {
+		if(Objects.isNull(user.getCellPhone())) {
 			user.setCellPhone(userActual.getCellPhone());
 		}
 
@@ -208,15 +207,12 @@ public class UserService {
 				.orElseThrow(() -> new UserNotFoundException(userId));
 	}
 
-	//@Cacheable(cacheNames = "User", key="#userId")
-	public Object findByGroup(Long userId) {
-		Object group = manager.createNativeQuery(
-				"select s.name from users u inner join user_roles r on u.id_user= r.user_id  inner join roles s on s.id = r.role_id and u.id_user ='"
-						+ userId + "'")
-				.getSingleResult();
-		return group;
-	}
-
-
-
+//	@Cacheable(cacheNames = "User", key="#userId")
+//	public Object findByGroup(Long userId) {
+//		Object group = manager.createNativeQuery(
+//				"select s.name from users u inner join user_roles r on u.id_user= r.user_id  inner join roles s on s.id = r.role_id and u.id_user ='"
+//						+ userId + "'")
+//				.getSingleResult();
+//		return group;
+//	}
 }

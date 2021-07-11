@@ -31,6 +31,14 @@ import com.br.recycle.api.payload.RoleName;
 import com.br.recycle.api.repository.RoleRepository;
 import com.br.recycle.api.repository.UserRepository;
 
+/**
+ * Classe responsável por validar os cenários de testes da classe
+ * de serviço do Usuário.
+ * 
+ * @author Caio Henrique do Carmo Bastos
+ * @since 11/07/2021
+ *
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
@@ -199,7 +207,7 @@ public class UserServiceTest {
 	 * em partes os dados de usuário.
 	 */
 	@Test
-	public void testUpdateSuccess() {
+	public void testUpdatePatchSuccess() {
 		given(userRepository.findById(id)).willReturn(Optional.of(getMockUser()));
 		doReturn(getMockUser()).when(userRepository).save(getMockUser());
 
@@ -208,17 +216,55 @@ public class UserServiceTest {
 	}
 	
 	/**
-	 * Método responsável por validar o cenário onde é os emails
-	 * são diferentes.
+	 * Método responsável por validar o cenário onde é atualizado 
+	 * em partes os dados de usuário quando o email está nulo.
 	 */
 	@Test
-	public void testUpdateNotAcceptable() {
-		//given(userRepository.findById(id)).willReturn(Optional.of(getMockUserRequestErro()));
+	public void testUpdatePatchEmailNullSuccess() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUser()));
+		doReturn(getMockUser()).when(userRepository).save(getMockUser());
 
-		//assertThrows(NotAcceptableException.class, () -> userService.updatPatch(getMockUser(), 1L));
-
+		User user = userService.updatPatch(getMockUserEmailNull(), 1L);
+		assertNotNull(user);
 	}
 		
+	/**
+	 * Método responsável por validar o cenário onde é atualizado 
+	 * em partes os dados de usuário quando o name está nulo.
+	 */
+	@Test
+	public void testUpdatePatchNameNullSuccess() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUser()));
+		doReturn(getMockUser()).when(userRepository).save(getMockUser());
+
+		User user = userService.updatPatch(getMockUserNameNull(), 1L);
+		assertNotNull(user);
+	}
+	
+	/**
+	 * Método responsável por validar o cenário onde é atualizado 
+	 * em partes os dados de usuário quando o CellPhone está nulo.
+	 */
+	@Test
+	public void testUpdatePatchCellPhoneNullSuccess() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUser()));
+		doReturn(getMockUser()).when(userRepository).save(getMockUser());
+
+		User user = userService.updatPatch(getMockUserCellPhoneNull(), 1L);
+		assertNotNull(user);
+	}
+
+	/**
+	 * Método responsável por validar o cenário onde O CPF não pode 
+	 * ser alterado
+	 */
+	@Test
+	public void testUpdatePatchNotAcceptableCpf() {
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUserCpf()));
+
+		assertThrows(NotAcceptableException.class, () -> userService.updatPatch(getMockUser(), 1L));
+	}
+	
 	private List<User> getMockUsers() {
 		User user = new User();
 		user.setId(1L);
@@ -252,6 +298,59 @@ public class UserServiceTest {
 		user.setId(1L);
 		user.setName("Caio Henrique Teste");
 		user.setEmail("caio12bastos@gmail.com");
+		user.setRole(RoleName.ROLE_USER);
+		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
+		user.setCellPhone("11983512009");
+		user.setIndividualRegistration("61061700020");
+		user.setFlowIndicator(Flow.C);
+		
+		return user;
+	}
+	
+	private User getMockUserCpf() {
+		User user = new User();
+		user.setId(1L);
+		user.setName("Caio Henrique Teste");
+		user.setEmail("caio12bastos@gmail.com");
+		user.setRole(RoleName.ROLE_USER);
+		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
+		user.setCellPhone("11983512009");
+		user.setIndividualRegistration("61061700021");
+		user.setFlowIndicator(Flow.C);
+		
+		return user;
+	}
+	
+	private User getMockUserCellPhoneNull() {
+		User user = new User();
+		user.setId(1L);
+		user.setName("Caio Henrique Teste");
+		user.setEmail("caio12bastos@gmail.com");
+		user.setRole(RoleName.ROLE_USER);
+		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
+		user.setIndividualRegistration("61061700020");
+		user.setFlowIndicator(Flow.C);
+		
+		return user;
+	}
+	
+	private User getMockUserNameNull() {
+		User user = new User();
+		user.setId(1L);
+		user.setEmail("caio12bastos@gmail.com");
+		user.setRole(RoleName.ROLE_USER);
+		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
+		user.setCellPhone("11983512009");
+		user.setIndividualRegistration("61061700020");
+		user.setFlowIndicator(Flow.C);
+		
+		return user;
+	}
+	
+	private User getMockUserEmailNull() {
+		User user = new User();
+		user.setId(1L);
+		user.setName("Caio Henrique Teste");
 		user.setRole(RoleName.ROLE_USER);
 		user.setPassword("$2a$10$X1tpGensr3VenL6oO/FWI.RA.y2nQTwpJ0y0Sx5l8DpyCeqa602xy");
 		user.setCellPhone("11983512009");
