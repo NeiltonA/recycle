@@ -4,6 +4,8 @@ package com.br.recycle.api.config;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +29,7 @@ public class DataSourceConfigTest {
 	
 	@Test
 	public void testDataSource() {
-		config.dataSource();
-		assertNotNull("Not Null", "");
+		DataSource dataSource = config.dataSource();
+		assertNotNull(dataSource);
 	}
-	
-	
-
 }

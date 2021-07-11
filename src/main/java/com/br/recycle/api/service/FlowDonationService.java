@@ -8,39 +8,43 @@ import org.springframework.stereotype.Service;
 import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.repository.DonationRepository;
 
+/**
+ * Classe responsável por realizar os serviços das transações de comunicação
+ * com a base de dados, com relação ao estado da doação.
+ */
 @Service
 public class FlowDonationService {
 
-	@Autowired
-	private DonationService service;
+	private DonationService donationService;
+	private DonationRepository donationRepository;
 
+	@Autowired
+	public FlowDonationService(DonationService donationService, DonationRepository donationRepository) {
+		this.donationService = donationService;
+		this.donationRepository = donationRepository;
+	}
 	
-	@Autowired
-	private DonationRepository repository;
-
 	@Transactional
 	public void confirm(String code) {
-		Donation donation = service.findByCodeOrFail(code);
+		Donation donation = donationService.findByCodeOrFail(code);
 		donation.confirm();
 		
-		repository.save(donation);
+		donationRepository.save(donation);
 	}
 	
 	@Transactional
 	public void cancel(String code) {
-		Donation donation = service.findByCodeOrFail(code);
+		Donation donation = donationService.findByCodeOrFail(code);
 		donation.cancel();
 		
-		repository.save(donation);
+		donationRepository.save(donation);
 	}
 	
 	@Transactional
 	public void deliver(String code) {
-		Donation donation = service.findByCodeOrFail(code);
+		Donation donation = donationService.findByCodeOrFail(code);
 		donation.deliver();
 		
-		repository.save(donation);
+		donationRepository.save(donation);
 	}
-	
-	
 }

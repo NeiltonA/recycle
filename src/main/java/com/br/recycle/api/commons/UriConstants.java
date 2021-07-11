@@ -28,4 +28,9 @@ public final class UriConstants {
 	
 	public static final String URI_BASE_GIVER = "/api/v1/giver";
 	public static final String URI_GIVER_ID = "/{id}";
+	
+	public static final String URI_BASE_FLOW_DONATION = "/api/v1/donation/{code}";
+	public static final String URI_FLOW_DONATION_CONFIRMED = "/confirmed";
+	public static final String URI_FLOW_DONATION_CANCEL = "/cancel";
+	public static final String URI_FLOW_DONATION_DELIVERY = "/deliver";	
 }
