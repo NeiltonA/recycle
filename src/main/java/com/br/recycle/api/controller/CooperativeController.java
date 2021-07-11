@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.CooperativeDtoAssembler;
@@ -55,10 +55,10 @@ public class CooperativeController {
     private CooperativeService service;
 
     @ApiOperation(value = "Method responsible for returning the list of cooperatives")
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CooperativeDtoOut> getAll() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CooperativeDtoOut> getAll(@RequestParam(required = false) Long user) {
         try {
-            List<Cooperative> cooperatives = repository.findAll();
+            List<Cooperative> cooperatives = service.findAll(user);
             return assembler.toCollectionModel(cooperatives);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage(), e);

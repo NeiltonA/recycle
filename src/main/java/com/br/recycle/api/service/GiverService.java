@@ -101,7 +101,7 @@ public class GiverService {
 	}
 
 	public boolean verifyCooperative(Long id) {
-		boolean cooperative = coopRepository.findByUserId(id).isPresent();
+		boolean cooperative = !coopRepository.findByUserId(id).isEmpty();
 		return cooperative;
 	}
 

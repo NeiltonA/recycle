@@ -1,5 +1,9 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.CooperativeNotFoundException;
 import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaCnpjClient;
 import com.br.recycle.api.model.Cooperative;
@@ -32,6 +37,21 @@ public class CooperativeService {
     @Autowired
     private GiverRepository gvRepository;
 
+    
+	public List<Cooperative> findAll(Long user) {
+		
+		List<Cooperative> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
+			response = repository.findByUserId(user);
+			return validateEmpty(response);
+		} else {
+			response = repository.findAll();
+			return validateEmpty(response);
+		}
+	}
+    
+    
 	public CnpjResponseBean searchCnpj(String cnpj) {
 		try {
 			return viaCnpjClient.searchCnpj(cnpj);
@@ -92,7 +112,7 @@ public class CooperativeService {
     }
     
     public boolean verifyCooperative(Long id) {
-    	boolean cooperative  = repository.findByUserId(id).isPresent();
+    	boolean cooperative  = !repository.findByUserId(id).isEmpty();
         return cooperative;
     }
     public boolean verifyGiver(Long id) {
@@ -109,5 +129,13 @@ public class CooperativeService {
 		user.setId(cooperativeActual.getUser().getId());
 		
 		return user;
+	}
+	
+	private List<Cooperative> validateEmpty(List<Cooperative> cooperatives) {
+		if (cooperatives.isEmpty()) {
+			throw new NoContentException("A lista de Cooperativa está vazia.");
+		}
+		
+		return cooperatives;
 	}
 }
