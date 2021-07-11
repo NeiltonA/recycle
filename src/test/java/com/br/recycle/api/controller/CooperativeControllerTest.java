@@ -49,7 +49,7 @@ public class CooperativeControllerTest {
 
 		when(repository.findAll()).thenReturn(new ArrayList<>());
 
-		List<CooperativeDtoOut> coop = controller.getAll();
+		List<CooperativeDtoOut> coop = controller.getAll(null);
 		assertNotNull(coop, NOT_NULL);
 
 	}
