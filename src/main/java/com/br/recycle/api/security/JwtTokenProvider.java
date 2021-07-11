@@ -31,10 +31,10 @@ public class JwtTokenProvider {
 
 	public String generateJwtToken(MainUser userPrincipal) {
 		boolean refresh = false;
-		return generateTokenFromUsername(userPrincipal.getEmail(), userPrincipal.getId(), refresh);
+		return generateTokenFromUsername(userPrincipal.getId(), refresh);
 	}
 
-	public String generateTokenFromUsername(String username, Long id, boolean refresh) {
+	public String generateTokenFromUsername(Long id, boolean refresh) {
 		     long expirationRefreshEhToken = 0;
 			if (refresh) {
 				expirationRefreshEhToken = this.refreshTokenDurationMs;
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
 		
 		
 		
-		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+		return Jwts.builder().setSubject(String.valueOf(id)).setIssuedAt(new Date())
 				.setId(id.toString()) //jti: Json Token Identifier ou ID único para o token;
 				.setAudience("Recycle") //Audience, quem vai consumir o seu token;
 				.setExpiration(new Date((new Date()).getTime() + expirationRefreshEhToken)) //exp: Expiration, tempo para utilização do token;

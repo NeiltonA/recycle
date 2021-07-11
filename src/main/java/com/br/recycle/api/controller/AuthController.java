@@ -105,7 +105,7 @@ public class AuthController {
 			boolean refresh = true;
 			return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
 					.map(RefreshToken::getUser).map(user -> {
-						String token = tokenProvider.generateTokenFromUsername(user.getEmail(), user.getId(), refresh);
+						String token = tokenProvider.generateTokenFromUsername(user.getId(), refresh);
 						return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
 					})
 					.orElseThrow(() -> new TokenRefreshException("O token de atualização não está no banco de dados!"));
