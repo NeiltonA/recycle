@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.recycle.api.assembler.RateDtoAssembler;
+import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.payload.ApiResponse;
@@ -33,89 +33,100 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Classe responsável por ser a Contreller e conter o Endpoint de avaliação da
+ * aplicação.
+ */
 @Log4j2
 @RestController
-@RequestMapping("/api/v1/rate")
+@RequestMapping(UriConstants.URI_BASE_RATE)
 @Api(value = "Rate", description = "REST API for Rate", tags = { "Rate" })
 public class RateController {
 
-    @Autowired
-    private RateRepository repository;
+	private RateRepository rateRepository;
+	private RateService rateService;
+	private RateDtoAssembler rateDtoAssembler;
 
-    @Autowired
-    private RateService service;
-    
-    @Autowired
-  	private RateDtoAssembler assembler;
+	@Autowired
+	public RateController(RateRepository rateRepository, RateService rateService, RateDtoAssembler rateDtoAssembler) {
+		this.rateRepository = rateRepository;
+		this.rateService = rateService;
+		this.rateDtoAssembler = rateDtoAssembler;
+	}
+	
+	/**
+	 * Método responsável por conter o endpoint que busca todos as avaliações na base
+	 * de dados.
+	 * 
+	 * @return {@code List<RateDtoOut} - Retorna uma lista de avaliações.
+	 */
+	@ApiOperation(value = "Method responsible for returning the list of rates")
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<RateDtoOut> getAll() {
 
-    @ApiOperation(value = "Method responsible for returning the list of rates")
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RateDtoOut> getAll() {
-        try {
-            List<Rate> rates = repository.findAll();
-            return assembler.toCollectionModel(rates);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+		List<Rate> rates = rateService.findAll();
 
-    @ApiOperation(value = "Method responsible for searching the rating by ID")
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RateDtoOut getById(@PathVariable("id") long id) {
-        try {
-            Rate rate = service.buscarOuFalhar(id);
-            return assembler.toModel(rate);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+		return rateDtoAssembler.toCollectionModel(rates);
+	}
 
-    @ApiOperation(value = "Method responsible for saving the rate")
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody RateInput rate) {
-        try {
-        	Rate rat = assembler.toDomainObject(rate);
-            service.save(rat);
-            log.info("Registered successfully -> []");
-            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Avaliação registrada com sucesso!"));
-        } catch (Exception e) {
-            log.error("Failed to register -> [] ", e);
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+	@ApiOperation(value = "Method responsible for searching the rating by ID")
+	@GetMapping(value = UriConstants.URI_RATE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public RateDtoOut getById(@PathVariable("id") Long id) {
+		try {
+			Rate rate = rateService.buscarOuFalhar(id);
+			return rateDtoAssembler.toModel(rate);
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage(), e);
+		}
+	}
 
-    @ApiOperation(value = "Method responsible for updating the rate")
-    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody RateInput rate) {
-        try {
-        	
-        	Rate rat = assembler.toDomainObject(rate);
-            Optional<Rate> ra = repository.findById(id);
-            if (ra.isPresent()) {
-                rat.setId(ra.get().getId());
-                repository.save(rat);
-                return ResponseEntity.ok(new ApiResponse(true, "Avaliação modificada com sucesso!"));
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+	@ApiOperation(value = "Method responsible for saving the rate")
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> save(@Valid @RequestBody RateInput rate) {
+		try {
+			Rate rat = rateDtoAssembler.toDomainObject(rate);
+			rateService.save(rat);
+			log.info("Registered successfully -> []");
+			return ResponseEntity.created(URI.create(""))
+					.body(new ApiResponse(true, "Avaliação registrada com sucesso!"));
+		} catch (Exception e) {
+			log.error("Failed to register -> [] ", e);
+			throw new BusinessException(e.getMessage(), e);
+		}
+	}
 
-    @ApiOperation(value = "Method responsible for removing the rate")
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
-        try {
-            Optional<Rate> rat = repository.findById(id);
-            if (rat.isPresent()) {
-                repository.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
+	@ApiOperation(value = "Method responsible for updating the rate")
+	@PutMapping(value = UriConstants.URI_RATE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody RateInput rate) {
+		try {
 
-    }
+			Rate rat = rateDtoAssembler.toDomainObject(rate);
+			Optional<Rate> ra = rateRepository.findById(id);
+			if (ra.isPresent()) {
+				rat.setId(ra.get().getId());
+				rateRepository.save(rat);
+				return ResponseEntity.ok(new ApiResponse(true, "Avaliação modificada com sucesso!"));
+			}
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage(), e);
+		}
+	}
+
+	@ApiOperation(value = "Method responsible for removing the rate")
+	@DeleteMapping(value = UriConstants.URI_RATE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
+		try {
+			Optional<Rate> rat = rateRepository.findById(id);
+			if (rat.isPresent()) {
+				rateRepository.deleteById(id);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			return ResponseEntity.notFound().build();
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage(), e);
+		}
+
+	}
 
 }
