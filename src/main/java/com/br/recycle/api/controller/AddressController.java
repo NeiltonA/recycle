@@ -27,8 +27,8 @@ import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.ApiResponse;
+import com.br.recycle.api.payload.Dictionary;
 import com.br.recycle.api.service.AddressService;
-import com.br.recycle.api.util.Dictionary;
 import com.br.recycle.api.validation.AddressValidation;
 
 import io.swagger.annotations.Api;
@@ -114,7 +114,7 @@ public class AddressController {
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for saving the address")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> save(@Valid @RequestBody AddressInput addressInput) {
+	public ResponseEntity<ApiResponse> save(@RequestBody @Valid AddressInput addressInput) {
 
 		Address address = addressDtoAssembler.toDomainObject(addressInput);
 		addressService.save(address);
@@ -157,7 +157,7 @@ public class AddressController {
 	// @PreAuthorize("hasRole('USER')")
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PutMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody AddressInput addressInput) {
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id, @RequestBody @Valid AddressInput addressInput) {
 
 		Address address = addressDtoAssembler.toDomainObject(addressInput);
 		addressService.update(address, id);

@@ -10,7 +10,7 @@ import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
-import com.br.recycle.api.util.DictionaryCnpj;
+import com.br.recycle.api.payload.DictionaryCnpj;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos da cooperativa

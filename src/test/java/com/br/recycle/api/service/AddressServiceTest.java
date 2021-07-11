@@ -26,6 +26,13 @@ import com.br.recycle.api.model.Address;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
 
+/**
+ * Classe responsável por mapear os cenários de testes da classe de serviço do endereço.
+ * 
+ * @author Caio Henrique do Carmo Bastos
+ * @since 10/07/2021
+ *
+ */
 @ExtendWith(MockitoExtension.class)
 public class AddressServiceTest {
 

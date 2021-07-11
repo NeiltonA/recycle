@@ -1,4 +1,4 @@
-package com.br.recycle.api.util;
+package com.br.recycle.api.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -10,11 +10,12 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
-public class DictionaryCnpj {
+public class Dictionary {
 
-	private String socialReason;
-    private String fantasyName;
-    private String state;
-    private String situation;
-    private String type;
+    private String zipCode;//cep
+    private String street;//rua
+    private String complement; //complemento
+    private String neighborhood;//bairro
+    private String city; //cidade
+    private String state;//estado
 }

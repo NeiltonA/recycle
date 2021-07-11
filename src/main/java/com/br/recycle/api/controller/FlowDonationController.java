@@ -9,35 +9,56 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.service.FlowDonationService;
 
 import io.swagger.annotations.Api;
 
+/**
+ * Classe responsável por ser a Contreller e conter do status da doação da aplicação.
+ */
 @RestController
-@RequestMapping(value = "/api/v1/donation/{code}")
+@RequestMapping(value = UriConstants.URI_BASE_FLOW_DONATION)
 @Api(value = "Flow Donation", description = "REST API for Flow Donation", tags = { "Flow Donation" })
 public class FlowDonationController {
 
-	@Autowired
-	private FlowDonationService service;
+	private FlowDonationService flowDonationService;
 	
-	@PatchMapping(value ="/confirmed", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Autowired
+	public FlowDonationController(FlowDonationService flowDonationService) {
+		this.flowDonationService = flowDonationService;
+	}
+	
+	/**
+	 * Método responsável por atualizar o estado da doação, 
+	 * informando que está confirmdo.
+	 * @param {@code String} code
+	 */
+	@PatchMapping(value = UriConstants.URI_FLOW_DONATION_CONFIRMED, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void confirm(@PathVariable String code) {
-		service.confirm(code);
+		flowDonationService.confirm(code);
 	}
 	
-	
-	@PatchMapping(value ="/cancel",produces = MediaType.APPLICATION_JSON_VALUE)
+	/**
+	 * Método responsável por atualizar o estado da doação, 
+	 * informando que está cancelado.
+	 * @param {@code String} code
+	 */
+	@PatchMapping(value = UriConstants.URI_FLOW_DONATION_CANCEL, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void cancel(@PathVariable String code) {
-		service.cancel(code);
+		flowDonationService.cancel(code);
 	}
 	
-	@PatchMapping(value="/deliver", produces = MediaType.APPLICATION_JSON_VALUE)
+	/**
+	 * Método responsável por atualizar o estado da doação, 
+	 * informando que está em andamento.
+	 * @param {@code String} code
+	 */
+	@PatchMapping(value = UriConstants.URI_FLOW_DONATION_DELIVERY, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deliver(@PathVariable String code) {
-		service.deliver(code);
-	}
-	
+		flowDonationService.deliver(code);
+	}	
 }

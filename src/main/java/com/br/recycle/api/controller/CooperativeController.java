@@ -30,9 +30,9 @@ import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
+import com.br.recycle.api.payload.DictionaryCnpj;
 import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
-import com.br.recycle.api.util.DictionaryCnpj;
 import com.br.recycle.api.validation.CnpjValidation;
 
 import io.swagger.annotations.Api;

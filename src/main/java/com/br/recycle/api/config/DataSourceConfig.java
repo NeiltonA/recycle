@@ -18,10 +18,13 @@ public class DataSourceConfig {
 
 	@Value("${datasource.url}")
 	protected String url;
+	
 	@Value("${datasource.username}")
 	protected String username;
+	
 	@Value("${datasource.password}")
 	protected String password;
+	
 	@Value("${datasource.class-name}")
 	protected String driverClassName;
 
@@ -38,5 +41,4 @@ public class DataSourceConfig {
 		log.info("Conectado na base -> {} ", this.url);
 		return dbase;
 	}
-
 }
