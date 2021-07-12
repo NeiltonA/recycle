@@ -55,5 +55,8 @@ public class DonationDtoOut{
     
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private CooperativeDtoOut cooperative;
+    
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AddressDtoOut  address;
 
 }

@@ -47,6 +47,9 @@ public class DonationInput {
 
 	@ApiModelProperty(example = "1", required = false)
 	private CooperativeIdInput cooperative;
+	
+	@ApiModelProperty(example = "1", required = false)
+	private AddressIdInput address;
 
 
 }
