@@ -39,4 +39,7 @@ public final class UriConstants {
 	
 	public static final String URI_BASE_DONATION = "/api/v1/donation";
 	public static final String URI_DONATION_ID = "/{id}";
+	
+	public static final String URI_BASE_RATE = "/api/v1/rate";
+	public static final String URI_RATE_ID = "/{id}";
 }

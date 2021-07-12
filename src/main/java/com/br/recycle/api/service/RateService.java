@@ -1,48 +1,128 @@
 package com.br.recycle.api.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.EntityNotFoundException;
+import com.br.recycle.api.exception.InternalServerException;
+import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.RatingNotFoundException;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.repository.RateRepository;
 
-
-
+/**
+ * Classe responsável por realizar os serviços das transações de comunicação com
+ * a base de dados.
+ */
 @Service
 public class RateService {
 
-	private static final String MSG_COOPERATIVE_EM_USO = "Rate de código %d não pode ser removida, pois está em uso";
+	//private static final String MSG_COOPERATIVE_EM_USO = "Rate de código %d não pode ser removida, pois está em uso";
+
+	private RateRepository rateRepository;
 
 	@Autowired
-	private RateRepository repository;
-
-	@Transactional
-	public Rate save(Rate rate) {
-		return repository.save(rate);
+	public RateService(RateRepository rateRepository) {
+		this.rateRepository = rateRepository;
 	}
 
+	/**
+	 * Método responsável por buscar todos os cadastros de avaliação.
+	 * 
+	 * @return {@code List<Rate>} - Retorna todos os dados de avaliação.
+	 */
+	public List<Rate> findAll() {
+		List<Rate> rates = rateRepository.findAll();
+		validateEmpty(rates);
+
+		return rates;
+	}
+
+	/**
+	 * Método responsável por salvar os dados de avalição na base de dados.
+	 * 
+	 * @param {@code Rate} - rate
+	 * @return {@code Rate} - Caso ocorra com sucesso, os dados são salvos na base
+	 *         de dados. - Caso ocorra algum erro, é lançado a exceção de Erro
+	 *         Interno.
+	 */
 	@Transactional
-	public void excluir(Long id) {
+	public Rate save(Rate rate) {
 		try {
-			repository.deleteById(id);
-			repository.flush();
-
-		} catch (EmptyResultDataAccessException e) {
-			throw new RatingNotFoundException(id);
-
-		} catch (DataIntegrityViolationException e) {
-			throw new EntityInUseException(String.format(MSG_COOPERATIVE_EM_USO, id));
+			return rateRepository.save(rate);
+		} catch (Exception e) {
+			throw new InternalServerException("Ocorreu um erro ao salvar os dados da availiação.");
 		}
 	}
 
-	public Rate buscarOuFalhar(Long id) {
-		return repository.findById(id).orElseThrow(() -> new RatingNotFoundException(id));
+	/**
+	 * Método responsável por buscar os dados de avalição por ID.
+	 * 
+	 * @param {@code Long} - id
+	 * @return {@code Rate} - Caso ocorra com sucesso a busca, retorna os dados da
+	 *         avaliação. - Caso não tenha avaliação de acordo com o ID informado,
+	 *         retorna que o registro não foi encontrado.
+	 */
+	public Rate findOrFail(Long id) {
+		return rateRepository.findById(id).orElseThrow(() -> new RatingNotFoundException(id));
 	}
 
+	/**
+	 * Método responsável por atualizar os dados na base de dados da avaliação.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code Rate} - rate
+	 */
+	public void update(Long id, Rate rate) {
+		Optional<Rate> rateActual = rateRepository.findById(id);
+
+		if (!rateActual.isPresent()) {
+			throw new EntityNotFoundException("A avaliação não pode ser atualizada, porque não existe.");
+		}
+
+		rate.setId(rateActual.get().getId());
+		rateRepository.save(rate);
+	}
+
+	/**
+	 * Método responsável por realizar a deleção da avaliação de acordo com o ID
+	 * informado.
+	 * 
+	 * @param {@code Long} id
+	 */
+	public void delete(Long id) {
+		findOrFail(id);
+		rateRepository.deleteById(id);
+	}
+
+	/**
+	 * Método responsável por verificar se a lista de avaliações está vazia. Caso
+	 * esteja vazia, retorna que está sem conteúdo.
+	 * 
+	 * @param {@code <List<Rate>} rates
+	 */
+	private void validateEmpty(List<Rate> rates) {
+		if (rates.isEmpty()) {
+			throw new NoContentException("Não existe cadastro de avaliações.");
+		}
+	}
+	
+//	@Transactional
+//	public void excluir(Long id) {
+//		try {
+//			rateRepository.deleteById(id);
+//			rateRepository.flush();
+//
+//		} catch (EmptyResultDataAccessException e) {
+//			throw new RatingNotFoundException(id);
+//
+//		} catch (DataIntegrityViolationException e) {
+//			throw new EntityInUseException(String.format(MSG_COOPERATIVE_EM_USO, id));
+//		}
+//	}
 }

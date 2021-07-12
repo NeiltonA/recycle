@@ -1,6 +1,6 @@
 package com.br.recycle.api.payload;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -17,7 +17,7 @@ import lombok.ToString;
 public class RateInput {
 
 	@ApiModelProperty(example = "9", required = true)
-	@NotEmpty
+	@NotNull
 	private Long note;
 
 	@ApiModelProperty(example = "Excelente", required = false)
