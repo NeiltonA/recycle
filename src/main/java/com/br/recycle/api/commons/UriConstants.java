@@ -23,11 +23,9 @@ public final class UriConstants {
 	public static final String URI_BASE_ACCESS = "/api/v1/address";
 	public static final String URI_ADDRESS_ID_USER = "/api/v1/address/";
 	public static final String URI_ACCESS_ZIPCODE = "/zip_code/{zipCode}";
-	public static final String URI_REVENUE_CNPJ = "/cnpj/{cnpj}";
 	public static final String URI_ACCESS_ID = "/{id}";
 	public static final String URI_ZIP_CORREIO = "https://viacep.com.br/ws/";
 	
-	public static final String URI_CNPJ = "https://www.receitaws.com.br/v1/";
 	
 	public static final String URI_BASE_GIVER = "/api/v1/giver";
 	public static final String URI_GIVER_ID = "/{id}";
@@ -42,4 +40,10 @@ public final class UriConstants {
 	
 	public static final String URI_BASE_RATE = "/api/v1/rate";
 	public static final String URI_RATE_ID = "/{id}";
+	
+	public static final String URI_BASE_COOPERATIVE = "/api/v1/cooperative";
+	public static final String URI_COOPERATIVE_ID = "/{id}";
+	public static final String URI_COOPERATIVE_CNPJ = "/cnpj/{cnpj}";
+
+	public static final String URI_PROVIDER_CNPJ = "https://www.receitaws.com.br/v1/";
 }
