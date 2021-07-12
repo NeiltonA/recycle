@@ -19,7 +19,7 @@ public class OrderCanceledNotificationListener {
     public void onCancelOrder(DonationCancelEvent event) {
         Donation donation = event.getDonation();
         var message = Message.builder()
-                .subject(donation.getGiver().getUser().getName() + " _ Donation cancel")
+                .subject(donation.getGiver().getUser().getName() + " _ Doação Cancelada")
                 .body("emails/donation-cancel.html")
                 .variavel("donation", donation)
                 .recipient(donation.getGiver().getUser().getEmail())
