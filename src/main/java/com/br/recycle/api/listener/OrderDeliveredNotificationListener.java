@@ -19,7 +19,7 @@ public class OrderDeliveredNotificationListener {
     public void onOrderDeliver(DonationDeliveredEvent event) {
         Donation donation = event.getDonation();
         var message = Message.builder()
-                .subject(donation.getGiver().getUser().getName() + " _ Donation delivered")
+                .subject(donation.getGiver().getUser().getName() + " _ Doação Entregue")
                 .body("emails/donation-delivered.html")
                 .variavel("donation", donation)
                 .recipient(donation.getGiver().getUser().getEmail())

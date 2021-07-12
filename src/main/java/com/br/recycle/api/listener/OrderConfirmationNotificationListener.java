@@ -19,7 +19,7 @@ public class OrderConfirmationNotificationListener {
     public void onOrderConfirm(DonationConfirmedEvent event) {
         Donation donation = event.getDonation();
         var message = Message.builder()
-                .subject(donation.getGiver().getUser().getName() + " _ Donation confirmed")
+                .subject(donation.getGiver().getUser().getName() + " _ Doação Confirmada")
                 .body("emails/donation-confirmation.html")
                 .variavel("donation", donation)
                 .recipient(donation.getGiver().getUser().getEmail())
