@@ -19,21 +19,28 @@ import com.br.recycle.api.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/**
+ * Classe responsável por realizar os serviços das transações de comunicação com
+ * a base de dados.
+ */
 @Service
 public class RefreshTokenService {
 
+	private RefreshTokenRepository refreshTokenRepository;
+	private UserRepository userRepository;
+
 	@Value("${recycle.jwtRefreshExpirationInMs}")
 	private Long refreshTokenDurationMs;
-
-	@Autowired
-	private RefreshTokenRepository refreshTokenRepository;
 
 	@Value("${recycle.jwtSecret}")
 	private String jwtSecret;
 
 	@Autowired
-	private UserRepository userRepository;
-
+	public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+		this.refreshTokenRepository = refreshTokenRepository;
+		this.userRepository = userRepository;
+	}
+	
 	public Optional<RefreshToken> findByToken(String token) {
 		return refreshTokenRepository.findByToken(token);
 	}
@@ -69,6 +76,7 @@ public class RefreshTokenService {
 	@Transactional
 	public int deleteByUserId(Long userId) {
 		return refreshTokenRepository
-				.deleteByUser(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
+				.deleteByUser(userRepository.findById(userId)
+						.orElseThrow(() -> new UserNotFoundException(userId)));
 	}
 }

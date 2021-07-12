@@ -6,8 +6,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.br.recycle.api.event.DonationConfirmedEvent;
 import com.br.recycle.api.model.Donation;
+import com.br.recycle.api.model.Message;
 import com.br.recycle.api.service.SendEmailService;
-import com.br.recycle.api.service.SendEmailService.Message;
 
 @Component
 public class OrderConfirmationNotificationListener {

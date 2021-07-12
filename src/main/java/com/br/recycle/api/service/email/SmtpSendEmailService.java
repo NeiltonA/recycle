@@ -11,6 +11,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.br.recycle.api.email.EmailProperties;
 import com.br.recycle.api.exception.EmailException;
+import com.br.recycle.api.model.Message;
 import com.br.recycle.api.service.SendEmailService;
 
 import freemarker.template.Configuration;
