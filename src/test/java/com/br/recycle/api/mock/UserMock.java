@@ -1,5 +1,6 @@
 package com.br.recycle.api.mock;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.br.recycle.api.model.Flow;
@@ -28,6 +29,7 @@ public class UserMock {
         user.setPassword("admin123");
         user.setConfirmPassword("admin123");
         user.setFlowIndicator(Flow.D);
+        user.setTokenCreationDate(LocalDateTime.of(2021, 07, 10, 07, 41));
 		
         return user;
     }
