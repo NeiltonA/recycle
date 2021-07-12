@@ -10,6 +10,7 @@ import com.br.recycle.api.model.Cooperative;
 @Repository
 public interface CooperativeRepository extends JpaRepository<Cooperative, Long> {
 
+	List<Cooperative> findByUserId(Long id);
 	
-	List<Cooperative>  findByUserId(Long id);
+	List<Cooperative> findByCnpj(String cnpj);
 }

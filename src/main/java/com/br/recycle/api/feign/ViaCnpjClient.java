@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.commons.UriConstants;
 
-@FeignClient(name = "cnpj", url = UriConstants.URI_CNPJ)
+@FeignClient(name = "cnpj", url = UriConstants.URI_PROVIDER_CNPJ)
 public interface ViaCnpjClient {
 
 	@RequestMapping("/cnpj/{cnpj}")

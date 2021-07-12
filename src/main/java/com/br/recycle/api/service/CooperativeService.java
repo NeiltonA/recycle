@@ -7,135 +7,249 @@ import java.util.Objects;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.bean.CnpjResponseBean;
-import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.CooperativeNotFoundException;
-import com.br.recycle.api.exception.EntityInUseException;
+import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaCnpjClient;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.CooperativeRepository;
-import com.br.recycle.api.repository.GiverRepository;
 
+/**
+ * Classe responsável por realizar os serviços das transações de comunicação com
+ * a base de dados.
+ */
 @Service
 public class CooperativeService {
 
-    private static final String COOPERATIVE_IN_USE_MESSAGE = "CooperativA de código %d não pode ser removida, pois está em uso.";
+	//private static final String COOPERATIVE_IN_USE_MESSAGE = "CooperativA de código %d não pode ser removida, pois está em uso.";
 
-    @Autowired
-    private CooperativeRepository repository;
-    
-    @Autowired
-    private ViaCnpjClient viaCnpjClient;
-    
-    @Autowired
-    private GiverRepository gvRepository;
+	private CooperativeRepository cooperativeRepository;
+	private ViaCnpjClient viaCnpjClient;
 
-    
-	public List<Cooperative> findAll(Long user) {
-		
+	@Autowired
+	public CooperativeService(CooperativeRepository cooperativeRepository, ViaCnpjClient viaCnpjClient) {
+		this.cooperativeRepository = cooperativeRepository;
+		this.viaCnpjClient = viaCnpjClient;
+	}
+
+	/**
+	 * Método responsável por buscar os dados da cooperativa. Pode buscar todos ou
+	 * através do filtro por ID do usuário.
+	 * 
+	 * @param {@code Long} idUser
+	 * @return {@code List<Cooperative>} - Retorna os dados da cooperativa.
+	 */
+	public List<Cooperative> findAll(Long idUser) {
+
 		List<Cooperative> response = new ArrayList<>();
-		
-		if (Objects.nonNull(user)) {
-			response = repository.findByUserId(user);
+
+		if (Objects.nonNull(idUser)) {
+			response = cooperativeRepository.findByUserId(idUser);
 			return validateEmpty(response);
 		} else {
-			response = repository.findAll();
+			response = cooperativeRepository.findAll();
 			return validateEmpty(response);
 		}
 	}
-    
-    
+
+	/**
+	 * Método responsável por buscar o serviço de comunicação da busca da empresa
+	 * pelo CNPJ.
+	 * 
+	 * @param {@code String} cnpj
+	 * @return {@code CnpjResponseBean} - Caso exista uma empresa de acordo com o
+	 *         CNPJ informado, é retornado os dados de sucesso da empresa. - Caso
+	 *         ocorra algum erro, é retornado que o CNPJ não está relacionado a
+	 *         nenhuma empresa.
+	 */
 	public CnpjResponseBean searchCnpj(String cnpj) {
 		try {
-			return viaCnpjClient.searchCnpj(cnpj);
+			CnpjResponseBean cnpjResponseBean = viaCnpjClient.searchCnpj(cnpj);
+			if (Objects.isNull(cnpjResponseBean.getNome())) {
+				throw new UnprocessableEntityException(
+						"De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
+			}
+			return cnpjResponseBean;
 		} catch (Exception e) {
-			throw new UnprocessableEntityException("De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
-		}	
-	}
-    
-    @Transactional
-    public Cooperative save(Cooperative cooperative) {
-    	
-    	
-
-		if (verifyCooperative(cooperative.getUser().getId())) {
-			throw new BusinessException(
-					String.format("Já existe uma cooperativa cadastrada com o código de usuário % s", cooperative.getUser().getId()));
-		}else if(verifyGiver(cooperative.getUser().getId())) {
-			throw new BusinessException(
-					String.format("já existe um usuário do código (%s)  associado com o Doador", cooperative.getUser().getId()));
+			throw new UnprocessableEntityException(
+					"De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
 		}
-    	
-        return repository.save(cooperative);
-    }
-    
+	}
+
+	/**
+	 * Método responsável por realizar o cadastro da cooperativa, realizando
+	 * validações, para saber se pode ser feita.
+	 * 
+	 * @param {@code Cooperative} - cooperative
+	 * @return
+	 */
+	@Transactional
+	public void save(Cooperative cooperative) {
+
+		verifyCooperative(cooperative.getCnpj());
+
+		try {
+			cooperativeRepository.save(cooperative);
+		} catch (Exception e) {
+			throw new InternalServerException("Ocorreu um erro ao salvar os dados da cooperativa.");
+		}
+	}
+
+	/**
+	 * Método responsável por realizar o serviço de atualização dos dados da
+	 * cooperativa. E caso ocorra algum erro, é lançado a exceção de erro interno.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code Cooperative} - cooperative
+	 */
+	@Transactional
+	public void update(Long id, Cooperative cooperative) {
+
+		Cooperative cooperativeActual = findOrFail(id);
+		validateUpdateCnpj(cooperativeActual.getCnpj(), cooperative.getCnpj());
+		cooperative.setId(cooperativeActual.getId());
+
+		try {
+			cooperativeRepository.save(cooperative);
+		} catch (Exception e) {
+			throw new InternalServerException("Ocorreu um erro ao atualizar os dados da cooperativa.");
+		}
+
+	}
+
+	/**
+	 * Método responsável por realizar o serviço de atualização dos dados da
+	 * cooperativa parcialmente. E casso ocorra algum erro ao salvar, é lançado a
+	 * exceção.
+	 * 
+	 * @param {@code Cooperative} - cooperative
+	 * @param {@code Long} id
+	 */
 	@Transactional
 	public void updatePatch(final Cooperative cooperative, Long id) {
+
+		Cooperative cooperativeActual = findOrFail(id);
+		validateUpdateCnpj(cooperativeActual.getCnpj(), cooperative.getCnpj());
+
+		cooperative.setId(cooperativeActual.getId());
+		cooperative.setUser(getUser(cooperativeActual));
+		cooperative.setCnpj(cooperativeActual.getCnpj());
+
+		if (Objects.isNull(cooperative.getCompanyName())) {
+			cooperative.setCompanyName(cooperativeActual.getCompanyName());
+		}
+
+		if (Objects.isNull(cooperative.getFantasyName())) {
+			cooperative.setFantasyName(cooperativeActual.getFantasyName());
+		}
+
 		try {
-			Cooperative cooperativeActual = findOrFail(id);
-			cooperative.setId(cooperativeActual.getId());
-			cooperative.setUser(getUser(cooperativeActual));
-			if (cooperative.getCompanyName() == null) {
-				cooperative.setCompanyName(cooperativeActual.getCompanyName());
-			}
-			if (cooperative.getFantasyName() == null) {
-				cooperative.setFantasyName(cooperativeActual.getFantasyName());
-			}
-			if (cooperative.getCnpj() == null) {
-				cooperative.setCnpj(cooperativeActual.getCnpj());
-			}
-			repository.save(cooperative);
-		} catch (DataIntegrityViolationException e) {
-			throw new CooperativeNotFoundException(String.format("Erro ao alterar o endereço"));
+			cooperativeRepository.save(cooperative);
+		} catch (Exception e) {
+			throw new InternalServerException("Ocorreu um erro ao atualizar os dados da cooperativa.");
 		}
 	}
 
-    @Transactional
-    public void remove(Long cooperativeId) {
-        try {
-            repository.deleteById(cooperativeId);
-            repository.flush();
+	/**
+	 * Método responsável por deletar os dados da cooperativa da base de dados pelo
+	 * o seu ID.
+	 * 
+	 * @param {@code Long} id
+	 */
+	@Transactional
+	public void delete(Long id) {
+		findOrFail(id);
 
-        } catch (EmptyResultDataAccessException e) {
-            throw new CooperativeNotFoundException(cooperativeId);
+		try {
+			cooperativeRepository.deleteById(id);
+		} catch (Exception e) {
+			throw new InternalServerException("Ocorreu um erro ao deletar a cooperativa.");
+		}
+	}
 
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(String.format(COOPERATIVE_IN_USE_MESSAGE, cooperativeId));
-        }
-    }
-    
-    public boolean verifyCooperative(Long id) {
-    	boolean cooperative  = !repository.findByUserId(id).isEmpty();
-        return cooperative;
-    }
-    public boolean verifyGiver(Long id) {
-    	boolean giver  = !gvRepository.findByUserId(id).isEmpty();
-        return giver;
-    }
+	/**
+	 * Método responsável por buscar os dados pelo ID da cooperativa.
+	 * 
+	 * @param {@code Long} - id
+	 * @return {@code Cooperative} - Caso exista um cadastro de acordo com o ID, é
+	 *         retornado os dados da cooperative. - Caso não exista, é lançado a
+	 *         exceção que a cooperativa não existe.
+	 */
+	public Cooperative findOrFail(Long id) {
+		return cooperativeRepository.findById(id)
+				.orElseThrow(() -> new CooperativeNotFoundException(id));
+	}
 
-    public Cooperative findOrFail(Long id) {
-        return repository.findById(id).orElseThrow(() -> new CooperativeNotFoundException(id));
-    }
+	/**
+	 * Método responsável por validar se o retorno da base de dados da cooperativa,
+	 * existe cadastro.
+	 * 
+	 * @param {@code List<Cooperative>} - cooperatives
+	 * @return {@code List<Cooperative>} - Caso exista retorno, é retornado os dados
+	 *         da cooperativa. - Caso a lista esteja vazia, é lançado a exceção que
+	 *         não existe conteúdo.
+	 */
+	private List<Cooperative> validateEmpty(List<Cooperative> cooperatives) {
+		if (cooperatives.isEmpty()) {
+			throw new NoContentException("No momento não existe cooperativas cadastradas.");
+		}
+
+		return cooperatives;
+	}
+
+	/**
+	 * Método responsável por validar se no cadastro da cooperativa, ela já existe,
+	 * porque não é possível cadastrar a mesma cooperativa.
+	 * 
+	 * @param {@code String} - cnpj
+	 */
+	private void verifyCooperative(String cnpj) {
+		List<Cooperative> cooperative = cooperativeRepository.findByCnpj(cnpj);
+
+		if (!cooperative.isEmpty()) {
+			throw new UnprocessableEntityException(
+					String.format("Já existe uma cooperativa cadastrada com o CNPJ '%s'", cnpj));
+		}
+	}
+
+	/**
+	 * Método responsável por validar se o usuário está tentando alterar o CNPJ.
+	 * Caso sejam diferentes é lançado a exceção que não permite.
+	 * 
+	 * @param {@code String} - cnpjActual
+	 * @param {@code String} - newCnpj
+	 */
+	private void validateUpdateCnpj(String cnpjActual, String newCnpj) {
+		if (Objects.nonNull(newCnpj)) {
+			if (!cnpjActual.equalsIgnoreCase(newCnpj)) {
+				throw new UnprocessableEntityException("Não é possível alterar o CNPJ da empresa.");
+			}
+		}
+	}
 
 	private User getUser(Cooperative cooperativeActual) {
 		User user = new User();
 		user.setId(cooperativeActual.getUser().getId());
-		
+
 		return user;
 	}
-	
-	private List<Cooperative> validateEmpty(List<Cooperative> cooperatives) {
-		if (cooperatives.isEmpty()) {
-			throw new NoContentException("A lista de Cooperativa está vazia.");
-		}
-		
-		return cooperatives;
-	}
+
+//	@Transactional
+//	public void remove(Long cooperativeId) {
+//		try {
+//			cooperativeRepository.deleteById(cooperativeId);
+//			cooperativeRepository.flush();
+//
+//		} catch (EmptyResultDataAccessException e) {
+//			throw new CooperativeNotFoundException(cooperativeId);
+//
+//		} catch (DataIntegrityViolationException e) {
+//			throw new EntityInUseException(String.format(COOPERATIVE_IN_USE_MESSAGE, cooperativeId));
+//		}
+//	}
 }

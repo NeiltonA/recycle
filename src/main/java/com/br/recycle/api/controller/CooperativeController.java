@@ -2,12 +2,10 @@ package com.br.recycle.api.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,14 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.recycle.api.assembler.CooperativeDtoAssembler;
 import com.br.recycle.api.bean.CnpjResponseBean;
 import com.br.recycle.api.commons.UriConstants;
-import com.br.recycle.api.exception.BusinessException;
-import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
 import com.br.recycle.api.payload.DictionaryCnpj;
-import com.br.recycle.api.repository.CooperativeRepository;
 import com.br.recycle.api.service.CooperativeService;
 import com.br.recycle.api.validation.CnpjValidation;
 
@@ -39,110 +34,142 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Classe responsável por ser a Contreller e conter o Endpoint de cooperativa da
+ * aplicação.
+ */
 @Log4j2
 @RestController
-@RequestMapping("/api/v1/cooperative")
+@RequestMapping(UriConstants.URI_BASE_COOPERATIVE)
 @Api(value = "Cooperative", description = "REST API for Cooperative", tags = { "Cooperative" })
 public class CooperativeController {
 
-    @Autowired
-    private CooperativeRepository repository;
-    
-    @Autowired
-	private CooperativeDtoAssembler assembler;
+	private CooperativeDtoAssembler cooperativeDtoAssembler;
+	private CooperativeService cooperativeService;
 
-    @Autowired
-    private CooperativeService service;
+	@Autowired
+	public CooperativeController(CooperativeDtoAssembler cooperativeDtoAssembler, CooperativeService cooperativeService) {
+		this.cooperativeDtoAssembler = cooperativeDtoAssembler;
+		this.cooperativeService = cooperativeService;
+	}
 
-    @ApiOperation(value = "Method responsible for returning the list of cooperatives")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CooperativeDtoOut> getAll(@RequestParam(required = false) Long user) {
-        try {
-            List<Cooperative> cooperatives = service.findAll(user);
-            return assembler.toCollectionModel(cooperatives);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
-    
+	/**
+	 * Método responsável por conter o endpoint que busca todos as cooperativas na
+	 * base de dados. E pode buscar através do filtro pod id do usuário.
+	 * 
+	 * @param {@code Long} - user
+	 * @return {@code List<CooperativeDtoOut} - Retorna uma lista de cooperativas.
+	 */
+	@ApiOperation(value = "Method responsible for returning the list of cooperatives")
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<CooperativeDtoOut> getAll(@RequestParam(required = false) Long user) {
+		List<Cooperative> cooperatives = cooperativeService.findAll(user);
+
+		return cooperativeDtoAssembler.toCollectionModel(cooperatives);
+	}
+
+	/**
+	 * Método responsável por conter o endpoint que busca a cooperativa pelo CNPJ,
+	 * na base da receita.
+	 * 
+	 * @param {@code String} - cnpj
+	 * @return {@code ResponseEntity<DictionaryCnpj>} - Retorna os dados de cadastro
+	 *         da empresa.
+	 */
 	@ApiOperation(value = "Method responsible for returning the cnpj via revenue-ws")
-	@GetMapping(value = UriConstants.URI_REVENUE_CNPJ, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = UriConstants.URI_COOPERATIVE_CNPJ, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DictionaryCnpj> getCnpj(@PathVariable String cnpj) {
 
 		CnpjValidation.validate(cnpj);
-		CnpjResponseBean cnpjResponseBean = service.searchCnpj(cnpj);
-		DictionaryCnpj dictionaryCnpj = assembler.toDictionary(cnpjResponseBean);
-			if (dictionaryCnpj.getSocialReason() ==null) {
-				throw new UnprocessableEntityException("De acordo com o CNPJ informado não está relacionado a nenhuma empresa");
-			}
+		CnpjResponseBean cnpjResponseBean = cooperativeService.searchCnpj(cnpj);
+		DictionaryCnpj dictionaryCnpj = cooperativeDtoAssembler.toDictionary(cnpjResponseBean);
+
 		return ResponseEntity.ok().body(dictionaryCnpj);
 	}
 
+	/**
+	 * Método responsável por conter o endpoint que busca os dados da cooperativa
+	 * pelo o seu ID.
+	 * 
+	 * @param {@code Long} - id
+	 * @return {@code CooperativeDtoOut} - Retorna os dados de cadastro da
+	 *         cooperativa.
+	 */
+	@ApiOperation(value = "Method responsible for searching the cooperative by ID")
+	@GetMapping(value = UriConstants.URI_COOPERATIVE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public CooperativeDtoOut getById(@PathVariable("id") Long id) {
+		Cooperative cooperative = cooperativeService.findOrFail(id);
+		return cooperativeDtoAssembler.toModel(cooperative);
+	}
 
-    @ApiOperation(value = "Method responsible for searching the cooperative by ID")
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CooperativeDtoOut getById(@PathVariable("id") long id) {
-        try {
-           Cooperative coop = service.findOrFail(id);
-            return assembler.toModel(coop);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+	/**
+	 * Método responsável por conter o endpoint que salva os dados da cooperativa.
+	 * 
+	 * @param {@code CooperativeInput} - cooperativeInput
+	 * @return {@code ResponseEntity<ApiResponse>} - retorna que os dados foram
+	 *         salvos.
+	 */
+	@ApiOperation(value = "Method responsible for saving the cooperative")
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> save(@Valid @RequestBody CooperativeInput cooperativeInput) {
+		Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(cooperativeInput);
+		cooperativeService.save(cooperative);
 
-    @ApiOperation(value = "Method responsible for saving the cooperative")
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody CooperativeInput cooperative) {
-        try {
-        	Cooperative coop = assembler.toDomainObject(cooperative);
+		log.info("Registered successfully -> []");
+		return ResponseEntity.created(URI.create(""))
+				.body(new ApiResponse(true, "Cooperativa registrada com sucesso."));
+	}
 
-        	service.save(coop);
-            log.info("Registered successfully -> []");
-            return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Cooperativa registrada com sucesso."));
-        } catch (Exception e) {
-            log.error("failed to register -> [] ", e);
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+	/**
+	 * Método responsável por conter o endpoint que atualiza por completo os dados
+	 * da cooperativa.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code CooperativeInput} cooperative
+	 * @return {@code ResponseEntity<ApiResponse>} - Retorna que os dados foram
+	 *         salvos com sucesso.
+	 */
+	@ApiOperation(value = "Method responsible for updating the cooperative")
+	@PutMapping(value = UriConstants.URI_COOPERATIVE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id,
+			@Valid @RequestBody CooperativeInput cooperativeInput) {
 
-    @ApiOperation(value = "Method responsible for updating the cooperative")
-    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> update(@PathVariable("id") long id, @RequestBody CooperativeInput cooperative) {
-        try {
-        	Cooperative coop = assembler.toDomainObject(cooperative);
-        	
-            Optional<Cooperative> cooper = repository.findById(id);
-            if (cooper.isPresent()) {
-            	coop.setId(cooper.get().getId());
-                repository.save(coop);
-                return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
-    
-    @ApiOperation(value = "Method responsible for updating the cooperative")
-    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> updatePatch(@PathVariable("id") long id, @RequestBody CooperativeInput cooperative) {
-        	Cooperative coop = assembler.toDomainObject(cooperative);
-        	service.updatePatch(coop, id);
-         return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
-    }
+		Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(cooperativeInput);
+		cooperativeService.update(id, cooperative);
 
-    @ApiOperation(value = "Method responsible for removing the cooperative") // cooperative
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) {
-        try {
-            Optional<Cooperative> cooperative = repository.findById(id);
-            if (cooperative.isPresent()) {
-                repository.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
+		return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
+	}
+
+	/**
+	 * Método responsável por conter o endpoint que atualiza parcialmente os daods
+	 * da cooperativa.
+	 * 
+	 * @param {@code Long} - id
+	 * @param {@code CooperativeInput} cooperative
+	 * @return {@code ResponseEntity<ApiResponse>} - Retorna os dados atualizados.
+	 */
+	@ApiOperation(value = "Method responsible for updating the cooperative")
+	@PatchMapping(value = UriConstants.URI_COOPERATIVE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> updatePatch(@PathVariable("id") Long id,
+			@RequestBody CooperativeInput cooperativeInput) {
+		
+		Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(cooperativeInput);
+		cooperativeService.updatePatch(cooperative, id);
+		return ResponseEntity.ok(new ApiResponse(true, "Cooperativa alterada com sucesso."));
+	}
+
+	/**
+	 * Método responsável por conter o endpoint que deleta a cooperativa por ID.
+	 * 
+	 * @param {@code Long} id
+	 * @return {@code ResponseEntity<Void>} - Retorna uma resposta de sucesso sem conteúdo.
+	 */
+	@ApiOperation(value = "Method responsible for removing the cooperative") // cooperative
+	@DeleteMapping(value = UriConstants.URI_COOPERATIVE_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+		
+		cooperativeService.delete(id);
+		
+		return ResponseEntity.noContent().build();
+	}
 }

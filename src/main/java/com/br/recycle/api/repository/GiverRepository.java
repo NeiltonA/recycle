@@ -10,6 +10,6 @@ import com.br.recycle.api.model.Giver;
 @Repository
 public interface GiverRepository extends JpaRepository<Giver, Long> {
 	
-	List<Giver>  findByUserId(Long id);
+	List<Giver> findByUserId(Long id);
 
 }
