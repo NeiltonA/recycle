@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
@@ -263,6 +265,16 @@ public class UserServiceTest {
 		given(userRepository.findById(id)).willReturn(Optional.of(getMockUserCpf()));
 
 		assertThrows(NotAcceptableException.class, () -> userService.updatPatch(getMockUser(), 1L));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de sucess de deleção.
+	 */
+	@Test
+	public void testDeleteByIdSuccess() {
+		given(userRepository.findById(1L)).willReturn(Optional.of(getMockUser()));		
+		userService.deleteById(1L);
+		verify(userRepository, times(1)).deleteById(1L);
 	}
 	
 	private List<User> getMockUsers() {

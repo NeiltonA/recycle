@@ -26,7 +26,8 @@ import com.br.recycle.api.repository.CooperativeRepository;
 @Service
 public class CooperativeService {
 
-	//private static final String COOPERATIVE_IN_USE_MESSAGE = "CooperativA de código %d não pode ser removida, pois está em uso.";
+	// private static final String COOPERATIVE_IN_USE_MESSAGE = "CooperativA de
+	// código %d não pode ser removida, pois está em uso.";
 
 	private CooperativeRepository cooperativeRepository;
 	private ViaCnpjClient viaCnpjClient;
@@ -165,11 +166,7 @@ public class CooperativeService {
 	public void delete(Long id) {
 		findOrFail(id);
 
-		try {
-			cooperativeRepository.deleteById(id);
-		} catch (Exception e) {
-			throw new InternalServerException("Ocorreu um erro ao deletar a cooperativa.");
-		}
+		cooperativeRepository.deleteById(id);
 	}
 
 	/**
@@ -181,8 +178,7 @@ public class CooperativeService {
 	 *         exceção que a cooperativa não existe.
 	 */
 	public Cooperative findOrFail(Long id) {
-		return cooperativeRepository.findById(id)
-				.orElseThrow(() -> new CooperativeNotFoundException(id));
+		return cooperativeRepository.findById(id).orElseThrow(() -> new CooperativeNotFoundException(id));
 	}
 
 	/**

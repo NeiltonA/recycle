@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
@@ -181,6 +183,15 @@ public class GiverServiceTest {
 		assertThrows(UnprocessableEntityException.class, () -> giverService.save(1L));
 	}
 	
+	/**
+	 * Método responsável por validar o cenário de sucess de deleção.
+	 */
+	@Test
+	public void testDeleteByIdSuccess() {
+		given(giverRepository.findById(1L)).willReturn(Optional.of(getMockGiver()));		
+		giverService.deleteById(1L);
+		verify(giverRepository, times(1)).deleteById(1L);
+	}
 	
 	private Cooperative getMockCooperative() {
 		Cooperative cooperative = new Cooperative();

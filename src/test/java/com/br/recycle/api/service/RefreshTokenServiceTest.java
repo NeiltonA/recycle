@@ -7,6 +7,8 @@ import static org.mockito.BDDMockito.given;
 import java.time.Instant;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +47,7 @@ public class RefreshTokenServiceTest {
 		ReflectionTestUtils.setField(refreshTokenService, "refreshTokenDurationMs", 1234567890L);
 		ReflectionTestUtils.setField(refreshTokenService, "jwtSecret", "12345");
 	}
-
+	
 	/**
 	 * Método responsável por busca o token.
 	 */
@@ -55,6 +57,26 @@ public class RefreshTokenServiceTest {
 		
 		Optional<RefreshToken> refreshToken = refreshTokenService.findByToken("1234556788");
 		assertNotNull(refreshToken);
+	}
+	
+	/**
+	 * Método responsável por busca o token.
+	 */
+	@Test
+	public void testFindByTokenEntityNotFound() {
+		given(refreshTokenRepository.findByToken("1234556788")).willThrow(EntityNotFoundException.class);
+		
+		assertThrows(EntityNotFoundException.class, () -> refreshTokenService.findByToken("1234556788"));
+	}
+	
+	/**
+	 * Método responsável por busca o token.
+	 */
+	@Test
+	public void testFindByTokenEntityNotFoundEmpty() {
+		given(refreshTokenRepository.findByToken("1234556788")).willReturn(Optional.empty());
+		
+		assertThrows(EntityNotFoundException.class, () -> refreshTokenService.findByToken("1234556788"));
 	}
 	
 	/**

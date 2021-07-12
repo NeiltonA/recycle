@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
@@ -171,6 +173,16 @@ public class CooperativeServiceTest {
 		doThrow(InternalServerException.class).when(cooperativeRepository).save(getMockCooperative());
 
 		assertThrows(InternalServerException.class, () -> cooperativeService.update(2L, getMockCooperative()));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de sucess de deleção.
+	 */
+	@Test
+	public void testDeleteByIdSuccess() {
+		given(cooperativeRepository.findById(1L)).willReturn(Optional.of(getMockCooperative()));		
+		cooperativeService.delete(1L);
+		verify(cooperativeRepository, times(1)).deleteById(1L);
 	}
 	
 	private Cooperative getMockCooperativeErro() {

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,8 @@ public class RefreshTokenService {
 	}
 	
 	public Optional<RefreshToken> findByToken(String token) {
-		return refreshTokenRepository.findByToken(token);
+		return Optional.of(refreshTokenRepository.findByToken(token)
+				.orElseThrow(() -> new EntityNotFoundException("O token informado não existe")));
 	}
 
 	@SuppressWarnings("deprecation")

@@ -58,6 +58,16 @@ public class DonationServiceTest {
 	 * Método responsável por validar o cenário de teste da busca de todos as doações.
 	 */
 	@Test
+	public void testFindAllIdNoContent() {
+		given(donationRepository.findByGiverUserId(1L)).willReturn(Collections.emptyList());
+		
+		assertThrows(NoContentException.class, () -> donationService.findAll(1L));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de teste da busca de todos as doações.
+	 */
+	@Test
 	public void testFindAllByIdGiverSuccess() {
 		given(donationRepository.findByGiverUserId(1L)).willReturn(getMockDonation());
 		
@@ -172,6 +182,17 @@ public class DonationServiceTest {
 	@Test
 	public void testFindOrFailCodeDonationNotFound() {
 		given(donationRepository.findByCode("testando")).willThrow(DonationNotFoundException.class);
+		
+		assertThrows(DonationNotFoundException.class, () -> donationService.findByCodeOrFail("testando"));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de teste da busca de doação por ID,
+	 * e não existe doação por código e lança exceção.
+	 */
+	@Test
+	public void testFindOrFailCodeDonationNotFoundEmpty() {
+		given(donationRepository.findByCode("testando")).willReturn(Optional.empty());
 		
 		assertThrows(DonationNotFoundException.class, () -> donationService.findByCodeOrFail("testando"));
 	}

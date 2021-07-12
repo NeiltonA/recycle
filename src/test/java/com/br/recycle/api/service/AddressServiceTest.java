@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
@@ -208,6 +210,16 @@ public class AddressServiceTest {
 		given(addressRepository.findById(1L)).willThrow(AddressNotFoundException.class);
 		
 		assertThrows(AddressNotFoundException.class, () -> addressService.findOrFail(1L));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de sucess de deleção.
+	 */
+	@Test
+	public void testDeleteByIdSuccess() {
+		given(addressRepository.findById(1L)).willReturn(Optional.of(getMockAddress()));		
+		addressService.deleteById(1L);
+		verify(addressRepository, times(1)).deleteById(1L);
 	}
 
 	private Address getMockAddressNew() {

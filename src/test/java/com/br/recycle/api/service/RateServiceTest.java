@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
@@ -130,6 +132,16 @@ public class RateServiceTest {
 		given(rateRepository.findById(1L)).willReturn(Optional.empty());
 		
 		assertThrows(EntityNotFoundException.class, () -> rateService.update(1L, getMockRate()));
+	}
+	
+	/**
+	 * Método responsável por validar o cenário de sucess de deleção.
+	 */
+	@Test
+	public void testDeleteByIdSuccess() {
+		given(rateRepository.findById(1L)).willReturn(Optional.of(getMockRate()));		
+		rateService.delete(1L);
+		verify(rateRepository, times(1)).deleteById(1L);
 	}
 	
 	private Rate getMockRate() {
