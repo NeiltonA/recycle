@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 import com.br.recycle.api.exception.BadRequestException;
+import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.TokenRefreshException;
@@ -30,7 +32,7 @@ public class ApiExceptionHandlerTest {
 
 	private ApiExceptionHandler apiExceptionHandler;
 	
-	@MockBean
+	@Mock
 	private WebRequest webRequest;
 	
 	@BeforeEach
@@ -115,5 +117,23 @@ public class ApiExceptionHandlerTest {
 		ResponseEntity<?> handleForbidden= apiExceptionHandler.handleEntityNotFoundException(userNotFoundException, webRequest);
 		assertNotNull(handleForbidden);
 		assertEquals(HttpStatus.NOT_FOUND, handleForbidden.getStatusCode());
+	}
+	
+	@Test 
+	public void testHandleEntityInUseExceptionSuccess() {
+		EntityInUseException entityInUseException = new EntityInUseException("Entidade em uso");
+		
+		ResponseEntity<?> handleEntityInUseException = apiExceptionHandler.handleEntityInUseException(entityInUseException, webRequest);
+		assertNotNull(handleEntityInUseException);
+		assertEquals(HttpStatus.CONFLICT, handleEntityInUseException.getStatusCode());
+	}
+
+	@Test 
+	public void testHandleBusinessExceptionSuccess() {
+		BusinessException businessException = new BusinessException("Erro na API");
+		
+		ResponseEntity<?> handleBusinessException = apiExceptionHandler.handleBusinessException(businessException, webRequest);
+		assertNotNull(handleBusinessException);
+		assertEquals(HttpStatus.BAD_REQUEST, handleBusinessException.getStatusCode());
 	}
 }
