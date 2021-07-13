@@ -43,10 +43,10 @@ import lombok.extern.log4j.Log4j2;
  * Classe responsável por ser a Contreller e conter o Endpoint de usuário da
  * aplicação.
  */
+@Log4j2
 @RestController
 @RequestMapping(UriConstants.URI_BASE_USER)
 @Api(value = "User", description = "REST API for User", tags = { "User" })
-@Log4j2
 public class UserController {
 
 	private UserService userService;

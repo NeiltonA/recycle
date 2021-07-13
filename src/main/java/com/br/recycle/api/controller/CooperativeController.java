@@ -32,13 +32,11 @@ import com.br.recycle.api.validation.CnpjValidation;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * Classe responsável por ser a Contreller e conter o Endpoint de cooperativa da
  * aplicação.
  */
-@Log4j2
 @RestController
 @RequestMapping(UriConstants.URI_BASE_COOPERATIVE)
 @Api(value = "Cooperative", description = "REST API for Cooperative", tags = { "Cooperative" })
@@ -115,7 +113,6 @@ public class CooperativeController {
 		Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(cooperativeInput);
 		cooperativeService.save(cooperative);
 
-		log.info("Registered successfully -> []");
 		return ResponseEntity.created(URI.create(""))
 				.body(new ApiResponse(true, "Cooperativa registrada com sucesso."));
 	}

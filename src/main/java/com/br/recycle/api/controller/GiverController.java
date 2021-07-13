@@ -27,12 +27,10 @@ import com.br.recycle.api.service.GiverService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * Classe responsável por ser a Contreller e conter do doador da aplicação.
  */
-@Log4j2
 @RestController
 @RequestMapping(UriConstants.URI_BASE_GIVER)
 @Api(value = "Giver", description = "REST API for Flow Giver", tags = { "Giver" })
@@ -87,7 +85,6 @@ public class GiverController {
 	public ResponseEntity<ApiResponse> save(@RequestBody @Valid GiverRequest giverRequest) {
 		
 		giverService.save(giverRequest.getUser().getId());
-		log.info("Registered successfully -> []");
 		
 		return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Doador registrado com sucesso."));
 	}

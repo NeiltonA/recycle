@@ -27,13 +27,11 @@ import com.br.recycle.api.service.RateService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * Classe responsável por ser a Contreller e conter o Endpoint de avaliação da
  * aplicação.
  */
-@Log4j2
 @RestController
 @RequestMapping(UriConstants.URI_BASE_RATE)
 @Api(value = "Rate", description = "REST API for Rate", tags = { "Rate" })
@@ -94,7 +92,6 @@ public class RateController {
 		Rate rate = rateDtoAssembler.toDomainObject(rateInput);
 		rateService.save(rate);
 
-		log.info("Registered successfully -> []");
 		return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "Avaliação registrada com sucesso!"));
 	}
 
