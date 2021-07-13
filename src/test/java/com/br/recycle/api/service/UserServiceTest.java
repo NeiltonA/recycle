@@ -262,9 +262,9 @@ public class UserServiceTest {
 	 */
 	@Test
 	public void testUpdatePatchNotAcceptableCpf() {
-		//given(userRepository.findById(id)).willReturn(Optional.of(getMockUserCpf()));
+		given(userRepository.findById(id)).willReturn(Optional.of(getMockUserCpf()));
 
-		//assertThrows(NotAcceptableException.class, () -> userService.updatPatch(getMockUser(), 1L));
+		assertThrows(NotAcceptableException.class, () -> userService.updatPatch(getMockUser(), 1L));
 	}
 	
 	/**
