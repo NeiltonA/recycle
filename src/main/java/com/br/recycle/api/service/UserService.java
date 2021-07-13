@@ -146,6 +146,7 @@ public class UserService {
 		user.setRoles(userActual.getRoles());
 		user.setToken(userActual.getToken());
 		user.setFlowIndicator(userActual.getFlowIndicator());
+		user.setIndividualRegistration(userActual.getIndividualRegistration());
 		if (!userActual.getIndividualRegistration().matches(user.getIndividualRegistration())) {
 		log.error("CPF não pode ser alterado!");
 		throw new NotAcceptableException(
