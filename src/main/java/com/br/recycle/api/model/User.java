@@ -29,12 +29,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Entity
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "individual_registration" }) })
