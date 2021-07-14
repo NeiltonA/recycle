@@ -26,6 +26,7 @@ import lombok.ToString;
 public class DonationDtoOut{
 
 
+	private Long id;
     private String code;
     private String donorUserName;
     private Long amount;

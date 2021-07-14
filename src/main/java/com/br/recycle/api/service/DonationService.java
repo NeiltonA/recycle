@@ -132,6 +132,36 @@ public class DonationService {
         donationRepository.save(donation);    
     }
     
+    @Transactional
+    public void updatePatch(Long id, Donation donation) {
+    	Optional<Donation> donationActual = donationRepository.findById(id);
+    	
+    	if (!donationActual.isPresent()) {
+			throw new EntityNotFoundException("A doação não pode ser atualizada porque não existe.");
+		}
+    	if (donation.getCode() ==null) {
+    		donation.setCode(donationActual.get().getCode());
+		}
+    	if (donation.getDonorUserName() ==null) {
+    		donation.setDonorUserName(donationActual.get().getDonorUserName());
+		}
+    	if (donation.getAmount() ==null) {
+    		donation.setAmount(donationActual.get().getAmount());
+		}
+    	if (donation.getStorage() ==null) {
+    		donation.setStorage(donationActual.get().getStorage());
+		}
+    	if (donation.getAvailabilityDays() ==null) {
+    		donation.setAvailabilityDays(donationActual.get().getAvailabilityDays());
+		}
+    	if (donation.getAvailabilityPeriod() ==null) {
+    		donation.setAvailabilityPeriod(donationActual.get().getAvailabilityPeriod());
+		}
+  
+        donation.setId(donationActual.get().getId());
+        donationRepository.save(donation);    
+    }
+    
     /**
      * Método responsável por validar se as doações estão vazias e retornar os dados.
      * @param {@code List<Donation>} - donations

@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -116,6 +117,15 @@ public class DonationController {
 	 * @return {@code ResponseEntity<ApiResponse>} - Retorna uma resposta de
 	 *         sucesso.
 	 */
+	@ApiOperation(value = "Method responsible for removing the donation")
+	@PatchMapping(value = UriConstants.URI_DONATION_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ApiResponse> updatePatch(@PathVariable("id") Long id, @RequestBody DonationInput newDonation) {
+		Donation donation = donationDtoAssembler.toDomainObject(newDonation);
+		donationService.updatePatch(id, donation);
+
+		return ResponseEntity.ok(new ApiResponse(true, "Doação modificada com sucesso."));
+	}
+	
 	@ApiOperation(value = "Method responsible for removing the donation")
 	@DeleteMapping(value = UriConstants.URI_DONATION_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
