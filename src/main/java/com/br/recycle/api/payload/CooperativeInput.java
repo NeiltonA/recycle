@@ -1,5 +1,6 @@
 package com.br.recycle.api.payload;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CNPJ;
@@ -19,18 +20,16 @@ import lombok.ToString;
 public class CooperativeInput  {
 
     @ApiModelProperty(example = "Recycle do brasil LTDA", required = true)
+    @NotBlank
     private String companyName; 
 
     @ApiModelProperty(example = "Juca do brasil LTDA", required = true)
+    @NotBlank
     private String fantasyName;
-    
-//    @ApiModelProperty(example = "29090890025", required = true)
-//    @CPF(message = "CPF inválido")
-//    private String cpfResponsible;
-    
-    
+     
     @ApiModelProperty(example = "52288720000106", required = true)
     @CNPJ(message = "CNPJ inválido")
+    @NotBlank
     private String cnpj;
 
     @ApiModelProperty(example = "1", required = true)

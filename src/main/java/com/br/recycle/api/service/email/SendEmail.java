@@ -30,10 +30,10 @@ public class SendEmail {
 		helper.setFrom(this.mail);
 		helper.setTo(email);
 
-		String subject = "Here's the link to reset your password";
+		String subject = "Aqui está o link para redefinir sua senha!";
 
 		String content = "<p>Olá,</p>" + "<p>Você solicitou a redefinição de sua senha.</p>"
-				+ "<p>Clique no link abaixo para alterar sua senha:</p>" + "<p><a href=\"" + link
+				+ "<p>Clique no link abaixo para alterá-la. Link válido por 30 minutos!</p>" + "<p><a href=\"" + link
 				+ "\">Mudar minha senha</a></p>" + "<br>" + "<p>Ignore este e-mail se você se lembra da sua senha, "
 				+ "ou você não fez o pedido.</p>";
 
