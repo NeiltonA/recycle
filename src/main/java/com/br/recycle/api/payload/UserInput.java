@@ -2,15 +2,14 @@ package com.br.recycle.api.payload;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.model.Flow;
 import com.br.recycle.api.validation.validator.CelularValidation;
+import com.br.recycle.api.validation.validator.EmailValidation;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -30,14 +29,12 @@ import lombok.ToString;
 public class UserInput{
 
 	@ApiModelProperty(example = "Teste Silva", required = true)
-	@NotEmpty
+	@NotBlank
 	private String name;
 	
 	@ApiModelProperty(example = "teste@recycle.com", required = true)
-	@NotEmpty(message = "{validation.mail.notEmpty}")
-	@Email(regexp = ".*@.*\\..*", message = "Email inválido!")
-	@NotEmpty
 	@NotBlank
+	@EmailValidation
 	private String email;
 	
 	@ApiModelProperty(example = "\"11 99999999\",\"(11) 99999-9999\"", required = false)
@@ -45,24 +42,21 @@ public class UserInput{
 	private String cellPhone;
 	
 	@ApiModelProperty(example = "10364680032", required = false)
-	@CPF(message = "CPF inválido")
-	@NotEmpty
+	@CPF(message = "O CPF está inválido")	
 	@NotBlank
 	private String individualRegistration;
 	
 	@ApiModelProperty(example = "admin123", required = true)
-	@NotEmpty
 	@NotBlank
 	private String password;
 	
 	@ApiModelProperty(example = "admin123", required = true)
-	@NotEmpty
 	@NotBlank
 	private String confirmPassword;
 	
 	@ApiModelProperty(example = "\"D = Doador\",\"C = Cooperativa\",\"A = Admin\"",  required = true)
-	@NotNull
 	@Enumerated(EnumType.STRING)
+	@NotNull
 	private Flow flowIndicator;
 	
 	private Boolean active = Boolean.TRUE;

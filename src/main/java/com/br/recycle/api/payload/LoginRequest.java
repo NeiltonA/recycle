@@ -2,6 +2,8 @@ package com.br.recycle.api.payload;
 
 import javax.validation.constraints.NotBlank;
 
+import com.br.recycle.api.validation.validator.EmailValidation;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,8 @@ import lombok.Setter;
 @Setter
 public class LoginRequest {
 
-	@NotBlank
+	@NotBlank	
+	@EmailValidation
 	private String email;
 
 	@NotBlank
