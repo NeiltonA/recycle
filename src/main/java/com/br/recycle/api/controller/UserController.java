@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.br.recycle.api.assembler.UserDtoAssembler;
 import com.br.recycle.api.commons.UriConstants;
@@ -28,6 +26,8 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.ApiResponse;
 import com.br.recycle.api.payload.PasswordInput;
+import com.br.recycle.api.payload.PwEmailInput;
+import com.br.recycle.api.payload.PwInput;
 import com.br.recycle.api.payload.UserDtoIn;
 import com.br.recycle.api.payload.UserDtoOut;
 import com.br.recycle.api.payload.UserInput;
@@ -49,6 +49,7 @@ import lombok.extern.log4j.Log4j2;
 @Api(value = "User", description = "REST API for User", tags = { "User" })
 public class UserController {
 
+	private static final String HTTPS_RECYCLE_EVERTON_ALAUK_VERCEL_APP_ACESSAR_TOKEN = "https://recycle-everton-alauk.vercel.app/acessar?token=";
 	private UserService userService;
 	private PwService pwService;
 	private SendEmail sendEmail;
@@ -172,17 +173,16 @@ public class UserController {
 
 	@ApiOperation(value = "Method responsible for forgot-password the user")
 	@PostMapping(value = UriConstants.URI_USER_FORGOT_PASSWORD, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> forgotPassword(@RequestParam String email) {
+	public ResponseEntity<Object> forgotPassword(@RequestBody @Valid  PwEmailInput pwEmailInput) {
 		try {
-			String response = pwService.forgotPassword(email);
+			String response = pwService.forgotPassword(pwEmailInput.getEmail());
 
 			if (!response.startsWith("Invalid")) {
-				String link = ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path("/reset-password?token=" + response).buildAndExpand().toUriString();
-
-				sendEmail.sendDespatchEmail(email, link);
+				String link = (HTTPS_RECYCLE_EVERTON_ALAUK_VERCEL_APP_ACESSAR_TOKEN + response);
+				
+				sendEmail.sendDespatchEmail(pwEmailInput.getEmail(), link);
 			}
-			log.error("Email enviado com sucesso para atualização de senha.");
+			log.info("Email enviado com sucesso para atualização de senha.");
 			return new ResponseEntity<Object>(
 					new ApiResponse(true, "E-mail enviado com sucesso para atualização de senha."), HttpStatus.OK);
 		} catch (Exception e) {
@@ -192,11 +192,11 @@ public class UserController {
 
 	@ApiOperation(value = "Method responsible for reset-password the user")
 	@PatchMapping(value = UriConstants.URI_USER_RESET_PASSWORD, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> resetPassword(HttpServletRequest request, @RequestParam String password) {
+	public ResponseEntity<Object> resetPassword(HttpServletRequest request, @RequestBody @Valid  PwInput pwInput) {
 		String token = request.getHeader("Authorization");
 		try {
-			pwService.resetPassword(token, password);
-			log.error("Sua senha foi atualizada com sucesso.");
+			pwService.resetPassword(token, pwInput.getPassword());
+			log.info("Sua senha foi atualizada com sucesso.");
 			return new ResponseEntity<Object>(new ApiResponse(true, "Sua senha foi atualizada com sucesso."),
 					HttpStatus.OK);
 		} catch (Exception e) {

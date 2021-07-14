@@ -40,7 +40,7 @@ public class PwServiceTest {
 	@BeforeEach
 	public void setUp() {
 		ReflectionTestUtils.setField(pwService, "jwtSecret", "1234");
-		ReflectionTestUtils.setField(pwService, "jwtExpirationInMs", 123454566);
+		ReflectionTestUtils.setField(pwService, "jwtExpirationInMsPw", 123454566);
 	}
 	
 	/**

@@ -40,8 +40,8 @@ public class PwService {
 	@Value("${recycle.jwtSecret}")
 	private String jwtSecret;
 	
-	@Value("${recycle.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+	@Value("${recycle.jwtExpirationInMsPw}")
+    private int jwtExpirationInMsPw;
 
 	@Autowired
 	public PwService(PwRepository pwRepository, PasswordEncoder passwordEncoder) {
@@ -63,10 +63,12 @@ public class PwService {
 		user.setRole((RoleName.valueOf(nameGroup.toString())));
 
 		 Date now = new Date();
-	     Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+	     Date expiryDate = new Date(now.getTime() + jwtExpirationInMsPw);
 		
 		@SuppressWarnings("deprecation")
-		String token = ("Bearer " + (Jwts.builder().setSubject(Long.toString(user.getId())).setIssuedAt(new Date())
+		String token = ((Jwts.builder().setSubject(Long.toString(user.getId())).setIssuedAt(new Date())
+				.setId(user.getId().toString()) //jti: Json Token Identifier ou ID único para o token;
+				.setAudience("Recycle") //Audience, quem vai consumir o seu token;
 				.setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact()));
 
 		user.setToken(token);
@@ -78,8 +80,8 @@ public class PwService {
 	}
 
 	public String resetPassword(String token, String password) {
-
-		Optional<User> userOptional = Optional.ofNullable(pwRepository.findByToken(token));
+		String tokenjwt = token.replace("Bearer", " ").trim();
+		Optional<User> userOptional = Optional.ofNullable(pwRepository.findByToken(tokenjwt.trim()));
 
 		if (!userOptional.isPresent()) {
 			throw new UserInvalidException("O token informado está inválido.");
