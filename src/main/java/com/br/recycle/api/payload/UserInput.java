@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CPF;
 
 import com.br.recycle.api.model.Flow;
+import com.br.recycle.api.validation.validator.CelularValidation;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -39,7 +40,8 @@ public class UserInput{
 	@NotBlank
 	private String email;
 	
-	@ApiModelProperty(example = "11 99999999", required = false)
+	@ApiModelProperty(example = "\"11 99999999\",\"(11) 99999-9999\"", required = false)
+	@CelularValidation
 	private String cellPhone;
 	
 	@ApiModelProperty(example = "10364680032", required = false)
