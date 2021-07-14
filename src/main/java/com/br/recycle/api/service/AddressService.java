@@ -147,7 +147,7 @@ public class AddressService {
 		try {
 			return viaZipCodeClient.searchAddress(zipCode);
 		} catch (Exception e) {
-			throw new UnprocessableEntityException("De acordo com o CEP informado não está relacionado a nenhum endereço");
+			throw new UnprocessableEntityException("O CEP informado não está relacionado a nenhum endereço");
 		}	
 	}
 
