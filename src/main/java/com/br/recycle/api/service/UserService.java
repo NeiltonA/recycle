@@ -102,19 +102,19 @@ public class UserService {
 		if (userOptionalCpf.isPresent() && !userOptionalCpf.get().equals(user)) {
 			log.error("CPF já cadastrado.");
 			throw new NotAcceptableException(
-					String.format("Já existe um usuário cadastrado com o CPF %s", user.getIndividualRegistration()));
+					String.format("Já existe um usuário cadastrado com o CPF %s.", user.getIndividualRegistration()));
 		}
 		
 		if (userOptionalEmail.isPresent() && !userOptionalEmail.get().equals(user)) {
 			log.error("E-mail já cadastrado.");
 			throw new NotAcceptableException(
-					String.format("Já existe um usuário cadastrado com o E-mail %s", user.getEmail()));
+					String.format("Já existe um usuário cadastrado com o E-mail %s.", user.getEmail()));
 		}
 		
 		if (!user.getPassword().matches(user.getConfirmPassword())) {
 			log.error("Senhas não conferem.");
 			throw new UnprocessableEntityException(
-					String.format("As senhas informadas, não conferem."));
+					String.format("As senhas informadas, não são iguais. Tente novamente!"));
 		}
 		
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -190,7 +190,12 @@ public class UserService {
 
 		if (!passwordEncoder.matches(passwordAtual, user.getPassword())) {
 			throw new UnprocessableEntityException(
-					String.format("Desculpe. A senha atual informada, não coincide com a senha no cadastro do usuário: '%s'", user.getName()));
+					String.format("Desculpe. A senha informada, não coincide com a senha no cadastro do usuário: '%s'", user.getName()));
+		}
+		
+		if (passwordEncoder.matches(novoPassword, user.getPassword())) {
+			throw new UnprocessableEntityException(
+					String.format("Desculpe. A senha informada, é igual a senha que tem no cadastro do usuário: '%s'", user.getName()));
 		}
 
 		user.setPassword(passwordEncoder.encode(novoPassword));
