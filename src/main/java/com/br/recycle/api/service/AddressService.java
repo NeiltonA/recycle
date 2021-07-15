@@ -18,6 +18,7 @@ import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
+import com.br.recycle.api.model.Donation;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
 import com.br.recycle.api.repository.DonationRepository;
@@ -162,8 +163,8 @@ public class AddressService {
 	 */
 	public void deleteById(Long id) {
 		findOrFail(id);
-		
-		if (donationRepository.findByAddressId(id).isPresent()) {
+		List<Donation> donation = donationRepository.findByAddressId(id);
+		if (!donation.isEmpty()) {
 			throw new MethodNotAllowedException("Não é possivel excluir o endereço, pois existe um relacionamento com a doação em aberta!");
 		}
 		
