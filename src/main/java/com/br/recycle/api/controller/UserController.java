@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,8 @@ import lombok.extern.log4j.Log4j2;
 @Api(value = "User", description = "REST API for User", tags = { "User" })
 public class UserController {
 
-	private static final String HTTPS_RECYCLE_EVERTON_ALAUK_VERCEL_APP_ACESSAR_TOKEN = "https://recycle-everton-alauk.vercel.app/acessar?token=";
+	@Value("${url.front.reset.password}")
+	protected String urlfront;
 	private UserService userService;
 	private PwService pwService;
 	private SendEmail sendEmail;
@@ -178,7 +180,7 @@ public class UserController {
 			String response = pwService.forgotPassword(pwEmailInput.getEmail());
 
 			if (!response.startsWith("Invalid")) {
-				String link = (HTTPS_RECYCLE_EVERTON_ALAUK_VERCEL_APP_ACESSAR_TOKEN + response);
+				String link = (this.urlfront + response);
 				
 				sendEmail.sendDespatchEmail(pwEmailInput.getEmail(), link);
 			}
