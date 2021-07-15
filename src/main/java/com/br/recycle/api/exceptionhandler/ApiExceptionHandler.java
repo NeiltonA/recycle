@@ -30,6 +30,7 @@ import com.br.recycle.api.exception.BusinessException;
 import com.br.recycle.api.exception.EntityInUseException;
 import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.InternalServerException;
+import com.br.recycle.api.exception.MethodNotAllowedException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.NotAcceptableException;
 import com.br.recycle.api.exception.TokenRefreshException;
@@ -185,6 +186,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleUnprocessableEntitys(Exception exception, WebRequest request) {
 		HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
 		ProblemType problemType = ProblemType.UNPROCESSABLE_ENTITY;
+		String detail = exception.getMessage();
+		
+		log.error(exception.getMessage(), exception);
+		
+		Problem problem = createProblemBuilder(httpStatus, problemType, detail)
+				.userMessage(detail)
+				.build();
+		
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), httpStatus, request);
+	}
+	
+	@ExceptionHandler(MethodNotAllowedException.class)
+	public ResponseEntity<Object> handleMethodNotAllowed(Exception exception, WebRequest request) {
+		HttpStatus httpStatus = HttpStatus.METHOD_NOT_ALLOWED;
+		ProblemType problemType = ProblemType.METHOD_NOT_ALLOWED;
 		String detail = exception.getMessage();
 		
 		log.error(exception.getMessage(), exception);

@@ -13,8 +13,10 @@ public enum ProblemType {
     RESOURCE_NOT_FOUND("/recurso-nao-encontrado", "Recurso não encontrado"),
     ENTITY_IN_USE("/entidade-em-uso", "Entidade em uso"),
     UNPROCESSABLE_ENTITY("/entidade-nao-processada", "Entidade não processada"),
-    BUSINESS_ERROR("/erro-na-requisicao", "Falha na chamada");
-
+    BUSINESS_ERROR("/erro-na-requisicao", "Falha na chamada"),
+	METHOD_NOT_ALLOWED("/erro-na-requisicao", "Falha ao deletar");
+	
+	
     private String title;
     private String uri;
 

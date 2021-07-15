@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.exception.AddressNotFoundException;
 import com.br.recycle.api.exception.InternalServerException;
+import com.br.recycle.api.exception.MethodNotAllowedException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.UnprocessableEntityException;
 import com.br.recycle.api.feign.ViaZipCodeClient;
 import com.br.recycle.api.model.Address;
 import com.br.recycle.api.model.User;
 import com.br.recycle.api.repository.AddressRepository;
+import com.br.recycle.api.repository.DonationRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -32,13 +34,15 @@ public class AddressService {
 
 	//private static final String MSG_ADDRESS_EM_USO = "Address de código %d não pode ser removida, pois está em uso";
 
+	private DonationRepository donationRepository;
 	private AddressRepository addressRepository;
 	private ViaZipCodeClient viaZipCodeClient;
 	
 	@Autowired
-	public AddressService(AddressRepository addressRepository, ViaZipCodeClient viaZipCodeClient) {
+	public AddressService(AddressRepository addressRepository, ViaZipCodeClient viaZipCodeClient, DonationRepository donationRepository) {
 		this.addressRepository = addressRepository;
 		this.viaZipCodeClient = viaZipCodeClient;
+		this.donationRepository = donationRepository;
 	}
 
 	/**
@@ -136,6 +140,7 @@ public class AddressService {
 				.orElseThrow(() -> new AddressNotFoundException(addressId));
 	}
 
+
 	/**
 	 * Método responsável por buscar o endereço de acordo com o CEP informado.
 	 * @param {@code String} zipCode
@@ -157,6 +162,11 @@ public class AddressService {
 	 */
 	public void deleteById(Long id) {
 		findOrFail(id);
+		
+		if (donationRepository.findByAddressId(id).isPresent()) {
+			throw new MethodNotAllowedException("Não é possivel excluir o endereço, pois existe um relacionamento com a doação em aberta!");
+		}
+		
 		addressRepository.deleteById(id);
 	}
 	
