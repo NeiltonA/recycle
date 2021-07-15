@@ -157,6 +157,16 @@ public class DonationService {
     	if (donation.getAvailabilityPeriod() ==null) {
     		donation.setAvailabilityPeriod(donationActual.get().getAvailabilityPeriod());
 		}
+    	
+    	if (donation.getAddress()==null) {
+    		donation.setAddress(donationActual.get().getAddress());
+		}
+    	if (donation.getCooperative()==null) {
+    		donation.setCooperative(donationActual.get().getCooperative());
+		}
+    	if (donation.getGiver()==null) {
+    		donation.setGiver(donationActual.get().getGiver());
+		}
   
         donation.setId(donationActual.get().getId());
         donationRepository.save(donation);    
