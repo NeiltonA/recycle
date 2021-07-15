@@ -11,10 +11,10 @@ import javax.validation.ConstraintValidatorContext;
  * @author caiobastos
  *
  */
-public class CelularValidator implements ConstraintValidator<CelularValidation, String> {
+public class PhoneValidator implements ConstraintValidator<PhoneValidation, String> {
 
 	@Override
-	public void initialize(CelularValidation celularValidation) {
+	public void initialize(PhoneValidation celularValidation) {
 
 	}
 

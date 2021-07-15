@@ -2,7 +2,7 @@ package com.br.recycle.api.payload;
 
 import org.hibernate.validator.constraints.br.CPF;
 
-import com.br.recycle.api.validation.validator.CelularValidation;
+import com.br.recycle.api.validation.validator.PhoneValidation;
 import com.br.recycle.api.validation.validator.EmailValidation;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -23,7 +23,7 @@ public class UserDtoIn{
 	@EmailValidation
 	private String email;
 	
-	@CelularValidation
+	@PhoneValidation
 	private String cellPhone;	
 
 	private String name;

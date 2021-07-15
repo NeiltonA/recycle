@@ -136,7 +136,7 @@ public class AddressController {
 	@ApiOperation(value = "Method responsible for changing the address")
 	@PatchMapping(value = UriConstants.URI_ACCESS_ID, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> update(@PathVariable("id") Long id,
-			@RequestBody AddressPartialInput addressPartialInput) {
+			@RequestBody @Valid AddressPartialInput addressPartialInput) {
 
 		Address address = addressDtoAssembler.toDomainPartialObject(addressPartialInput);
 		addressService.updatePartial(address, id);

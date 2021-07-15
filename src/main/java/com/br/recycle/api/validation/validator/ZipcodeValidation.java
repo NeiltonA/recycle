@@ -1,7 +1,9 @@
 package com.br.recycle.api.validation.validator;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -10,12 +12,12 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = CelularValidator.class)
-@Target(ElementType.FIELD)
+@Constraint(validatedBy = ZipcodeValidator.class)
+@Target({ FIELD, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CelularValidation {
+public @interface ZipcodeValidation {
 
-	String message() default "O número de celular está inválido. E deve ser informado um DDD válido.";
+	String message() default "O CEP informado está inválido. Por favor informe um cep com 8 dígitos.";
 	
 	Class<?>[] groups() default {};
 	

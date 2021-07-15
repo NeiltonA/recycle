@@ -1,5 +1,6 @@
 package com.br.recycle.api.payload;
 
+import com.br.recycle.api.validation.validator.NumberValidation;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -15,6 +16,7 @@ import lombok.ToString;
 public class AddressPartialInput  {
 
 	@ApiModelProperty(example = "188", required = true)
+	@NumberValidation
 	private String number;
 
 	@ApiModelProperty(example = "casa", required = false)

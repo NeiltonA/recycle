@@ -16,6 +16,7 @@ public class EmailValidatorTest {
 	private ConstraintValidatorContext context;
 	
 	private EmailValidator emailValidator;
+	
 	@BeforeEach
 	public void setUp() {
 		emailValidator = new EmailValidator();
