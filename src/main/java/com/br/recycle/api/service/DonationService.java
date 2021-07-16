@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.br.recycle.api.exception.DonationNotFoundException;
@@ -26,7 +27,10 @@ public class DonationService {
 	private static final String DONATION_IN_USE_MESSAGE = "Doação de código %d não pode ser removida, pois está em uso";
 
 	private DonationRepository donationRepository;
-
+	
+	@Autowired
+	private FlowDonationService flowDonationService;
+	
 	@Autowired
 	public DonationService(DonationRepository donationRepository) {
 		this.donationRepository = donationRepository;
@@ -132,7 +136,7 @@ public class DonationService {
         donationRepository.save(donation);    
     }
     
-    @Transactional
+   
     public void updatePatch(Long id, Donation donation) {
     	Optional<Donation> donationActual = donationRepository.findById(id);
     	
@@ -157,7 +161,6 @@ public class DonationService {
     	if (donation.getAvailabilityPeriod() ==null) {
     		donation.setAvailabilityPeriod(donationActual.get().getAvailabilityPeriod());
 		}
-    	
     	if (donation.getAddress()==null) {
     		donation.setAddress(donationActual.get().getAddress());
 		}
@@ -167,11 +170,26 @@ public class DonationService {
     	if (donation.getGiver()==null) {
     		donation.setGiver(donationActual.get().getGiver());
 		}
-  
+    	donation.setDateCancellation(donationActual.get().getDateCancellation());
+    	donation.setDateConfirmation(donationActual.get().getDateConfirmation());
+    	donation.setDateDelivery(donationActual.get().getDateDelivery());
+    	donation.setDateRegister(donationActual.get().getDateRegister());
         donation.setId(donationActual.get().getId());
-        donationRepository.save(donation);    
+    
+        updateDonation(donation);
+        updateDonationConfirm(donation);
+       
     }
     
+    @Transactional
+    private void  updateDonation(Donation donation) {
+    	donationRepository.save(donation);  
+        
+    }
+    @Async
+    private void  updateDonationConfirm(Donation donation) { 
+        flowDonationService.confirm(donation.getCode());
+    }
     /**
      * Método responsável por validar se as doações estão vazias e retornar os dados.
      * @param {@code List<Donation>} - donations

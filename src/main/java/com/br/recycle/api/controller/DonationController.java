@@ -123,7 +123,7 @@ public class DonationController {
 		Donation donation = donationDtoAssembler.toDomainObject(newDonation);
 		donationService.updatePatch(id, donation);
 
-		return ResponseEntity.ok(new ApiResponse(true, "Doação modificada com sucesso."));
+		return ResponseEntity.ok(new ApiResponse(true, "Doação modificada com sucesso e e-mail de confirmação enviado!"));
 	}
 	
 	@ApiOperation(value = "Method responsible for removing the donation")
