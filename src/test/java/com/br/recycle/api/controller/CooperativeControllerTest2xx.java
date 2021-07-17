@@ -96,7 +96,7 @@ public class CooperativeControllerTest2xx {
 
 	private DictionaryCnpj getMockCooperativeDictionary() {
 		DictionaryCnpj dictionaryCnpj = new DictionaryCnpj();
-		dictionaryCnpj.setSocialReason("Empresa fantasia");
+		dictionaryCnpj.setCompanyName("Empresa fantasia");
 		
 		return dictionaryCnpj;
 	}

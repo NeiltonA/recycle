@@ -12,7 +12,7 @@ import lombok.Data;
 @JsonNaming(SnakeCaseStrategy.class)
 public class DictionaryCnpj {
 
-	private String socialReason;
+	private String companyName;
     private String fantasyName;
     private String state;
     private String situation;

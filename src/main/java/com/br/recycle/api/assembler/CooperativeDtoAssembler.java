@@ -38,7 +38,7 @@ public class CooperativeDtoAssembler {
 	public DictionaryCnpj toDictionary(CnpjResponseBean cnpjResponseBean) {
 		DictionaryCnpj dictionary = new DictionaryCnpj();
 		dictionary.setFantasyName(cnpjResponseBean.getFantasia());
-		dictionary.setSocialReason(cnpjResponseBean.getNome());
+		dictionary.setCompanyName(cnpjResponseBean.getNome());
 		dictionary.setSituation(cnpjResponseBean.getSituacao());
 		dictionary.setType(cnpjResponseBean.getTipo());
 		dictionary.setState(cnpjResponseBean.getUf());

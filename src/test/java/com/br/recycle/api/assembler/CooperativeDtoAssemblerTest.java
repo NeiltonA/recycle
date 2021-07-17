@@ -96,7 +96,7 @@ public class CooperativeDtoAssemblerTest {
     	DictionaryCnpj dictionaryCnpj = cooperativeDtoAssembler.toDictionary(CooperativeMock.getMockDictionaryCnpj());
     	assertNotNull(dictionaryCnpj);
     	assertEquals("Empresa fantasia", dictionaryCnpj.getFantasyName());
-    	assertEquals("Empresa real", dictionaryCnpj.getSocialReason());
+    	assertEquals("Empresa real", dictionaryCnpj.getCompanyName());
     	assertEquals("Ativa", dictionaryCnpj.getSituation());
     	assertEquals("Teste", dictionaryCnpj.getType());
     	assertEquals("SP", dictionaryCnpj.getState());
