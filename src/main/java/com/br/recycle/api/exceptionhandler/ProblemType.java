@@ -16,7 +16,6 @@ public enum ProblemType {
     BUSINESS_ERROR("/erro-na-requisicao", "Falha na chamada"),
 	METHOD_NOT_ALLOWED("/erro-na-requisicao", "Falha ao deletar");
 	
-	
     private String title;
     private String uri;
 
@@ -24,5 +23,4 @@ public enum ProblemType {
         this.uri = "https://recycle.com.br" + path;
         this.title = title;
     }
-
 }
