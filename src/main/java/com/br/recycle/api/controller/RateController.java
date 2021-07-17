@@ -56,9 +56,9 @@ public class RateController {
 	 */
 	@ApiOperation(value = "Method responsible for returning the list of rates")
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<RateDtoOut> getAll(@RequestParam(required = false) Long user) {
+	public List<RateDtoOut> getAll(@RequestParam(required = false) Long donation) {
 
-		List<Rate> rates = rateService.findAll(user);
+		List<Rate> rates = rateService.findAll(donation);
 
 		return rateDtoAssembler.toCollectionModel(rates);
 	}

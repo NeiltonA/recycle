@@ -149,8 +149,8 @@ public class RateServiceTest {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		rate.setGiver(GiverMock.getMockToModel());
-		rate.setCooperative(CooperativeMock.getMockCooperative());
+		//rate.setGiver(GiverMock.getMockToModel());
+		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return rate;
 	}
@@ -160,8 +160,8 @@ public class RateServiceTest {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		rate.setGiver(GiverMock.getMockToModel());
-		rate.setCooperative(CooperativeMock.getMockCooperative());
+		//rate.setGiver(GiverMock.getMockToModel());
+		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return List.of(rate);
 	}

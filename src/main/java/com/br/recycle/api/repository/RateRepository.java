@@ -10,8 +10,6 @@ import com.br.recycle.api.model.Rate;
 @Repository
 public interface RateRepository extends JpaRepository<Rate, Long> {
 	
-	 List<Rate> findByCooperativeUserId(Long user);
-
-	 List<Rate> findByGiverUserId(Long user);
+	 List<Rate> findByDonationId(Long donation);
 
 }

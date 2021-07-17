@@ -38,15 +38,11 @@ public class RateService {
 	 * 
 	 * @return {@code List<Rate>} - Retorna todos os dados de avaliação.
 	 */
-	public List<Rate> findAll(Long user) {
+	public List<Rate> findAll(Long donation) {
 		List<Rate> response = new ArrayList<>();
 		
-		if (Objects.nonNull(user)) {
-			response = rateRepository.findByGiverUserId(user);
-			if (response.isEmpty()) {
-				response = rateRepository.findByCooperativeUserId(user);	
-			}
-			
+		if (Objects.nonNull(donation)) {
+			response = rateRepository.findByDonationId(donation);
 			return validateEmpty(response);
 		} else {
 			response = rateRepository.findAll();
@@ -112,12 +108,10 @@ public class RateService {
 			rate.setComment(rateActual.get().getComment());
 		}
 		
-		if (rate.getCooperative() ==null) {
-			rate.setCooperative(rateActual.get().getCooperative());
+		if (rate.getDonation() ==null) {
+			rate.setDonation(rateActual.get().getDonation());
 		}
-		if (rate.getGiver() ==null) {
-			rate.setGiver(rateActual.get().getGiver());
-		}
+	
 		if (rate.getNote() ==null) {
 			rate.setNote(rateActual.get().getNote());
 		}

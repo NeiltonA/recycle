@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.br.recycle.api.assembler.RateDtoAssembler;
-import com.br.recycle.api.mock.CooperativeMock;
-import com.br.recycle.api.mock.GiverMock;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.payload.RateDtoOut;
 import com.br.recycle.api.service.RateService;
@@ -90,8 +88,8 @@ public class RateControllerTest2xx {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		rate.setGiver(GiverMock.getMockToModel());
-		rate.setCooperative(CooperativeMock.getMockCooperative());
+		//rate.setGiver(GiverMock.getMockToModel());
+		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return rate;
 	}
@@ -119,8 +117,8 @@ public class RateControllerTest2xx {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		rate.setGiver(GiverMock.getMockToModel());
-		rate.setCooperative(CooperativeMock.getMockCooperative());
+		//rate.setGiver(GiverMock.getMockToModel());
+		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return List.of(rate);
 	}
