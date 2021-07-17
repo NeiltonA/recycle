@@ -47,8 +47,6 @@ public class RateDtoAssemblerTest {
     	assertNotNull(rate);
     	assertEquals("Excelente", rate.getComment());
     	assertEquals(Long.valueOf(9), rate.getNote());
-    	//assertEquals(Long.valueOf(1), rate.getCooperative().getId());
-    	//assertEquals(Long.valueOf(1), rate.getGiver().getId());
     }
 
     /**
@@ -62,8 +60,6 @@ public class RateDtoAssemblerTest {
     	assertEquals(Long.valueOf(1), rateDtoOut.getId());
     	assertEquals("Excelente", rateDtoOut.getComment());
     	assertEquals(Long.valueOf(9), rateDtoOut.getNote());
-    	//assertEquals(Long.valueOf(1), rateDtoOut.getCooperative().getId());
-    	//assertEquals(Long.valueOf(1), rateDtoOut.getGiver().getId());
     }
 
     /**
@@ -77,7 +73,5 @@ public class RateDtoAssemblerTest {
     	assertEquals(Long.valueOf(1), rateDtoOut.get(0).getId());
     	assertEquals("Excelente", rateDtoOut.get(0).getComment());
     	assertEquals(Long.valueOf(9), rateDtoOut.get(0).getNote());
-    	//assertEquals(Long.valueOf(1), rateDtoOut.get(0).getCooperative().getId());
-    	//assertEquals(Long.valueOf(1), rateDtoOut.get(0).getGiver().getId());
     }
 }

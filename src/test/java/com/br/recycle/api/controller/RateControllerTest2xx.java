@@ -88,8 +88,6 @@ public class RateControllerTest2xx {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		//rate.setGiver(GiverMock.getMockToModel());
-		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return rate;
 	}
@@ -117,8 +115,6 @@ public class RateControllerTest2xx {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		//rate.setGiver(GiverMock.getMockToModel());
-		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return List.of(rate);
 	}

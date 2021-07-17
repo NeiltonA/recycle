@@ -1,11 +1,5 @@
 package com.br.recycle.api.service;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,12 +13,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.br.recycle.api.exception.EntityNotFoundException;
 import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.exception.RatingNotFoundException;
-import com.br.recycle.api.mock.CooperativeMock;
-import com.br.recycle.api.mock.GiverMock;
 import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.repository.RateRepository;
 
@@ -50,10 +48,10 @@ public class RateServiceTest {
 	 */
 	@Test
 	public void testFindAllSuccess() {
-		//given(rateRepository.findAll()).willReturn(getMockRates());
-//		List<Rate> rates = rateService.findAll(1L);
-//		assertNotNull(rates);
-//		assertEquals(1, rates.size());
+		given(rateRepository.findAll()).willReturn(getMockRates());
+		List<Rate> rates = rateService.findAll(null);
+		assertNotNull(rates);
+		assertEquals(1, rates.size());
 	}
 
 	/*
@@ -62,8 +60,8 @@ public class RateServiceTest {
 	 */
 	@Test
 	public void testFindAllNoContent() {
-		//given(rateRepository.findAll()).willReturn(Collections.emptyList());
-		assertThrows(NoContentException.class, () -> rateService.findAll(1L));
+		given(rateRepository.findAll()).willReturn(Collections.emptyList());
+		assertThrows(NoContentException.class, () -> rateService.findAll(null));
 	}
 	
 	/*
@@ -149,8 +147,6 @@ public class RateServiceTest {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		//rate.setGiver(GiverMock.getMockToModel());
-		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return rate;
 	}
@@ -160,8 +156,6 @@ public class RateServiceTest {
 		rate.setId(1L);
 		rate.setComment("Otimo");
 		rate.setNote(10L);
-		//rate.setGiver(GiverMock.getMockToModel());
-		//rate.setCooperative(CooperativeMock.getMockCooperative());
 		
 		return List.of(rate);
 	}
