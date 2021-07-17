@@ -23,4 +23,7 @@ public class RateDtoOut{
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private GiverDtoOut giver;
+    
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private DonationDtoOut donation;
 }

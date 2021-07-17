@@ -1,6 +1,8 @@
 package com.br.recycle.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -36,11 +38,21 @@ public class RateService {
 	 * 
 	 * @return {@code List<Rate>} - Retorna todos os dados de avaliação.
 	 */
-	public List<Rate> findAll() {
-		List<Rate> rates = rateRepository.findAll();
-		validateEmpty(rates);
+	public List<Rate> findAll(Long user) {
+		List<Rate> response = new ArrayList<>();
+		
+		if (Objects.nonNull(user)) {
+			response = rateRepository.findByGiverUserId(user);
+			if (response.isEmpty()) {
+				response = rateRepository.findByCooperativeUserId(user);	
+			}
+			
+			return validateEmpty(response);
+		} else {
+			response = rateRepository.findAll();
+			return validateEmpty(response);
+		}
 
-		return rates;
 	}
 
 	/**
@@ -88,6 +100,31 @@ public class RateService {
 		rate.setId(rateActual.get().getId());
 		rateRepository.save(rate);
 	}
+	
+	public void updatePatch(Long id, Rate rate) {
+		Optional<Rate> rateActual = rateRepository.findById(id);
+
+		if (!rateActual.isPresent()) {
+			throw new EntityNotFoundException("A avaliação não pode ser atualizada, porque não existe.");
+		}
+
+		if (rate.getComment() ==null) {
+			rate.setComment(rateActual.get().getComment());
+		}
+		
+		if (rate.getCooperative() ==null) {
+			rate.setCooperative(rateActual.get().getCooperative());
+		}
+		if (rate.getGiver() ==null) {
+			rate.setGiver(rateActual.get().getGiver());
+		}
+		if (rate.getNote() ==null) {
+			rate.setNote(rateActual.get().getNote());
+		}
+		
+		rate.setId(rateActual.get().getId());
+		rateRepository.save(rate);
+	}
 
 	/**
 	 * Método responsável por realizar a deleção da avaliação de acordo com o ID
@@ -105,11 +142,13 @@ public class RateService {
 	 * esteja vazia, retorna que está sem conteúdo.
 	 * 
 	 * @param {@code <List<Rate>} rates
+	 * @return 
 	 */
-	private void validateEmpty(List<Rate> rates) {
+	private List<Rate> validateEmpty(List<Rate> rates) {
 		if (rates.isEmpty()) {
 			throw new NoContentException("Não existe cadastro de avaliações.");
 		}
+		return rates;
 	}
 	
 //	@Transactional

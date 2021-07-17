@@ -19,8 +19,8 @@ public class RateMock {
 		RateInput rateInput = new RateInput();
 		rateInput.setNote(9L);
 		rateInput.setComment("Excelente");
-		rateInput.setCooperative(CooperativeIdInputMock.getMockCooperativeIdInput());
-		rateInput.setGiver(GiverIdInputMock.getMockGiverIdInput());
+		//rateInput.setCooperative(CooperativeIdInputMock.getMockCooperativeIdInput());
+		//rateInput.setGiver(GiverIdInputMock.getMockGiverIdInput());
 		
 		return rateInput; 
 	}
