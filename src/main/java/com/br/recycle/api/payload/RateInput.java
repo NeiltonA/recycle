@@ -24,8 +24,6 @@ public class RateInput {
 	private String comment;
 
 	@ApiModelProperty(example = "1", required = false)
-	private CooperativeIdInput cooperative;
+	private DonationIdInput donation;
 
-	@ApiModelProperty(example = "1", required = false)
-	private GiverIdInput giver;
 }

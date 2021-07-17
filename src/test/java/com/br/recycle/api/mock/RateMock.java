@@ -19,8 +19,8 @@ public class RateMock {
 		RateInput rateInput = new RateInput();
 		rateInput.setNote(9L);
 		rateInput.setComment("Excelente");
-		rateInput.setCooperative(CooperativeIdInputMock.getMockCooperativeIdInput());
-		rateInput.setGiver(GiverIdInputMock.getMockGiverIdInput());
+		//rateInput.setCooperative(CooperativeIdInputMock.getMockCooperativeIdInput());
+		//rateInput.setGiver(GiverIdInputMock.getMockGiverIdInput());
 		
 		return rateInput; 
 	}
@@ -30,8 +30,8 @@ public class RateMock {
 		rate.setId(1L);
 		rate.setNote(9L);
 		rate.setComment("Excelente");
-		rate.setCooperative(CooperativeIdMock.getMockCooperative());
-		rate.setGiver(GiverIdMock.getMockGiver());
+		//rate.setCooperative(CooperativeIdMock.getMockCooperative());
+		//rate.setGiver(GiverIdMock.getMockGiver());
 		
 		return rate;
 	}
@@ -41,8 +41,8 @@ public class RateMock {
 		rate.setId(1L);
 		rate.setNote(9L);
 		rate.setComment("Excelente");
-		rate.setCooperative(CooperativeIdMock.getMockCooperative());
-		rate.setGiver(GiverIdMock.getMockGiver());
+		//rate.setCooperative(CooperativeIdMock.getMockCooperative());
+		//rate.setGiver(GiverIdMock.getMockGiver());
 		
 		return List.of(rate);
 	}	

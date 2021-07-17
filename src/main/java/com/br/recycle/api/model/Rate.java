@@ -39,10 +39,10 @@ public class Rate implements Serializable {
 
 
     @OneToOne
-    @JoinColumn(name = "id_cooperative")
-    private Cooperative cooperative;
+    @JoinColumn(name = "id_donation")
+    private Donation donation;
 
-    @OneToOne
-    @JoinColumn(name = "id_giver")
-    private Giver giver;
+//    @OneToOne
+//    @JoinColumn(name = "id_giver")
+//    private Giver giver;
 }
