@@ -1,4 +1,4 @@
-package com.br.recycle.api.validation.utils;
+package com.br.recycle.api.utils;
 
 import java.util.Objects;
 

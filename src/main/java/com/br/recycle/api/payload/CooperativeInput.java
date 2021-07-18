@@ -1,5 +1,6 @@
 package com.br.recycle.api.payload;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -34,5 +35,6 @@ public class CooperativeInput  {
 
     @ApiModelProperty(example = "1", required = true)
     @NotNull
+    @Valid
     private UserIdInput user;
 }

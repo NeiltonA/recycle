@@ -10,7 +10,7 @@ import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.UserDtoIn;
 import com.br.recycle.api.payload.UserDtoOut;
 import com.br.recycle.api.payload.UserInput;
-import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+import com.br.recycle.api.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos do Usuário.

@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+import com.br.recycle.api.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por validar os dados de entrada de números.

@@ -14,7 +14,7 @@ import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.Dictionary;
 import com.br.recycle.api.payload.UserIdInput;
-import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+import com.br.recycle.api.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos de Endereço.

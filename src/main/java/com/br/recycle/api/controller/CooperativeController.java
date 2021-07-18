@@ -78,8 +78,8 @@ public class CooperativeController {
 	@GetMapping(value = UriConstants.URI_COOPERATIVE_CNPJ, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DictionaryCnpj> getCnpj(@PathVariable String cnpj) {
 
-		CnpjValidation.validate(cnpj);
-		CnpjResponseBean cnpjResponseBean = cooperativeService.searchCnpj(cnpj);
+		String cnpjValid = CnpjValidation.validate(cnpj);
+		CnpjResponseBean cnpjResponseBean = cooperativeService.searchCnpj(cnpjValid);
 		DictionaryCnpj dictionaryCnpj = cooperativeDtoAssembler.toDictionary(cnpjResponseBean);
 
 		return ResponseEntity.ok().body(dictionaryCnpj);
@@ -110,6 +110,7 @@ public class CooperativeController {
 	@ApiOperation(value = "Method responsible for saving the cooperative")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ApiResponse> save(@Valid @RequestBody CooperativeInput cooperativeInput) {
+		
 		Cooperative cooperative = cooperativeDtoAssembler.toDomainObject(cooperativeInput);
 		cooperativeService.save(cooperative);
 

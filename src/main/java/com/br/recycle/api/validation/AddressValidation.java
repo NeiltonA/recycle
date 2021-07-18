@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.br.recycle.api.exception.BadRequestException;
-import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+import com.br.recycle.api.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por validar os dados de entrada com relação 

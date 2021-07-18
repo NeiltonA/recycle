@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.br.recycle.api.exception.BadRequestException;
-import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+import com.br.recycle.api.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por validar os dados de entrada com relação 
@@ -16,7 +16,7 @@ import com.br.recycle.api.validation.utils.RegexCharactersUtils;
  */
 public class CnpjValidation {
 
-	public static void validate(String cnpj) {
+	public static String validate(String cnpj) {
 		
 		cnpj = RegexCharactersUtils.removeSpecialCharacters(cnpj);
 		Pattern pattern = Pattern.compile("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})");
@@ -24,5 +24,7 @@ public class CnpjValidation {
 	    if (!matcher.matches()) {
 			throw new BadRequestException("O CNPJ informado está com o tamanho inválido.");
 		}
+	    
+	    return cnpj;
 	}
 }
