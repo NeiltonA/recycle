@@ -1,8 +1,10 @@
 package com.br.recycle.api.model;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -19,6 +21,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.data.domain.AbstractAggregateRoot;
 
@@ -26,6 +29,7 @@ import com.br.recycle.api.event.DonationCancelEvent;
 import com.br.recycle.api.event.DonationConfirmedEvent;
 import com.br.recycle.api.event.DonationDeliveredEvent;
 import com.br.recycle.api.exception.BusinessException;
+import com.br.recycle.api.payload.RateDtoResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -95,6 +99,9 @@ public class Donation extends AbstractAggregateRoot<Donation> {
     @OneToOne
     @JoinColumn(name = "id_address")
     private Address address;
+    
+    @Transient
+    private List<RateDtoResponse> rateDto = new ArrayList<>();;
 
     public void confirm() {
         setStatus(DonationStatus.CONFIRMED);

@@ -37,6 +37,7 @@ public class DataSourceConfig {
 		config.setJdbcUrl(this.url);
 		config.setUsername(this.username);
 		config.setPassword(this.password);
+		config.setIdleTimeout(120);
 		HikariDataSource dbase = new HikariDataSource(config);
 		log.info("Conectado na base -> {} ", this.url);
 		return dbase;

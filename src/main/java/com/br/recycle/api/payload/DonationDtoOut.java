@@ -2,6 +2,7 @@ package com.br.recycle.api.payload;
 
 import java.time.OffsetDateTime;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -59,5 +60,8 @@ public class DonationDtoOut{
     
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private AddressDtoOut  address;
+    
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<RateDtoResponse>  rate;
 
 }

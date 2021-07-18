@@ -55,6 +55,7 @@ public class DonationController {
 	public List<DonationDtoOut> getAll(@RequestParam(required = false) Long user) {
 
 		List<Donation> donations = donationService.findAll(user);
+		
 		return donationDtoAssembler.toCollectionModel(donations);
 	}
 

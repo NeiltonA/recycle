@@ -23,8 +23,10 @@ import com.br.recycle.api.exception.NoContentException;
 import com.br.recycle.api.model.AvailabilityDays;
 import com.br.recycle.api.model.AvailabilityPeriod;
 import com.br.recycle.api.model.Donation;
+import com.br.recycle.api.model.Rate;
 import com.br.recycle.api.model.Storage;
 import com.br.recycle.api.repository.DonationRepository;
+import com.br.recycle.api.repository.RateRepository;
 
 /**
  * Classe responsável por validar os cenários de testes da classe
@@ -43,6 +45,8 @@ public class DonationServiceTest {
 	@InjectMocks
 	private DonationService donationService;
 
+	@Mock
+	private RateRepository rateRepository;
 	/**
 	 * Método responsável por validar o cenário de teste da busca de todos as doações.
 	 */
@@ -70,9 +74,13 @@ public class DonationServiceTest {
 	@Test
 	public void testFindAllByIdGiverSuccess() {
 		given(donationRepository.findByGiverUserId(1L)).willReturn(getMockDonation());
-		
+		given(rateRepository.findByDonationCooperativeUserId(1L)).willReturn(getMockRates());
+		given(rateRepository.findByDonationGiverUserId(1L)).willReturn(getMockRates());
+
 		List<Donation> donations = donationService.findAll(1L);
+
 		assertNotNull(donations);
+
 	}
 	
 	/**
@@ -82,7 +90,8 @@ public class DonationServiceTest {
 	public void testFindAllByIdCooperativeSuccess() {
 		given(donationRepository.findByGiverUserId(1L)).willReturn(Collections.emptyList());
 		given(donationRepository.findByCooperativeUserId(1L)).willReturn(getMockDonation());
-		
+		given(rateRepository.findByDonationCooperativeUserId(1L)).willReturn(getMockRates());
+		given(rateRepository.findByDonationGiverUserId(1L)).willReturn(getMockRates());
 		List<Donation> donations = donationService.findAll(1L);
 		assertNotNull(donations);
 	}
@@ -221,5 +230,13 @@ public class DonationServiceTest {
 		donation.setAvailabilityPeriod(AvailabilityPeriod.ANY_TIME);
 
 		return List.of(donation);
+	}
+	private List<Rate> getMockRates() {
+		Rate rate = new Rate();
+		rate.setId(1L);
+		rate.setComment("Otimo");
+		rate.setNote(10L);
+		
+		return List.of(rate);
 	}
 }
