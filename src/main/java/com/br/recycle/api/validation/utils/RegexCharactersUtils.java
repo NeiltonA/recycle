@@ -1,0 +1,14 @@
+package com.br.recycle.api.validation.utils;
+
+import java.util.Objects;
+
+public class RegexCharactersUtils {
+
+	public static String removeSpecialCharacters(String value) {
+		if (Objects.nonNull(value)) {
+			value = value.replaceAll("[^a-zA-Z0-9]", "");
+			return value;			
+		}
+		return null;
+	}
+}

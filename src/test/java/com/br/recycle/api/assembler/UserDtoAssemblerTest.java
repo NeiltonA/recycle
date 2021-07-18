@@ -48,7 +48,7 @@ public class UserDtoAssemblerTest {
     	assertNotNull(user);	
     	assertEquals("Teste Silva", user.getName());
     	assertEquals("teste@recycle.com", user.getEmail());
-    	assertEquals("11 999999999", user.getCellPhone());
+    	assertEquals("11999999999", user.getCellPhone());
     	assertEquals("10364680032", user.getIndividualRegistration());
     	assertEquals("admin123", user.getPassword());
     	assertEquals("admin123", user.getConfirmPassword());
@@ -98,9 +98,8 @@ public class UserDtoAssemblerTest {
     	assertNotNull(user);	
     	assertEquals("Teste Silva", user.getName());
     	assertEquals("teste@recycle.com", user.getEmail());
-    	assertEquals("11 999999999", user.getCellPhone());
+    	assertEquals("11999999999", user.getCellPhone());
     	assertEquals("10364680032", user.getIndividualRegistration());
-    	assertEquals(Flow.D, user.getFlowIndicator());
     	assertEquals(Boolean.TRUE, user.getActive());
     }
 }

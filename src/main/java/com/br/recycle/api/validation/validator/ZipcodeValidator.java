@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+
 /**
  * Classe responsável por validar os dados de entrada do os caracteres do cep.
  * 
@@ -28,7 +30,8 @@ public class ZipcodeValidator implements ConstraintValidator<ZipcodeValidation, 
 	public boolean isValid(String zipcode, ConstraintValidatorContext context) {
 
 		if (Objects.nonNull(zipcode)) {
-			return zipcode.matches("(^\\d{5}-\\d{3}|^\\d{2}.\\d{3}-\\d{3}|\\d{8})");
+			zipcode = RegexCharactersUtils.removeSpecialCharacters(zipcode);
+			return zipcode.matches("\\d{8}");
 		}
 
 		return true;

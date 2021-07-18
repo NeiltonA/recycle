@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+
 /**
  * Classe responsável por validar os dados de entrada de números.
  * 
@@ -26,6 +28,7 @@ public class NumberValidator implements ConstraintValidator<NumberValidation, St
 	public boolean isValid(String number, ConstraintValidatorContext context) {
 
 		if (Objects.nonNull(number)) {
+			number = RegexCharactersUtils.removeSpecialCharacters(number);
 			return number.matches("^\\d+$");
 		}
 

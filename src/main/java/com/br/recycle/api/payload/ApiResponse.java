@@ -1,5 +1,8 @@
 package com.br.recycle.api.payload;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class ApiResponse {
     private Boolean success;
     private String message;

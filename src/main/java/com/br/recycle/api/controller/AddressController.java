@@ -80,8 +80,8 @@ public class AddressController {
 	@GetMapping(value = UriConstants.URI_ACCESS_ZIPCODE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Dictionary> getZipCode(@PathVariable String zipCode) {
 
-		AddressValidation.validate(zipCode);
-		AddressResponseBean addressResponseBean = addressService.searchAddress(zipCode);
+		String zipcodeValid = AddressValidation.validate(zipCode);
+		AddressResponseBean addressResponseBean = addressService.searchAddress(zipcodeValid);
 		Dictionary dictionary = addressDtoAssembler.toDictionary(addressResponseBean);
 
 		return ResponseEntity.ok().body(dictionary);

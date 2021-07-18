@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import com.br.recycle.api.validation.utils.RegexCharactersUtils;
+
 /**
  * Classe responsável por validar os dados de entrada do celular.
  * 
@@ -26,10 +28,11 @@ public class PhoneValidator implements ConstraintValidator<PhoneValidation, Stri
 	 * informado.
 	 */
 	@Override
-	public boolean isValid(String celular, ConstraintValidatorContext context) {
+	public boolean isValid(String cellphone, ConstraintValidatorContext context) {
 
-		if (Objects.nonNull(celular)) {
-			return celular.matches(
+		if (Objects.nonNull(cellphone)) {
+			cellphone = RegexCharactersUtils.removeSpecialCharacters(cellphone);
+			return cellphone.matches(
 					"^\\(?(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])\\)? ?(?:[2-8]|9[1-9])[0-9]{3}\\-?[0-9]{4}$");
 		}
 

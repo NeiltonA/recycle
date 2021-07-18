@@ -1,5 +1,6 @@
 package com.br.recycle.api.payload;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
@@ -51,5 +52,6 @@ public class AddressInput  {
 	private String city;
 
 	@ApiModelProperty(example = "1", required = true)
+	@Valid
 	private UserIdInput user;
 }

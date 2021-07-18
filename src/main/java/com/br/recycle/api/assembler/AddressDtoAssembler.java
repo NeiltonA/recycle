@@ -8,10 +8,13 @@ import org.springframework.stereotype.Component;
 
 import com.br.recycle.api.bean.AddressResponseBean;
 import com.br.recycle.api.model.Address;
+import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.AddressDtoOut;
 import com.br.recycle.api.payload.AddressInput;
 import com.br.recycle.api.payload.AddressPartialInput;
 import com.br.recycle.api.payload.Dictionary;
+import com.br.recycle.api.payload.UserIdInput;
+import com.br.recycle.api.validation.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos de Endereço.
@@ -22,12 +25,53 @@ public class AddressDtoAssembler {
 
 	private ModelMapper modelMapper = new ModelMapper();
 
+	/**
+	 * Método responsável por montar o objeto de entidade para o banco.
+	 * Não foi utilizado o modelMapper, porque alguns campos precisavam ser
+	 * modificados.
+	 * @param addressInput - {@code AddressInput}
+	 * @return {@code Address}
+	 */
 	public Address toDomainObject(AddressInput addressInput) {
-		return modelMapper.map(addressInput, Address.class);
+		Address address = new Address();
+		address.setStreet(addressInput.getStreet());
+		address.setNumber(RegexCharactersUtils.removeSpecialCharacters(addressInput.getNumber()));
+		address.setComplement(addressInput.getComplement());
+		address.setZipCode(RegexCharactersUtils.removeSpecialCharacters(addressInput.getZipCode()));
+		address.setNeighborhood(addressInput.getNeighborhood());
+		address.setState(addressInput.getState());
+		address.setCity(addressInput.getCity());
+		address.setUser(toDomainObjectAddressUser(addressInput.getUser()));
+		
+		return address;
 	}
 	
+	/**
+	 * Método responsável por montar o objeto de usuário
+	 * relacinado ao endereço. Não foi usado o modelMapper, 
+	 * devido a alguns valores que precisavam ser modificados.
+	 * @param userIdInput - {@code UserIdInput}
+	 * @return {@code User} - user
+	 */
+	private User toDomainObjectAddressUser(UserIdInput userIdInput) {
+		User user = new User();
+		user.setId(userIdInput.getId());
+		
+		return user;
+	}
+
+	/**
+	 * Método responsável por montar o objeto de entidade para o banco.
+	 * Não foi utilizado o modelMapper, porque alguns campos precisavam ser
+	 * modificados.
+	 * @param addressPartialInput - {@code AddressPartialInput}
+	 * @return {@code Address}
+	 */
 	public Address toDomainPartialObject(AddressPartialInput addressPartialInput) {
-		return modelMapper.map(addressPartialInput, Address.class);
+		Address address = new Address();
+		address.setNumber(RegexCharactersUtils.removeSpecialCharacters(addressPartialInput.getNumber()));
+		address.setComplement(addressPartialInput.getComplement());
+		return address;
 	}
 
 	public AddressDtoOut toModel(Address address) {

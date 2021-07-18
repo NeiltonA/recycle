@@ -10,6 +10,7 @@ import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.UserDtoIn;
 import com.br.recycle.api.payload.UserDtoOut;
 import com.br.recycle.api.payload.UserInput;
+import com.br.recycle.api.validation.utils.RegexCharactersUtils;
 
 /**
  * Classe responsável por transformar os dados relacionado aos modelos do Usuário.
@@ -20,8 +21,28 @@ public class UserDtoAssembler {
 
 	private ModelMapper modelMapper = new ModelMapper();
 	
+	/**
+	 * Objeto sendo montado, sem o auxilio do modelMapper, devido a 
+	 * remoção dos campos que foram informados no momento da entrada
+	 * para ser salvo na base de dados, sem caracteres.
+	 * 
+	 * @param userInput - {@code UserInput}
+	 * @return {@code User}
+	 * 		- Retorna um usuário montado.
+	 */
 	public User toDomainObject(UserInput userInput) {
-		return modelMapper.map(userInput, User.class);
+		User user = new User();
+		user.setName(userInput.getName());
+		user.setEmail(userInput.getEmail());
+		user.setCellPhone(RegexCharactersUtils.removeSpecialCharacters(userInput.getCellPhone()));
+		user.setIndividualRegistration(
+				RegexCharactersUtils.removeSpecialCharacters(userInput.getIndividualRegistration()));
+		user.setPassword(userInput.getPassword());
+		user.setConfirmPassword(userInput.getConfirmPassword());
+		user.setFlowIndicator(userInput.getFlowIndicator());
+		user.setActive(user.getActive());
+		
+		return user;
 	}
 	
 	public UserDtoOut toModel(User user) {
@@ -34,7 +55,25 @@ public class UserDtoAssembler {
 				.collect(Collectors.toList());
 	}
 	
+	/**
+	 * Objeto sendo montado, sem o auxilio do modelMapper, devido a 
+	 * remoção dos campos que foram informados no momento da entrada
+	 * para ser salvo na base de dados, sem caracteres.
+	 * 
+	 * @param userDtoIn - {@code UserDtoIn}
+	 * @return {@code User}
+	 * 		- Retorna um usuário montado.
+	 */
 	public User toDomainObject(UserDtoIn userDtoIn) {
-		return modelMapper.map(userDtoIn, User.class);
+		User user = new User();
+		user.setName(userDtoIn.getName());
+		user.setEmail(userDtoIn.getEmail());
+		user.setCellPhone(RegexCharactersUtils.removeSpecialCharacters(userDtoIn.getCellPhone()));
+		user.setIndividualRegistration(
+				RegexCharactersUtils.removeSpecialCharacters(userDtoIn.getIndividualRegistration()));
+		//user.setFlowIndicator(userDtoIn.getFlowIndicator());
+		user.setActive(user.getActive());
+		
+		return user;
 	}
 }
