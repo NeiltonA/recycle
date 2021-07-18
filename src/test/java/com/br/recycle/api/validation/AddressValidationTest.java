@@ -1,5 +1,6 @@
 package com.br.recycle.api.validation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,8 @@ public class AddressValidationTest {
 	 */
 	@Test
 	public void testValidateSuccess() {
-		AddressValidation.validate("06766200");
+		String zipcode = AddressValidation.validate("06766200");
+		assertEquals("06766200", zipcode);
 	}
 	
 	/**
@@ -31,7 +33,8 @@ public class AddressValidationTest {
 	 */
 	@Test
 	public void testValidateFormatedSuccess() {
-		AddressValidation.validate("06.766-200");
+		String zipcode = AddressValidation.validate("06.766-200");
+		assertEquals("06766200", zipcode);
 	}
 	
 	/**
@@ -40,7 +43,8 @@ public class AddressValidationTest {
 	 */
 	@Test
 	public void testValidateFormated2Success() {
-		AddressValidation.validate("06766-200");
+		String zipcode = AddressValidation.validate("06766-200");
+		assertEquals("06766200", zipcode);
 	}
 	
 	/**

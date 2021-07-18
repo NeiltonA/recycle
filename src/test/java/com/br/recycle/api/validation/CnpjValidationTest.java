@@ -1,5 +1,6 @@
 package com.br.recycle.api.validation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,8 @@ public class CnpjValidationTest {
 	 */
 	@Test
 	public void testValidateFormatedSuccess() {
-		CnpjValidation.validate("76.511.411/0001-03");
+		String cnpj = CnpjValidation.validate("76.511.411/0001-03");
+		assertEquals("76511411000103", cnpj);
 	}
 	
 	/**
@@ -31,7 +33,8 @@ public class CnpjValidationTest {
 	 */
 	@Test
 	public void testValidateSuccess() {
-		CnpjValidation.validate("76511411000103");
+		String cnpj = CnpjValidation.validate("76511411000103");
+		assertEquals("76511411000103", cnpj);
 	}
 	
 	/**
