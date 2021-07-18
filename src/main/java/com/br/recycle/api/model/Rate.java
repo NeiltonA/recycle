@@ -37,10 +37,13 @@ public class Rate implements Serializable {
 
     private String comment;
 
-
     @OneToOne
     @JoinColumn(name = "id_donation")
     private Donation donation;
+    
+    @OneToOne
+    @JoinColumn(name = "id_cooperative")
+    private Cooperative cooperative;
 
 //    @OneToOne
 //    @JoinColumn(name = "id_giver")

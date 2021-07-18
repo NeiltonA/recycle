@@ -19,6 +19,4 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     
     
     List<Donation> findByAddressId(Long id);
-   
-
 }

@@ -101,7 +101,7 @@ public class Donation extends AbstractAggregateRoot<Donation> {
     private Address address;
     
     @Transient
-    private List<RateDtoResponse> rateDto = new ArrayList<>();;
+    private List<RateDtoResponse> rateDto = new ArrayList<>();
 
     public void confirm() {
         setStatus(DonationStatus.CONFIRMED);

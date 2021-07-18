@@ -38,13 +38,16 @@ public class RateService {
 	 * 
 	 * @return {@code List<Rate>} - Retorna todos os dados de avaliação.
 	 */
-	public List<Rate> findAll(Long donation) {
+	public List<Rate> findAll(Long donation, Long cooperative) {
 		List<Rate> response = new ArrayList<>();
 		
 		if (Objects.nonNull(donation)) {
 			response = rateRepository.findByDonationId(donation);
 			return validateEmpty(response);
-		} else {
+		} else if (Objects.nonNull(cooperative)) {
+			response = rateRepository.findByDonationCooperativeId(cooperative);
+			return validateEmpty(response);
+		}else {
 			response = rateRepository.findAll();
 			return validateEmpty(response);
 		}

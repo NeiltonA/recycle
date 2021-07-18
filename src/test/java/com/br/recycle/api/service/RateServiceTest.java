@@ -49,7 +49,7 @@ public class RateServiceTest {
 	@Test
 	public void testFindAllSuccess() {
 		given(rateRepository.findAll()).willReturn(getMockRates());
-		List<Rate> rates = rateService.findAll(null);
+		List<Rate> rates = rateService.findAll(null, null);
 		assertNotNull(rates);
 		assertEquals(1, rates.size());
 	}
@@ -61,7 +61,7 @@ public class RateServiceTest {
 	@Test
 	public void testFindAllNoContent() {
 		given(rateRepository.findAll()).willReturn(Collections.emptyList());
-		assertThrows(NoContentException.class, () -> rateService.findAll(null));
+		assertThrows(NoContentException.class, () -> rateService.findAll(null, null));
 	}
 	
 	/*
