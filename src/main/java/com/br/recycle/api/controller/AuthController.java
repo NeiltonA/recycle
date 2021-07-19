@@ -117,7 +117,7 @@ public class AuthController {
 			throw new TokenRefreshException(exception.getMessage(), exception);
 
 		} catch (Exception e) {
-			throw new InternalServerException(e.getMessage(), e);
+			throw new TokenRefreshException(e.getMessage(), e);
 		}
 	}
 
