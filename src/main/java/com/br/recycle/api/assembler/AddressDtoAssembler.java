@@ -1,6 +1,7 @@
 package com.br.recycle.api.assembler;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -41,7 +42,7 @@ public class AddressDtoAssembler {
 		address.setNeighborhood(addressInput.getNeighborhood());
 		address.setState(addressInput.getState());
 		address.setCity(addressInput.getCity());
-		address.setUser(toDomainObjectAddressUser(addressInput.getUser()));
+		address.setUser(toDomainObjectAddressUser(addressInput));
 		
 		return address;
 	}
@@ -50,12 +51,16 @@ public class AddressDtoAssembler {
 	 * Método responsável por montar o objeto de usuário
 	 * relacinado ao endereço. Não foi usado o modelMapper, 
 	 * devido a alguns valores que precisavam ser modificados.
-	 * @param userIdInput - {@code UserIdInput}
+	 * @param addressInput - {@code UserIdInput}
 	 * @return {@code User} - user
 	 */
-	private User toDomainObjectAddressUser(UserIdInput userIdInput) {
+	private User toDomainObjectAddressUser(AddressInput addressInput) {
 		User user = new User();
-		user.setId(userIdInput.getId());
+
+		if (Objects.nonNull(addressInput.getUser())) {
+			UserIdInput userIdInput = addressInput.getUser();
+			user.setId(userIdInput.getId());
+		}
 		
 		return user;
 	}
