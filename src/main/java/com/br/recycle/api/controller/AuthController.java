@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.br.recycle.api.assembler.AuthAssembler;
 import com.br.recycle.api.commons.UriConstants;
 import com.br.recycle.api.exception.BadRequestException;
-import com.br.recycle.api.exception.InternalServerException;
 import com.br.recycle.api.exception.TokenRefreshException;
 import com.br.recycle.api.exception.UserInvalidException;
 import com.br.recycle.api.model.RefreshToken;
