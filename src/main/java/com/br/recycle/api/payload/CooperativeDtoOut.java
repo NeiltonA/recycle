@@ -20,5 +20,4 @@ public class CooperativeDtoOut  {
     //private String cpfResponsible;
     private String cnpj;
     private UserDtoOut user;
-    private AddressDtoOut address;
 }
