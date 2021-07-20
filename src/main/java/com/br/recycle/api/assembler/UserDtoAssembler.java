@@ -72,7 +72,7 @@ public class UserDtoAssembler {
 		user.setIndividualRegistration(
 				RegexCharactersUtils.removeSpecialCharacters(userDtoIn.getIndividualRegistration()));
 		//user.setFlowIndicator(userDtoIn.getFlowIndicator());
-		user.setActive(user.getActive());
+		user.setActive(userDtoIn.getActive());
 		
 		return user;
 	}
