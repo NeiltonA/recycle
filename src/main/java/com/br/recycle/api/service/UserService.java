@@ -23,7 +23,7 @@ import com.br.recycle.api.model.User;
 import com.br.recycle.api.payload.RoleName;
 import com.br.recycle.api.repository.RoleRepository;
 import com.br.recycle.api.repository.UserRepository;
-
+import com.br.recycle.api.model.Flow;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -95,6 +95,9 @@ public class UserService {
 	//@CacheEvict(cacheNames = "User", allEntries = true)
 	public User save(User user) {
 
+		if(Flow.C.equals(user.getFlowIndicator())){
+			user.setActive(false);
+		}
 		Optional<User> userOptionalCpf = userRepository.findByIndividualRegistration(user.getIndividualRegistration());
 
 		Optional<User> userOptionalEmail = userRepository.findByEmail(user.getEmail());
