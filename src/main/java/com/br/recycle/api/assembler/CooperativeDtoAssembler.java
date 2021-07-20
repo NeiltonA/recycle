@@ -8,8 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.br.recycle.api.bean.CnpjResponseBean;
+import com.br.recycle.api.model.Address;
 import com.br.recycle.api.model.Cooperative;
 import com.br.recycle.api.model.User;
+import com.br.recycle.api.payload.AddressIdInput;
 import com.br.recycle.api.payload.CooperativeDtoOut;
 import com.br.recycle.api.payload.CooperativeInput;
 import com.br.recycle.api.payload.DictionaryCnpj;
@@ -38,10 +40,21 @@ public class CooperativeDtoAssembler {
 		cooperative.setFantasyName(cooperativeInput.getFantasyName());
 		cooperative.setCnpj(RegexCharactersUtils.removeSpecialCharacters(cooperativeInput.getCnpj()));
 		cooperative.setUser(toDomainDomainCooperativeUser(cooperativeInput.getUser()));
+		cooperative.setAddress(toDomainAddress(cooperativeInput.getAddress()));
 		
 		return cooperative;
 	}
 	
+	private Address toDomainAddress(AddressIdInput addressIdInput) {
+		if (Objects.isNull(addressIdInput)) {
+			return null;
+		}
+		
+		Address address = new Address();
+		address.setId(Objects.isNull(addressIdInput.getId()) ? null : addressIdInput.getId());
+		return address;
+	}
+
 	/**
 	 * Método responsável por mapear o objeto de usuário para 
 	 * salvar no banco. Não foi utilizado modelMaper,

@@ -53,6 +53,10 @@ public class Cooperative implements Serializable {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
     
+    @OneToOne
+    @JoinColumn(name = "id_address", nullable = false)
+    private Address address;
+    
     @Transient
     private List<RateDtoResponse> rateDto = new ArrayList<>();
 }

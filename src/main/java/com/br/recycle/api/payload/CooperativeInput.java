@@ -37,4 +37,9 @@ public class CooperativeInput  {
     @NotNull
     @Valid
     private UserIdInput user;
+    
+    @ApiModelProperty(example = "1", required = true)
+    @NotNull
+    @Valid
+    private AddressIdInput address;
 }
