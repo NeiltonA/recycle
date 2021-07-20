@@ -39,10 +39,10 @@ public class RateControllerTest2xx {
 	
 	@Test
 	public void testGetAllSuccess() {
-		given(rateService.findAll(1L, null)).willReturn(getMockRates());
+		given(rateService.findAll(1L, null, null)).willReturn(getMockRates());
 		given(rateDtoAssembler.toCollectionModel(getMockRates())).willReturn(getMockRateDtos());
 		
-		List<RateDtoOut> ratesDtoOuts = rateController.getAll(1L, null);
+		List<RateDtoOut> ratesDtoOuts = rateController.getAll(1L, null, null);
 		assertNotNull(ratesDtoOuts);
 		assertEquals(Long.valueOf(1), ratesDtoOuts.get(0).getId());
 	}

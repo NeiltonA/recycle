@@ -38,10 +38,9 @@ public class CooperativeDtoAssembler {
 		cooperative.setFantasyName(cooperativeInput.getFantasyName());
 		cooperative.setCnpj(RegexCharactersUtils.removeSpecialCharacters(cooperativeInput.getCnpj()));
 		cooperative.setUser(toDomainDomainCooperativeUser(cooperativeInput.getUser()));
-		
 		return cooperative;
 	}
-	
+
 	/**
 	 * Método responsável por mapear o objeto de usuário para 
 	 * salvar no banco. Não foi utilizado modelMaper,

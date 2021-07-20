@@ -59,5 +59,4 @@ public class Address implements Serializable {
 	@JoinColumn(name = "id_user")
 	@JsonBackReference
 	private User user;
-
 }
