@@ -43,7 +43,9 @@ public class ContactController {
 
 		service.send(contact);
 
-		return ResponseEntity.created(URI.create("")).body(new ApiResponse(true, "E-mail enviado com sucesso!"));
+		return ResponseEntity.ok(new ApiResponse(true, "E-mail enviado com sucesso!"));
 	}
+	
+
 
 }

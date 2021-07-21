@@ -109,7 +109,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		log.error(ex.getMessage(), ex);
 		
-		Problem problem = createProblemBuilder(status, problemType, detail)
+		Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
 				.userMessage(detail)
 				.build();
 
