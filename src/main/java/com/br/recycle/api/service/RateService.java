@@ -54,7 +54,6 @@ public class RateService {
 			response = rateRepository.findAll();
 			return validateEmpty(response);
 		}
-
 	}
 
 	/**
