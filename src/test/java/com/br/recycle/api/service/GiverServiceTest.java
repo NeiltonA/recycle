@@ -153,7 +153,7 @@ public class GiverServiceTest {
 	public void testSaveSuccess() {
 		given(userService.findById(1L)).willReturn(getMockUser());
 		given(giverRepository.findByUserId(1L)).willReturn(Collections.emptyList());
-		given(cooperativeRepository.findById(1L)).willReturn(Optional.empty());
+		given(cooperativeRepository.findByUserId(1L)).willReturn(Collections.emptyList());
 		doReturn(getMockGiverSave()).when(giverRepository).save(getMockGiverSave());
 		
 		Giver giver = giverService.save(1L);
@@ -178,7 +178,7 @@ public class GiverServiceTest {
 	public void testSaveCooperativeUnprocessableEntity() {
 		given(userService.findById(1L)).willReturn(getMockUser());
 		given(giverRepository.findByUserId(1L)).willReturn(Collections.emptyList());
-		given(cooperativeRepository.findById(1L)).willReturn(Optional.of(getMockCooperative()));
+		given(cooperativeRepository.findByUserId(1L)).willReturn(getMockCooperative());
 		
 		assertThrows(UnprocessableEntityException.class, () -> giverService.save(1L));
 	}
@@ -193,11 +193,12 @@ public class GiverServiceTest {
 		verify(giverRepository, times(1)).deleteById(1L);
 	}
 	
-	private Cooperative getMockCooperative() {
+	private List<Cooperative> getMockCooperative() {
+		
 		Cooperative cooperative = new Cooperative();
 		cooperative.setId(1L);
 		
-		return cooperative;
+		return List.of(cooperative);
 	}
 
 	private Giver getMockGiverSave() {

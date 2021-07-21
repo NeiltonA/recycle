@@ -3,7 +3,6 @@ package com.br.recycle.api.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -116,9 +115,9 @@ public class GiverService {
 	 * @param {@code Long} - id
 	 */
 	public void verifyCooperative(Long id) {
-		Optional<Cooperative> cooperativePresent = cooperativeRepository.findById(id);
+		List<Cooperative> cooperativePresent = cooperativeRepository.findByUserId(id);
 		
-		if (cooperativePresent.isPresent()) {
+		if (!cooperativePresent.isEmpty()) {
 			throw new UnprocessableEntityException(String.format("já existe um usuário do código (%s)  associado com a Cooperativa", id));
 		}
 	}
