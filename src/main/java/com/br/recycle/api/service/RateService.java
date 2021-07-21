@@ -48,7 +48,7 @@ public class RateService {
 			response = rateRepository.findByDonationCooperativeId(cooperative);
 			return validateEmpty(response);
 		} else if (Objects.nonNull(user)) {
-			response = rateRepository.findByDonationCooperativeUserId(user);
+			response = rateRepository.findByDonationGiverUserId(user);
 			return validateEmpty(response);
 		} else {
 			response = rateRepository.findAll();
