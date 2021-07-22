@@ -1,6 +1,6 @@
 package com.br.recycle.api.controller;
 
-import java.net.URI;
+import java.io.IOException;
 
 import javax.validation.Valid;
 
@@ -39,7 +39,7 @@ public class ContactController {
 
 	@ApiOperation(value = "Method responsible for contact email")
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApiResponse> send(@Valid @RequestBody ContactInput contact) {
+	public ResponseEntity<ApiResponse> send(@Valid @RequestBody ContactInput contact) throws IOException {
 
 		service.send(contact);
 
